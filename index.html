@@ -34,23 +34,15 @@
   a{color:inherit;}
   button{font-family:inherit;}
 
-  .proto-banner{
-    position:fixed;top:0;left:0;right:0;z-index:200;
-    background:var(--accent-bright);color:#fff;text-align:center;
-    font-family:var(--font-ui);font-size:11px;letter-spacing:.06em;
-    padding:7px 10px;text-transform:uppercase;
-  }
-  .proto-banner strong{color:#fff;}
-
   /* ============= MACRO CANVAS ============= */
-  #macroWrap{position:fixed;inset:0;overflow:hidden;top:32px;}
+  #macroWrap{position:fixed;inset:0;overflow:hidden;}
   #canvasInner{
-    position:absolute;width:300vw;height:calc(300vh - 32px);
+    position:absolute;width:300vw;height:300vh;
     transition:transform .85s cubic-bezier(.65,0,.35,1);
     transform:translate(-100vw,-100vh);
   }
   .room{
-    position:absolute;width:100vw;height:calc(100vh - 32px);
+    position:absolute;width:100vw;height:100vh;
     overflow:hidden;
     /* an explicit opaque background is required here — the logo's
        mix-blend-mode:difference needs a real painted backdrop within
@@ -428,8 +420,6 @@
 </style>
 </head>
 <body>
-
-<div class="proto-banner">Interactive prototype v5 — <strong>not the final site</strong> — click around, then tell me what to keep / change</div>
 
 <div id="macroWrap">
   <div id="canvasInner">
