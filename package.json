@@ -3,14 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "tinacms dev -c \"npx serve .\"",
-    "build": "tinacms build && node scripts/build-articles-json.mjs",
+    "build": "node scripts/build-articles-json.mjs",
     "build:articles": "node scripts/build-articles-json.mjs"
   },
   "dependencies": {
-    "@tinacms/cli": "^1.12.6",
     "gray-matter": "^4.0.3",
-    "markdown-it": "^14.3.0",
-    "tinacms": "^2.10.1"
+    "markdown-it": "^14.3.0"
   }
 }

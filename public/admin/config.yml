@@ -1,0 +1,76 @@
+backend:
+  name: github
+  repo: mutaremores/mutare-mores-website
+  branch: main
+  base_url: https://mutaremores.com
+  auth_endpoint: .netlify/functions/auth
+
+# Markdown files live at content/articles/*.md and get rebuilt into
+# public/articles.json at build time by scripts/build-articles-json.mjs.
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "article"
+    label: "Learn Articles"
+    folder: "content/articles"
+    create: true
+    slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}"
+    identifier_field: title
+    fields:
+      - { label: "Title", name: "title", widget: "string", required: true }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        required: false
+        options: ["Concepts", "Notes", "Thoughts", "Types"]
+      - label: "Topics"
+        name: "topics"
+        widget: "list"
+        required: false
+        default: []
+      - label: "Sources"
+        name: "sources"
+        widget: "select"
+        multiple: true
+        required: false
+        default: []
+        options: ["Article", "Books", "Image", "Study", "Video", "Website"]
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        required: true
+        default: "Not started"
+        options: ["Not started", "In progress", "Done"]
+      - label: "First Published"
+        name: "firstPublished"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        required: false
+      - label: "Last Edited"
+        name: "lastEdited"
+        widget: "string"
+        required: false
+      - label: "Has been written up?"
+        name: "hasContent"
+        widget: "boolean"
+        default: false
+      - { label: "Related Articles (out)", name: "relatedOut", widget: "hidden", default: [] }
+      - { label: "Related Articles (in)", name: "relatedIn", widget: "hidden", default: [] }
+      - { label: "Original Index", name: "origIndex", widget: "hidden", required: false }
+      - label: "TL;DR"
+        name: "tldr"
+        widget: "markdown"
+        required: false
+        minimal: true
+      - label: "Notes (main article body)"
+        name: "body"
+        widget: "markdown"
+        required: false
+      - label: "Resources"
+        name: "resources"
+        widget: "markdown"
+        required: false
+        minimal: true
