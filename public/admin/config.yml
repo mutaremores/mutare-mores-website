@@ -106,3 +106,54 @@ collections:
             name: "intro"
             widget: "text"
             default: "This library grows out of real coaching notes and reading. Pick a way in, or browse everything."
+
+      - name: "about"
+        label: "About page"
+        file: "content/settings/about.json"
+        fields:
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            label_singular: "Section"
+            summary: "{{fields.heading}}"
+            fields:
+              - { label: "Heading", name: "heading", widget: "string" }
+              - { label: "Body", name: "body", widget: "markdown" }
+
+      - name: "work"
+        label: "Work with me page"
+        file: "content/settings/work.json"
+        fields:
+          - label: "What I Do"
+            name: "whatIDo"
+            widget: "markdown"
+            hint: "The inline link back to the Learn page is a raw <a id=\"linkLearnFromWork\"> tag in the source text — leave it as-is unless you want to remove that link."
+          - label: "The Discovery Call"
+            name: "discoveryCall"
+            widget: "markdown"
+          - label: "Things We Can Work On — columns"
+            name: "columns"
+            widget: "list"
+            label_singular: "Column"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Column title", name: "title", widget: "string" }
+              - label: "Accordion items"
+                name: "items"
+                widget: "list"
+                label_singular: "Item"
+                summary: "{{fields.summary}}"
+                fields:
+                  - { label: "Summary (collapsed title)", name: "summary", widget: "string" }
+                  - { label: "Body", name: "body", widget: "markdown" }
+          - label: "Closing paragraph (after the two columns)"
+            name: "workOnOutro"
+            widget: "markdown"
+          - label: "What It's Like To Work With Me — accordion"
+            name: "faq"
+            widget: "list"
+            label_singular: "Item"
+            summary: "{{fields.summary}}"
+            fields:
+              - { label: "Summary (collapsed title)", name: "summary", widget: "string" }
+              - { label: "Body", name: "body", widget: "markdown" }
