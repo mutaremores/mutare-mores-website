@@ -17,6 +17,14 @@ collections:
     create: true
     slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}"
     identifier_field: title
+    view_groups:
+      - { label: "Category", field: category }
+      - { label: "Status", field: status }
+    view_filters:
+      - { label: "Not started", field: status, pattern: "Not started" }
+      - { label: "In progress", field: status, pattern: "In progress" }
+      - { label: "Done", field: status, pattern: "Done" }
+      - { label: "Has been written up", field: hasContent, pattern: true }
     fields:
       - { label: "Title", name: "title", widget: "string", required: true }
       - label: "Category"
@@ -57,8 +65,16 @@ collections:
         name: "hasContent"
         widget: "boolean"
         default: false
-      - { label: "Related Articles (out)", name: "relatedOut", widget: "hidden", default: [] }
-      - { label: "Related Articles (in)", name: "relatedIn", widget: "hidden", default: [] }
+      - label: "Related Articles"
+        name: "related"
+        widget: "relation"
+        collection: "article"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        value_field: "{{slug}}"
+        multiple: true
+        required: false
+        default: []
       - { label: "Original Index", name: "origIndex", widget: "hidden", required: false }
       - label: "TL;DR"
         name: "tldr"
@@ -74,3 +90,19 @@ collections:
         widget: "markdown"
         required: false
         minimal: true
+
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "learn_welcome"
+        label: "Learn: Start Here panel"
+        file: "content/settings/learn-welcome.json"
+        fields:
+          - label: "Heading"
+            name: "heading"
+            widget: "string"
+            default: "Start Here"
+          - label: "Intro text"
+            name: "intro"
+            widget: "text"
+            default: "This library grows out of real coaching notes and reading. Pick a way in, or browse everything."
