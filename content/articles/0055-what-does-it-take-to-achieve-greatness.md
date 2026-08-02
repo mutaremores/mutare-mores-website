@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-13'
 lastEdited: 'July 18'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: ''
 resources: ''
 ---

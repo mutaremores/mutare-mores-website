@@ -8,8 +8,7 @@ status: Done
 firstPublished: 2026-07-29
 lastEdited: July 29
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 origIndex: 0
 tldr: >
   * Evaluating your dream life systematically can bring more clarity than just

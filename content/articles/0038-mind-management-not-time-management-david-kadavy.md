@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-16'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * For creatives who struggle with their time, whether it be constantly changing schedules, or feel like they aren't able to create at their full potential.
   * Managing your mindset about your schedule and how you work will be much more effective than worrying about specific time management techniques and tools.

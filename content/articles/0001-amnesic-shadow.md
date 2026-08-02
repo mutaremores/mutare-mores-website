@@ -8,8 +8,7 @@ status: 'Done'
 firstPublished: '2026-07-28'
 lastEdited: 'July 29'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * Intentionally trying to suppress a memory can cause you to temporarily forget unrelated memories that happened around the same time
 resources: |

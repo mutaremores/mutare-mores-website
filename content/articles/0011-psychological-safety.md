@@ -8,8 +8,8 @@ status: 'Not started'
 firstPublished: '2026-07-27'
 lastEdited: 'July 27'
 hasContent: false
-relatedOut: []
-relatedIn: [39]
+related:
+  - 0039-herding-tigers-todd-henry
 tldr: ''
 resources: ''
 ---

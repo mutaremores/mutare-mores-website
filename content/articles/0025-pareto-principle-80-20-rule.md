@@ -8,8 +8,8 @@ status: 'Not started'
 firstPublished: '2026-07-17'
 lastEdited: 'July 22'
 hasContent: false
-relatedOut: []
-relatedIn: [45]
+related:
+  - 0045-procrastination-can-come-in-the-form-of-progress
 tldr: ''
 resources: ''
 ---

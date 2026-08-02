@@ -8,8 +8,10 @@ status: 'Done'
 firstPublished: '2026-07-10'
 lastEdited: 'July 22'
 hasContent: true
-relatedOut: [52]
-relatedIn: [21, 22]
+related:
+  - 0052-the-six-thinking-hats
+  - 0021-the-four-types-of-creativity-in-creative-organizations
+  - 0022-solving-the-problem-that-keeps-coming-back
 tldr: ''
 resources: ''
 ---

@@ -8,8 +8,8 @@ status: 'Not started'
 firstPublished: '2026-07-22'
 lastEdited: 'July 27'
 hasContent: false
-relatedOut: []
-relatedIn: [22]
+related:
+  - 0022-solving-the-problem-that-keeps-coming-back
 tldr: ''
 resources: ''
 ---
