@@ -1079,6 +1079,10 @@ drawRadar();
 let notionEntries = [];
 let noteContent = [];
 let articleLinks = [];
+let learnWelcome = {
+  heading: 'Start Here',
+  intro: 'This library grows out of real coaching notes and reading. Pick a way in, or browse everything.'
+};
 const topicStyle = {"Leadership": {"color": "#4f8a34", "species": "pine"}, "Creativity": {"color": "#d99a2b", "species": "tulip"}, "Systems thinking": {"color": "#3d7f9e", "species": "succulent"}, "Systems design": {"color": "#2f6690", "species": "cactus"}, "Communication": {"color": "#a8447a", "species": "bell"}, "Personal development": {"color": "#6a4fae", "species": "blossom"}, "Team dynamics": {"color": "#c2694f", "species": "clover"}, "Organizational development": {"color": "#7a9c3f", "species": "palm"}, "Coaching": {"color": "#a3742c", "species": "sunflower"}, "Psychology": {"color": "#8a4f6e", "species": "orchid"}, "Philosophy": {"color": "#5c5c8a", "species": "lavender"}, "Personality": {"color": "#c98f3f", "species": "poppy"}, "Training": {"color": "#3f9c7a", "species": "wheat"}, "Learning": {"color": "#4fa3a3", "species": "ivy"}, "Culture": {"color": "#a34f7a", "species": "daisy"}, "Procrastination": {"color": "#9c6b3f", "species": "mushroom"}, "Productivity": {"color": "#5c8a4f", "species": "berry"}, "Time management": {"color": "#4f7a8a", "species": "reed"}, "Task management": {"color": "#7a6b4f", "species": "vine"}, "Personal": {"color": "#8a6b9c", "species": "sprout"}, "Financial": {"color": "#3f8a6b", "species": "fern"}, "Uncategorized": {"color": "#7d7d7d", "species": "thistle"}};
 
 
@@ -1096,15 +1100,21 @@ const CATEGORY_DEFS = [
   {cat:'Thoughts', def:'Original reflections, opinions, and things I’m still working out.'},
 ];
 
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
 function welcomeColumnEl(){
   const el = document.createElement('div');
   el.className = 'learn-col';
   el.innerHTML = `
     <div class="kicker">Welcome</div>
-    <h3>Start Here</h3>
-    <p>This library grows out of real coaching notes and reading. Pick a way in, or browse everything.</p>
+    <h3>${escapeHtml(learnWelcome.heading)}</h3>
+    <p>${escapeHtml(learnWelcome.intro)}</p>
     <ul class="learn-links">
-      <li><a data-newest="1">Newest articles</a></li>
+      <li><a data-newest="1">Articles by date</a></li>
       <li><a data-bytype="1">Articles by type</a></li>
       <li><a data-topic="Creativity">Creativity</a></li>
       <li><a data-topic="Leadership">Leadership</a></li>
@@ -1139,14 +1149,19 @@ function allTopicsColumnEl(afterIndex){
   return el;
 }
 
-function entryListColumnEl(kicker, title, entries, afterIndex){
+function defaultEntryMeta(e){
+  return `${e.cat||'Note'} &middot; ${e.prog}`;
+}
+
+function entryListColumnEl(kicker, title, entries, afterIndex, metaFn){
+  metaFn = metaFn || defaultEntryMeta;
   const el = document.createElement('div');
   el.className = 'learn-col';
   el.innerHTML = `
     <div class="kicker">${kicker}</div>
     <h3>${title}</h3>
     <ul class="learn-links">
-      ${entries.map(e=>`<li><a data-idx="${notionEntries.indexOf(e)}">${e.t}<span class="meta">${e.cat||'Note'} &middot; ${e.prog}</span></a></li>`).join('')}
+      ${entries.map(e=>`<li><a data-idx="${notionEntries.indexOf(e)}">${e.t}<span class="meta">${metaFn(e)}</span></a></li>`).join('')}
     </ul>`;
   el.querySelectorAll('[data-idx]').forEach(a=>{
     a.addEventListener('click', ()=>openArticleColumn(+a.dataset.idx, afterIndex+1));
@@ -1164,7 +1179,12 @@ function newestColumnEl(afterIndex){
   const entries = [...notionEntries]
     .sort((a,b)=>(b.first||'').localeCompare(a.first||''))
     .slice(0,10);
-  return entryListColumnEl('List', 'Newest Articles', entries, afterIndex);
+  const lastEditedMeta = e => {
+    const idx = notionEntries.indexOf(e);
+    const last = articleLinks[idx] && articleLinks[idx].last;
+    return last ? `Last edited ${last}` : 'Last edited date unknown';
+  };
+  return entryListColumnEl('List', 'Articles by Date', entries, afterIndex, lastEditedMeta);
 }
 function openNewestColumn(afterIndex){
   learnColumns = learnColumns.slice(0, afterIndex+1);
@@ -1343,6 +1363,7 @@ fetch('articles.json')
     notionEntries = data.notionEntries;
     noteContent = data.noteContent;
     articleLinks = data.articleLinks;
+    if (data.learnWelcome) learnWelcome = data.learnWelcome;
     buildLearnColumns();
   })
   .catch(err => {
