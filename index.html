@@ -146,7 +146,7 @@
      needed anymore. */
   .home-logo{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    z-index:5;height:40vh;min-height:275px;width:auto;aspect-ratio:900/636;
+    z-index:5;height:70vh;min-height:480px;width:auto;aspect-ratio:900/636;
     pointer-events:none;
     mix-blend-mode:difference;
   }
@@ -1293,7 +1293,7 @@ buildLearnColumns();
   const scribbleCurve = new THREE.CatmullRomCurve3(scribblePts, false, 'centripetal', 0.5);
   const scribbleGeo = new THREE.TubeGeometry(scribbleCurve, scribblePts.length*10, 0.045, 6, false);
   scribbleGroup.add(new THREE.Mesh(scribbleGeo, inkMat));
-  scribbleGroup.scale.setScalar(1.15);
+  scribbleGroup.scale.setScalar(0.97);
 
   // a half-thickness copy of the same curve, used only for what shows
   // through the square window -- same renderer/context as everything
@@ -1303,7 +1303,7 @@ buildLearnColumns();
   const thinGroup = new THREE.Group();
   thinScene.add(thinGroup);
   thinGroup.add(new THREE.Mesh(thinGeo, inkMat));
-  thinGroup.scale.setScalar(1.15);
+  thinGroup.scale.setScalar(0.97);
 
   // ---- offscreen render targets the scribble draws into (rt = full
   // thickness, used for the halftone; rtThin = half thickness, used only
@@ -1403,13 +1403,13 @@ buildLearnColumns();
     camera.updateProjectionMatrix();
     postMat.uniforms.uResolution.value.set(w*pr, h*pr);
     // static, non-rotating square centered in the canvas
-    const squareSize = Math.min(w,h)*pr*0.323;
+    const squareSize = Math.min(w,h)*pr*0.2175;
     const cx = (w*pr)/2, cy = (h*pr)/2;
     postMat.uniforms.uSquareMin.value.set(cx-squareSize/2, cy-squareSize/2);
     postMat.uniforms.uSquareMax.value.set(cx+squareSize/2, cy+squareSize/2);
     postMat.uniforms.uCell.value = Math.max(6, Math.min(w,h)*pr/58);
     const squareEl = document.getElementById('homeLogoSquare');
-    const sizeCss = Math.min(w,h)*0.323;
+    const sizeCss = Math.min(w,h)*0.2175;
     if(squareEl){
       squareEl.style.width = sizeCss + 'px';
       squareEl.style.height = sizeCss + 'px';
