@@ -36,13 +36,23 @@
 
   /* ============= MACRO CANVAS ============= */
   #macroWrap{position:fixed;inset:0;overflow:hidden;}
+  /* height is declared twice on purpose: the plain "vh" line is a fallback
+     for browsers with no "dvh" support, and the "dvh" (dynamic viewport
+     height) line after it wins on everything modern. Plain vh on mobile
+     Safari/Chrome is sized against the LARGEST possible viewport (address
+     bar hidden) even while the address bar is actually showing, so the
+     bottom slice of every room — including the back-arrow/title bar that
+     About and Work with Me anchor to the bottom of the room — could end up
+     rendered underneath the browser's own toolbar. dvh tracks the real,
+     currently-visible viewport instead, so that never happens. */
   #canvasInner{
-    position:absolute;width:300vw;height:300vh;
+    position:absolute;width:300vw;height:300vh;height:300dvh;
     transition:transform .85s cubic-bezier(.65,0,.35,1);
     transform:translate(-100vw,-100vh);
+    transform:translate(-100vw,-100dvh);
   }
   .room{
-    position:absolute;width:100vw;height:100vh;
+    position:absolute;width:100vw;height:100vh;height:100dvh;
     overflow:hidden;
     /* an explicit opaque background is required here — the logo's
        mix-blend-mode:difference needs a real painted backdrop within
@@ -51,11 +61,11 @@
        to blend with and the logo simply doesn't render there at all. */
     background:var(--bg);
   }
-  #roomHome{left:100vw;top:100vh;}
+  #roomHome{left:100vw;top:100vh;top:100dvh;}
   #roomAbout{left:0;top:0;}
   #roomWork{left:200vw;top:0;}
-  #roomAssessment{left:0;top:200vh;}
-  #roomLearn{left:200vw;top:200vh;}
+  #roomAssessment{left:0;top:200vh;top:200dvh;}
+  #roomLearn{left:200vw;top:200vh;top:200dvh;}
 
   /* ============= HOME =============
      the four words are sized (in JS — see fitHomeWords) to fill their
@@ -217,7 +227,7 @@
      .cta-button used to have — while the CTA itself moved down into the
      back-arrow bar. */
   .room-title-floating{
-    position:absolute;z-index:20;top:4vh;
+    position:absolute;z-index:20;top:4vh;top:4dvh;
     font-family:var(--font-display);font-weight:800;font-size:clamp(28px,3.4vw,42px);
     text-transform:uppercase;letter-spacing:.01em;white-space:nowrap;
   }
@@ -693,9 +703,16 @@ const ROOM_POS = {
   learn:{x:200,y:200},
 };
 let currentRoom = 'home';
+// dvh (dynamic viewport height) tracks the browser's actually-visible area
+// on mobile, instead of the "largest possible" area plain vh assumes even
+// while the address bar is on screen — using it here keeps room navigation
+// aligned with the real viewport so nothing ends up parked behind the
+// browser's own toolbar. Feature-detected once so browsers without dvh
+// support keep working with plain vh instead of silently failing to move.
+const VH_UNIT = (window.CSS && CSS.supports && CSS.supports('height', '100dvh')) ? 'dvh' : 'vh';
 function goToRoom(name){
   const pos = ROOM_POS[name];
-  document.getElementById('canvasInner').style.transform = `translate(-${pos.x}vw,-${pos.y}vh)`;
+  document.getElementById('canvasInner').style.transform = `translate(-${pos.x}vw,-${pos.y}${VH_UNIT})`;
   currentRoom = name;
 }
 
