@@ -108,11 +108,64 @@ if (fs.existsSync(welcomePath)) {
   }
 }
 
+// About page: a flat list of {heading, body} sections, edited via the CMS's
+// "About page" Site Settings entry and written to content/settings/about.json.
+let about = { sections: [] };
+const aboutPath = path.resolve("content/settings/about.json");
+if (fs.existsSync(aboutPath)) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(aboutPath, "utf-8"));
+    about = {
+      sections: (parsed.sections || []).map((s) => ({
+        heading: s.heading || "",
+        bodyHtml: htmlFromMarkdown(s.body || ""),
+      })),
+    };
+  } catch (e) {
+    console.warn(`Could not parse ${aboutPath}, using defaults:`, e.message);
+  }
+}
+
+// Work with Me page: mostly-fixed structure (What I Do / Discovery Call /
+// two-column accordion / closing FAQ accordion), edited via the CMS's
+// "Work with me page" Site Settings entry, written to content/settings/work.json.
+let work = {
+  whatIDoHtml: "",
+  discoveryCallHtml: "",
+  columns: [],
+  workOnOutroHtml: "",
+  faq: [],
+};
+const workPath = path.resolve("content/settings/work.json");
+if (fs.existsSync(workPath)) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(workPath, "utf-8"));
+    work = {
+      whatIDoHtml: htmlFromMarkdown(parsed.whatIDo || ""),
+      discoveryCallHtml: htmlFromMarkdown(parsed.discoveryCall || ""),
+      columns: (parsed.columns || []).map((c) => ({
+        title: c.title || "",
+        items: (c.items || []).map((it) => ({
+          summary: it.summary || "",
+          bodyHtml: htmlFromMarkdown(it.body || ""),
+        })),
+      })),
+      workOnOutroHtml: htmlFromMarkdown(parsed.workOnOutro || ""),
+      faq: (parsed.faq || []).map((it) => ({
+        summary: it.summary || "",
+        bodyHtml: htmlFromMarkdown(it.body || ""),
+      })),
+    };
+  } catch (e) {
+    console.warn(`Could not parse ${workPath}, using defaults:`, e.message);
+  }
+}
+
 fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true });
 fs.writeFileSync(
   OUT_FILE,
   JSON.stringify(
-    { notionEntries, noteContent, articleLinks, learnWelcome },
+    { notionEntries, noteContent, articleLinks, learnWelcome, about, work },
     null,
     0
   )

@@ -7,5 +7,9 @@
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Registers preview templates so the editor's preview pane mirrors the
+         real site's look (see preview.js / preview.css) instead of Decap's
+         generic default preview. Must load after decap-cms.js. -->
+    <script src="preview.js"></script>
   </body>
 </html>

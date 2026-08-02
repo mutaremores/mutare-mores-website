@@ -1106,6 +1106,60 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+// The About and Work with Me rooms are CMS-editable (Site Settings entries
+// "About page" / "Work with me page") — content is authored as Markdown,
+// rendered to HTML at build time (scripts/build-articles-json.mjs), and
+// injected here into the same .room-section / .work-columns / <details>
+// structure the CSS already targets, so editing content never touches layout.
+// Section/heading text for Work stays fixed in code (the page structure is
+// stable); only the prose inside each section is CMS-driven.
+function renderAboutRoom(about){
+  const body = document.querySelector('#roomAbout .room-body');
+  if (!body || !about || !about.sections) return;
+  body.innerHTML = about.sections.map(s => `
+    <div class="room-section">
+      <h2>${escapeHtml(s.heading)}</h2>
+      ${s.bodyHtml}
+    </div>`).join('');
+}
+
+function renderWorkRoom(work){
+  const body = document.querySelector('#roomWork .room-body');
+  if (!body || !work) return;
+  const columnsHtml = (work.columns || []).map(col => `
+    <div>
+      <h3>${escapeHtml(col.title)}</h3>
+      ${(col.items || []).map(it => `<details><summary>${escapeHtml(it.summary)}</summary>${it.bodyHtml}</details>`).join('')}
+    </div>`).join('');
+  const faqHtml = (work.faq || []).map(it =>
+    `<details><summary>${escapeHtml(it.summary)}</summary>${it.bodyHtml}</details>`
+  ).join('');
+  body.innerHTML = `
+    <div class="room-section">
+      <h2>What I Do</h2>
+      ${work.whatIDoHtml || ''}
+    </div>
+    <div class="room-section">
+      <h2>The Discovery Call</h2>
+      ${work.discoveryCallHtml || ''}
+    </div>
+    <div class="room-section">
+      <h2>Things We Can Work On</h2>
+      <div class="work-columns">${columnsHtml}</div>
+      ${work.workOnOutroHtml || ''}
+    </div>
+    <div class="room-section">
+      <h2>What It’s Like To Work With Me</h2>
+      ${faqHtml}
+    </div>`;
+  // The "What I Do" paragraph carries a raw <a id="linkLearnFromWork"> anchor
+  // (see content/settings/work.json) that jumps to the Learn room — that
+  // element was just replaced, so its click listener (wired once at initial
+  // page load, below) needs to be re-attached to the new element.
+  const learnLink = document.getElementById('linkLearnFromWork');
+  if (learnLink) learnLink.addEventListener('click', ()=>goToRoom('learn'));
+}
+
 function welcomeColumnEl(){
   const el = document.createElement('div');
   el.className = 'learn-col';
@@ -1179,12 +1233,12 @@ function newestColumnEl(afterIndex){
   const entries = [...notionEntries]
     .sort((a,b)=>(b.first||'').localeCompare(a.first||''))
     .slice(0,10);
-  const lastEditedMeta = e => {
+  const dateMeta = e => {
     const idx = notionEntries.indexOf(e);
     const last = articleLinks[idx] && articleLinks[idx].last;
-    return last ? `Last edited ${last}` : 'Last edited date unknown';
+    return `${defaultEntryMeta(e)}${last ? ' &middot; ' + last : ''}`;
   };
-  return entryListColumnEl('List', 'Articles by Date', entries, afterIndex, lastEditedMeta);
+  return entryListColumnEl('List', 'Articles by Date', entries, afterIndex, dateMeta);
 }
 function openNewestColumn(afterIndex){
   learnColumns = learnColumns.slice(0, afterIndex+1);
@@ -1365,6 +1419,8 @@ fetch('articles.json')
     articleLinks = data.articleLinks;
     if (data.learnWelcome) learnWelcome = data.learnWelcome;
     buildLearnColumns();
+    renderAboutRoom(data.about);
+    renderWorkRoom(data.work);
   })
   .catch(err => {
     console.error('Failed to load articles.json', err);
