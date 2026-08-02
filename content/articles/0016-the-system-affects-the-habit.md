@@ -1,0 +1,20 @@
+---
+origIndex: 16
+title: 'The system affects the habit'
+category: 'Thoughts'
+topics: []
+sources: []
+status: 'In progress'
+firstPublished: '2026-07-22'
+lastEdited: 'July 28'
+hasContent: true
+relatedOut: []
+relatedIn: []
+tldr: ''
+resources: ''
+---
+
+* Habits are components of systems, they do not come out of nowhere, and they have effects on other parts of the system (your life).
+* When you change a habit, that habit will effect other parts of your life.
+* When trying to change a habit, you need to change other parts of your life.
+* In other words, the habit you are trying to create, in order to stick, needs to be a byproduct of the other things you do in your life.
