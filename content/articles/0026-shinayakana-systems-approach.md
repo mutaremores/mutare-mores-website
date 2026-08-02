@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-16'
 lastEdited: 'July 16'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * This is a Japanese-designed approach for complex and uncertain problems. It combines "hard" analysis with "soft" human judgment to get the best of both worlds, it's more of a mindset than an actual analytical model. Taking an approach like this will help you use the tools at your disposal to be decision supporters, not decision-makers.
 resources: |

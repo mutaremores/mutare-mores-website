@@ -8,8 +8,13 @@ status: 'Not started'
 firstPublished: '2026-08-02'
 lastEdited: 'Aug 2'
 hasContent: false
-relatedOut: [63, 65, 67, 68, 71, 72]
-relatedIn: []
+related:
+  - 0063-low-creativity-strengths-and-blind-spots
+  - 0065-low-eq-strengths-and-blind-spots
+  - 0067-low-vision-strengths-and-blind-spots
+  - 0068-high-influence-strengths-and-blind-spots
+  - 0071-low-execution-strengths-and-blind-spots
+  - 0072-high-adaptability-strengths-and-blind-spots
 tldr: ''
 resources: ''
 ---

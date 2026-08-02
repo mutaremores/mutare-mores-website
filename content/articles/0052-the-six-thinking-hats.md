@@ -8,8 +8,8 @@ status: 'In progress'
 firstPublished: '2026-07-13'
 lastEdited: 'July 16'
 hasContent: true
-relatedOut: []
-relatedIn: [58]
+related:
+  - 0058-brainstorming-techniques
 tldr: ''
 resources: ''
 ---

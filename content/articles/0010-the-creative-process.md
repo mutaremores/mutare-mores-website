@@ -8,8 +8,8 @@ status: 'Not started'
 firstPublished: '2026-07-27'
 lastEdited: 'July 27'
 hasContent: false
-relatedOut: []
-relatedIn: [8]
+related:
+  - 0008-5-step-model-for-producing-ideas-young-1940
 tldr: |
   * Explain
 resources: ''

@@ -8,8 +8,7 @@ status: 'Not started'
 firstPublished: '2026-07-13'
 lastEdited: 'July 27'
 hasContent: false
-relatedOut: []
-relatedIn: []
+related: []
 tldr: ''
 resources: ''
 ---

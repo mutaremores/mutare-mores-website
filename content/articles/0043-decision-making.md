@@ -8,8 +8,9 @@ status: 'In progress'
 firstPublished: '2026-07-16'
 lastEdited: 'July 17'
 hasContent: true
-relatedOut: [42]
-relatedIn: [53]
+related:
+  - 0042-heuristics
+  - 0053-mapping-out-your-best-choice
 tldr: ''
 resources: |
   External Resources

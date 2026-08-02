@@ -8,8 +8,8 @@ status: 'Done'
 firstPublished: '2026-07-28'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: [10]
-relatedIn: []
+related:
+  - 0010-the-creative-process
 tldr: |
   * This is the classic model for defining what the creative process is.
   * Created by James Webb Young, an advertising executive in 1940

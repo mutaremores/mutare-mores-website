@@ -8,8 +8,12 @@ status: 'Done'
 firstPublished: '2026-07-22'
 lastEdited: 'July 22'
 hasContent: true
-relatedOut: [17, 18, 19, 20, 58]
-relatedIn: []
+related:
+  - 0017-vision
+  - 0018-creativity
+  - 0019-group-communication
+  - 0020-collaboration
+  - 0058-brainstorming-techniques
 tldr: |
   * Creativity comes in all shapes and sizes, and it doesn't matter if you have an all-star artist on your team, the outcome is going to be severely limited by the creativity of the leader, the team, and the organization. Improving all of these will allow for focusing on actually producing good work, not figuring out how to work together.
 resources: ''

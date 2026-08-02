@@ -41,16 +41,13 @@ withoutLegacy.sort((a, b) => a.file.localeCompare(b.file));
 
 const ordered = [...withLegacy, ...withoutLegacy];
 
-// Build a map from legacy origIndex -> new position, so relatedOut/relatedIn
-// (which reference legacy indexes) can be translated to the new array
-// positions. New articles (no origIndex) can't be targets of legacy
-// relations, which is fine — those links were only ever generated for the
-// original stub set.
-const legacyIndexToNewPos = new Map();
+// Build a map from filename slug -> new array position, so the `related`
+// field (a list of slugs picked via the CMS's relation widget) can be
+// translated into the new array positions the site's JS indexes by.
+const slugToNewPos = new Map();
 ordered.forEach((p, newPos) => {
-  if (Number.isInteger(p.data.origIndex)) {
-    legacyIndexToNewPos.set(p.data.origIndex, newPos);
-  }
+  const slug = p.file.replace(/\.md$/, "");
+  slugToNewPos.set(slug, newPos);
 });
 
 const notionEntries = [];
@@ -82,24 +79,43 @@ for (const p of ordered) {
     has: !!d.hasContent,
   });
 
-  const out = (d.relatedOut || [])
-    .map((legacyIdx) => legacyIndexToNewPos.get(legacyIdx))
-    .filter((v) => v !== undefined);
-  const inn = (d.relatedIn || [])
-    .map((legacyIdx) => legacyIndexToNewPos.get(legacyIdx))
+  const out = (d.related || [])
+    .map((slug) => slugToNewPos.get(slug))
     .filter((v) => v !== undefined);
 
   articleLinks.push({
     out,
-    in: inn,
+    in: [],
     last: d.lastEdited || "",
   });
+}
+
+// Site-wide content that isn't a Learn article (currently just the Learn
+// "Start Here" welcome column heading/intro), edited via the CMS's Site
+// Settings entry and written to content/settings/learn-welcome.json.
+let learnWelcome = {
+  heading: "Start Here",
+  intro:
+    "This library grows out of real coaching notes and reading. Pick a way in, or browse everything.",
+};
+const welcomePath = path.resolve("content/settings/learn-welcome.json");
+if (fs.existsSync(welcomePath)) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(welcomePath, "utf-8"));
+    learnWelcome = { ...learnWelcome, ...parsed };
+  } catch (e) {
+    console.warn(`Could not parse ${welcomePath}, using defaults:`, e.message);
+  }
 }
 
 fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true });
 fs.writeFileSync(
   OUT_FILE,
-  JSON.stringify({ notionEntries, noteContent, articleLinks }, null, 0)
+  JSON.stringify(
+    { notionEntries, noteContent, articleLinks, learnWelcome },
+    null,
+    0
+  )
 );
 
 console.log(`Wrote ${notionEntries.length} articles to ${OUT_FILE}`);

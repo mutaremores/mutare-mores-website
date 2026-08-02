@@ -8,8 +8,10 @@ status: 'In progress'
 firstPublished: '2026-07-28'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: [4]
-relatedIn: [5, 7]
+related:
+  - 0004-experiential-learning-theory-kolb
+  - 0005-kelp-kolb-experiential-learning-profiles
+  - 0007-4-stages-of-learning-kolb-1984
 tldr: |
   * As a part of Experiential Learning Theory by Kolb
   * This was later updated into 9 different styles, called the KELP

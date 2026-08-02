@@ -8,8 +8,7 @@ status: 'Done'
 firstPublished: '2026-07-27'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * This study shows that some people are a better fit for (or are more common in) certain types of company cultures.
   * For example, those who are highly creative (surprisingly) tend to be in bureaucratic cultures

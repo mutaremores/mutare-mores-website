@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-22'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * Keep job training simple, repetitive, and use feedback to get the most out of it, it doesn't have to be complicated or fancy.
 resources: ''

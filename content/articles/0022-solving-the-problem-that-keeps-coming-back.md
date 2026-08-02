@@ -8,8 +8,9 @@ status: 'Done'
 firstPublished: '2026-07-19'
 lastEdited: 'July 22'
 hasContent: true
-relatedOut: [14, 58]
-relatedIn: []
+related:
+  - 0014-the-5-why-s
+  - 0058-brainstorming-techniques
 tldr: |
   * If you're facing the same problem over and over, you're trying solutions for the wrong problem
   * Ask yourself "Why?" 5 times to figure out the root cause

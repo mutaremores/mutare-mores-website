@@ -8,8 +8,8 @@ status: 'In progress'
 firstPublished: '2026-07-16'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: [11]
-relatedIn: []
+related:
+  - 0011-psychological-safety
 tldr: |
   * Herding Tigers is a development book for leaders of creative teams.
   * He talks about common issues when it comes to dealing with people in creative environments, and how to lead them better.

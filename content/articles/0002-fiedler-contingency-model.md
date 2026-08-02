@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-28'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * This explains that leaders are either task-oriented or relationship-oriented
   * Depending on the context of the situation, one leadership style tends to be more effective than the other

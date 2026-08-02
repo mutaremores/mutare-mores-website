@@ -8,8 +8,7 @@ status: 'In progress'
 firstPublished: '2026-07-16'
 lastEdited: 'July 28'
 hasContent: true
-relatedOut: []
-relatedIn: []
+related: []
 tldr: |
   * This is a framework for evaluation how effective a training program is, usually used in the context of job and skill training given to employees.
   * 1. Reactions of participants, do they enjoy or find it useful?
