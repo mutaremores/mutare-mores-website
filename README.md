@@ -4,26 +4,35 @@ Prototype website for the Mutare Mores coaching business.
 
 ## What's here
 
-This is currently a single self-contained static HTML file (`index.html`) — all HTML, CSS, and JavaScript live in one file, including the site's fonts and images (embedded as base64 data URIs). There's no build step; you can open `index.html` directly in a browser to preview it.
+There are **two** `index.html` files — know which one you're editing:
+
+- **`public/index.html`** — the real, deployed site. Fetches `public/articles.json` at load time for all article/content data, so it always reflects whatever's currently in `content/articles/`.
+- **`index.html`** (repo root) — an older, self-contained snapshot with all content frozen inline instead of fetched. No build step needed; you can open it directly in a browser. It's a leftover from before the CMS migration and can drift out of sync with `public/index.html` — treat it as a rough local preview only, not a source of truth.
+
+Both share the same overall structure: all HTML/CSS/JS for a given file live in that one file, including fonts and images (embedded as base64 data URIs).
 
 ## Editing content
 
-Right now, all page copy, article content, and links live directly inside `index.html`. There's no CMS or database behind it yet — to change text, add an article, or update a link, you edit the HTML/JS directly in this file (search for the `notionEntries` array for the Learn section's article list).
+Article copy lives in `content/articles/*.md` (one file per article, edited through the Decap CMS at `/admin`, which authenticates via GitHub). Site-wide text (About page, Work with Me page, Learn intro) lives in `content/settings/*.json`, also editable through `/admin`.
+
+At build time, `scripts/build-articles-json.mjs` reads all of `content/articles/*.md` and `content/settings/*.json` and writes the combined `public/articles.json` that `public/index.html` fetches — so a content edit only shows up on the live site after that build runs (Cloudflare Pages runs it automatically on every push, see Deploying below).
 
 ## Deploying
 
-Because it's a single static file, this repo can be deployed as-is to any static hosting provider:
+Deployed as a **Cloudflare Worker** (Workers Builds' Git integration), connected to this GitHub repo, auto-deploying on every push to `main`. `wrangler.jsonc` at the repo root defines the deploy: `src/worker.js` is the entry point, and it serves everything in `public/` as static assets (via the `assets` binding) except for two routes it handles itself, `/auth` and `/callback` (the Decap CMS GitHub login flow — see `src/worker.js` for details).
 
-- **Netlify** or **Vercel** — connect this GitHub repo and it will auto-deploy on every push to `main`.
-- **GitHub Pages** — enable Pages in the repo settings, pointing at the `main` branch root.
+Project setup in the Cloudflare dashboard ("Set up your application" screen):
+
+- **Build command**: `npm run build` (runs `scripts/build-articles-json.mjs`, which reads `content/articles/*.md` and writes `public/articles.json` — `wrangler deploy` then picks up everything in `public/` per `wrangler.jsonc`)
+- **Deploy command**: default (`npx wrangler deploy`) — no changes needed, `wrangler.jsonc` already points it at `public/`
+- **Path / API token**: leave at their defaults (repo root; Cloudflare auto-provisions the deploy token)
+- **Environment variables set on this screen are build-time only** — they will *not* be visible to `src/worker.js` at runtime. `GITHUB_OAUTH_ID` and `GITHUB_OAUTH_SECRET` additionally need to be added under the deployed Worker's own **Settings → Variables and Secrets** (`GITHUB_OAUTH_SECRET` as an encrypted Secret), or `/auth` and `/callback` will 500. These must also match the callback URL registered on the corresponding GitHub OAuth App (`https://<your-domain>/callback`).
 
 ## Known placeholders
 
-- The "Book a Discovery Call" button currently shows a JavaScript `alert()` instead of linking to a real booking tool (e.g. Calendly, Acuity).
 - Article content in the Learn section is a static snapshot, not connected to a live source like Notion.
 
 ## Roadmap ideas
 
-- Wire the Discovery Call button to a real booking integration.
-- Move article content to a lightweight CMS (or a live Notion API connection) so it can be edited without touching code.
+- Bring the root `index.html` back in sync with `public/index.html`, or retire it, so there's only one file to maintain.
 - Split the single HTML file into separate CSS/JS files as the site grows, if maintainability becomes an issue.

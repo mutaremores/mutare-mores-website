@@ -1,0 +1,13 @@
+{
+  // Deploys this repo as a Cloudflare Worker: src/worker.js runs first for
+  // every request, handles the two OAuth routes the Decap CMS login needs
+  // (/auth, /callback), and hands everything else off to the static files
+  // built into public/ (via the ASSETS binding).
+  "name": "mutare-mores-website",
+  "compatibility_date": "2026-08-02",
+  "main": "src/worker.js",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  }
+}

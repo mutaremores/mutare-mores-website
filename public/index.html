@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mutare Mores — Interactive Prototype v5</title>
+<title>Mutare Mores - Systems development for creatives</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -277,6 +277,8 @@
   .learn-links-defs li a{border-bottom:none;padding-bottom:2px;}
   .learn-link-def{margin:0;font-size:12px;line-height:1.5;color:var(--ink-soft);}
   .learn-col.active-type{background:var(--paper);padding-left:20px;padding-top:4px;margin-left:-20px;}
+  .result-dim{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
+  .result-dim:first-of-type{margin-top:14px;padding-top:0;border-top:none;}
 
   /* ============= ABOUT / WORK ============= */
   /* About's title/back-arrow read into the top-right corner and its CTA
@@ -981,13 +983,16 @@ document.getElementById('resetQuiz').addEventListener('click',()=>{
   document.getElementById('dimDetail').classList.remove('show');
 });
 
-const dimArticleIdx = {
+// Keyed by each article's stable origIndex (see oiToPos below), not its
+// array position — position shifts whenever an earlier article is added or
+// removed, which used to silently point these at the wrong article.
+const dimArticleOrigIdx = {
   Creativity: 18, EQ: 138, Vision: 17, Influence: 139, Execution: 140, Adaptability: 141,
 };
 let openDimPopup = null;
 
 function goToDimArticle(d){
-  const idx = dimArticleIdx[d];
+  const idx = oiToPos.get(dimArticleOrigIdx[d]);
   if(idx == null) return;
   buildLearnColumns();
   openArticleColumn(idx, 0);
@@ -1038,21 +1043,22 @@ function drawRadar(){
   });
 }
 
-/* Leadership type lookup: notionEntries[62..73] are the 12 High/Low trait
-   concept stubs (2 per dim, in `dims` order), notionEntries[74..137] are
-   the 64 leader-type stubs, in binary order over `dims`
-   (Creativity=bit5 ... Adaptability=bit0, High=1/Low=0). */
-const TRAIT_CONCEPT_START = 62;
-const LEADER_TYPES_START = 74;
+/* Trait-concept lookup: each dimension's High/Low "strengths and blind
+   spots" stub has a fixed origIndex from the original migration (High =
+   TRAIT_CONCEPT_OI_START + i*2, Low = +1, in `dims` order). Resolved
+   through oiToPos (set once articles.json loads) rather than used as a
+   raw array position, so it keeps pointing at the right article even as
+   unrelated articles get added or removed. */
+const TRAIT_CONCEPT_OI_START = 62;
+const RECS_PER_DIM = 3;
 
 function showAssessmentResult(){
   const profile = dims.map(d=>{
     const lvl = Math.max(1, Math.min(4, Math.round(scores[d])));
     return lvl >= 3;
   });
-  const typeIndex = profile.reduce((acc,high)=>acc*2 + (high?1:0), 0);
   buildLearnColumns();
-  insertTypeColumn(typeIndex, profile);
+  insertResultsColumn(profile);
   goToRoom('learn');
 }
 
@@ -1079,6 +1085,11 @@ drawRadar();
 let notionEntries = [];
 let noteContent = [];
 let articleLinks = [];
+// origIndex -> current array position, rebuilt whenever notionEntries
+// loads/reloads. Lets a few places (dimArticleOrigIdx, trait-concept
+// recommendations) reference a specific article by a ref that survives
+// other articles being added or removed, instead of a raw array index.
+let oiToPos = new Map();
 let learnWelcome = {
   heading: 'Start Here',
   intro: 'This library grows out of real coaching notes and reading. Pick a way in, or browse everything.'
@@ -1381,23 +1392,51 @@ function openArticleColumn(idx, afterIndex){
   renderLearnScroller();
 }
 
-function insertTypeColumn(typeIndex, profile){
+// Picks up to RECS_PER_DIM articles to recommend for one dimension's
+// High/Low reading: the exact trait-concept stub first (via its stable
+// origIndex), then other same-topic articles, preferring ones that
+// actually have content written up (Done, then In progress, then Not
+// started) over bare stubs.
+function recommendationsForDim(i, high){
+  const dim = dims[i];
+  const picks = [];
+  const seen = new Set();
+  const add = idx => {
+    if(idx != null && notionEntries[idx] && !seen.has(idx)){ seen.add(idx); picks.push(idx); }
+  };
+  add(oiToPos.get(TRAIT_CONCEPT_OI_START + i*2 + (high?0:1)));
+  const progRank = {Done:0, 'In progress':1, 'Not started':2};
+  const pool = notionEntries
+    .map((e,idx)=>({e,idx}))
+    .filter(({e,idx})=>!seen.has(idx) && (e.topics||[]).includes(dim))
+    .sort((a,b)=>(progRank[a.e.prog] ?? 2) - (progRank[b.e.prog] ?? 2) || a.idx - b.idx);
+  for(const {idx} of pool){
+    if(picks.length >= RECS_PER_DIM) break;
+    add(idx);
+  }
+  return picks;
+}
+
+function insertResultsColumn(profile){
   buildLearnColumns();
-  const idx = LEADER_TYPES_START + typeIndex;
-  const entry = notionEntries[idx];
-  const relatedIdx = dims.map((d,i)=> TRAIT_CONCEPT_START + i*2 + (profile[i]?0:1));
-  const related = relatedIdx.map(i=>notionEntries[i]);
   const el = document.createElement('div');
   el.className = 'learn-col active-type';
-  const profileHtml = dims.map((d,i)=>`<span class="status-badge ${profile[i]?'badge-done':'badge-notstarted'}">${d}: ${profile[i]?'High':'Low'}</span>`).join('');
+  const dimsHtml = dims.map((d,i)=>{
+    const high = profile[i];
+    const recs = recommendationsForDim(i, high);
+    const linksHtml = recs.length
+      ? `<ul class="learn-links">${recs.map(idx=>`<li><a data-idx="${idx}">${notionEntries[idx].t}<span class="meta">${notionEntries[idx].cat||'Note'}</span></a></li>`).join('')}</ul>`
+      : `<p class="article-body-text article-body-empty">No recommendations yet for this one.</p>`;
+    return `
+      <div class="result-dim">
+        <div class="article-meta-line"><span class="status-badge ${high?'badge-done':'badge-notstarted'}">${d}: ${high?'High':'Low'}</span></div>
+        ${linksHtml}
+      </div>`;
+  }).join('');
   el.innerHTML = `
-    <div class="kicker">Your discovery type</div>
-    <h3>${entry.t}</h3>
-    <div class="article-meta-line">${profileHtml}</div>
-    <p class="article-body-text article-body-empty">This type's full write-up hasn't been published yet — here's where to start exploring the traits behind it.</p>
-    <ul class="learn-links">
-      ${related.map(e=>`<li><a data-idx="${notionEntries.indexOf(e)}">${e.t}<span class="meta">${e.cat||'Note'}</span></a></li>`).join('')}
-    </ul>`;
+    <div class="kicker">Your discovery profile</div>
+    <h3>Where you stand, and what to read next</h3>
+    ${dimsHtml}`;
   el.querySelectorAll('[data-idx]').forEach(a=>{
     a.addEventListener('click', ()=>openArticleColumn(+a.dataset.idx, 1));
   });
@@ -1418,6 +1457,9 @@ fetch('articles.json')
     noteContent = data.noteContent;
     articleLinks = data.articleLinks;
     if (data.learnWelcome) learnWelcome = data.learnWelcome;
+    oiToPos = new Map(
+      notionEntries.map((e,i)=>[e.oi, i]).filter(([oi])=>oi != null)
+    );
     buildLearnColumns();
     renderAboutRoom(data.about);
     renderWorkRoom(data.work);

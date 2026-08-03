@@ -65,6 +65,11 @@ for (const p of ordered) {
     first: d.firstPublished
       ? String(d.firstPublished).slice(0, 10)
       : new Date().toISOString().slice(0, 10),
+    // Stable id (survives other articles being added/deleted, unlike this
+    // entry's array position) for the few places in the site's JS that need
+    // to point at one specific article — e.g. the radar chart's per-dimension
+    // "read more" links. Only legacy-migrated articles have one.
+    oi: Number.isInteger(d.origIndex) ? d.origIndex : null,
   });
 
   const notesHtml = htmlFromMarkdown(p.body);

@@ -3,7 +3,7 @@ backend:
   repo: mutaremores/mutare-mores-website
   branch: main
   base_url: https://mutaremores.com
-  auth_endpoint: .netlify/functions/auth
+  auth_endpoint: auth
 
 # Markdown files live at content/articles/*.md and get rebuilt into
 # public/articles.json at build time by scripts/build-articles-json.mjs.
