@@ -7,8 +7,8 @@
    no changes. This widget just converts markdown -> Editor.js blocks on
    load, and blocks -> markdown on every change, entirely in the browser.
 
-   Scope: headings (#/##/###), paragraphs with **bold**/*italic*/[links](url),
-   and ordered/unordered/checklist lists (including one level of nesting) --
+   Scope: headings (#/##/###), paragraphs with bold, italic, and [link](url)
+   markdown, and ordered/unordered/checklist lists (one level of nesting) --
    matching what this site's actual content uses. Anything outside that
    (tables, code blocks, images, etc.) round-trips as a plain paragraph
    rather than being silently dropped, so nothing is ever lost, even if the
