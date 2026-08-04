@@ -1,141 +1,40 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Browse &amp; Edit — Mutare Mores CMS</title>
-<!-- Reuses the CMS's own preview stylesheet (see preview.js/preview.css)
-     so this list looks like the real Learn page's article styling, not a
-     separately-maintained copy of it. -->
-<link rel="stylesheet" href="preview.css" />
-<style>
-  body{margin:0;background:var(--bg,#fff);}
-  .browse-header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 28px;border-bottom:1px solid var(--line,#dcdcda);
-    font-family:var(--font-ui,sans-serif);position:sticky;top:0;background:#fff;z-index:10;
-  }
-  .browse-header a{color:var(--ink,#2b2b2b);text-decoration:none;font-size:14px;}
-  .browse-header a:hover{text-decoration:underline;}
-  .browse-filters{display:flex;gap:8px;padding:16px 28px 0;flex-wrap:wrap;font-family:var(--font-ui,sans-serif);}
-  .browse-filters button{
-    font-family:inherit;font-size:12px;letter-spacing:.03em;text-transform:uppercase;
-    padding:6px 12px;border:1px solid var(--line,#dcdcda);border-radius:20px;background:#fff;cursor:pointer;
-  }
-  .browse-filters button.active{border-color:var(--accent-bright,#111);color:var(--accent-bright,#111);font-weight:600;}
-  .browse-group-title{
-    font-family:var(--font-display,serif);text-transform:uppercase;letter-spacing:.02em;
-    font-size:14px;color:var(--ink-soft,#8d8d8d);margin:28px 28px 6px;
-  }
-  .browse-row{display:block;padding:14px 28px;border-bottom:1px solid var(--line,#dcdcda);text-decoration:none;color:inherit;}
-  .browse-row:hover{background:var(--paper,#f6f6f4);}
-  .browse-row .article-title{font-size:17px;margin:0 0 6px;}
-  .browse-row .article-meta-line{margin-bottom:0;}
-  .browse-topics{font-family:var(--font-ui,sans-serif);font-size:11px;color:var(--ink-soft,#8d8d8d);margin-top:4px;}
-  .browse-empty{padding:40px 28px;color:var(--ink-soft,#8d8d8d);font-style:italic;font-family:var(--font-ui,sans-serif);}
-</style>
-</head>
-<body>
-  <div class="browse-header">
-    <strong>Browse &amp; Edit</strong>
-    <a href="editor.html">Open CMS editor &rarr;</a>
-  </div>
-  <div class="browse-filters" id="filters"></div>
-  <div id="list" class="mm-preview"></div>
-
-  <script>
-    (function () {
-      var STATUS_OPTIONS = ['All', 'Not started', 'In progress', 'Done'];
-      var activeStatus = 'All';
-      var entries = [];
-
-      function statusBadgeClass(status) {
-        if (status === 'Done') return 'badge-done';
-        if (status === 'In progress') return 'badge-progress';
-        return 'badge-notstarted';
-      }
-
-      function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-        });
-      }
-
-      function renderFilters() {
-        var el = document.getElementById('filters');
-        el.innerHTML = '';
-        STATUS_OPTIONS.forEach(function (s) {
-          var btn = document.createElement('button');
-          btn.textContent = s;
-          if (s === activeStatus) btn.className = 'active';
-          btn.addEventListener('click', function () {
-            activeStatus = s;
-            renderFilters();
-            renderList();
-          });
-          el.appendChild(btn);
-        });
-      }
-
-      function renderList() {
-        var list = document.getElementById('list');
-        list.innerHTML = '';
-        var filtered = entries.filter(function (e) {
-          return activeStatus === 'All' || e.prog === activeStatus;
-        });
-        if (!filtered.length) {
-          list.innerHTML = '<div class="browse-empty">No articles match this filter.</div>';
-          return;
-        }
-        var byCategory = {};
-        var order = [];
-        filtered.forEach(function (e) {
-          var cat = e.cat || 'Uncategorized';
-          if (!byCategory[cat]) { byCategory[cat] = []; order.push(cat); }
-          byCategory[cat].push(e);
-        });
-        order.sort();
-        order.forEach(function (cat) {
-          var heading = document.createElement('div');
-          heading.className = 'browse-group-title';
-          heading.textContent = cat;
-          list.appendChild(heading);
-
-          byCategory[cat]
-            .slice()
-            .sort(function (a, b) { return a.t.localeCompare(b.t); })
-            .forEach(function (e) {
-              var row = document.createElement('a');
-              row.className = 'browse-row';
-              // Decap CMS's deep-link format for opening one entry's editor
-              // directly: /admin/editor.html#/collections/<collection>/entries/<slug>.
-              row.href = '/admin/editor.html#/collections/article/entries/' + encodeURIComponent(e.slug);
-              row.innerHTML =
-                '<div class="article-title">' + escapeHtml(e.t) + '</div>' +
-                '<div class="article-meta-line">' +
-                  '<span class="status-badge ' + statusBadgeClass(e.prog) + '">' + escapeHtml(e.prog) + '</span>' +
-                  (e.cat ? '<span class="status-badge badge-category">' + escapeHtml(e.cat) + '</span>' : '') +
-                '</div>' +
-                (e.topics && e.topics.length
-                  ? '<div class="browse-topics">' + e.topics.map(escapeHtml).join(' · ') + '</div>'
-                  : '');
-              list.appendChild(row);
-            });
-        });
-      }
-
-      fetch('/articles.json')
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-          entries = (data.notionEntries || []).filter(function (e) { return e.slug; });
-          renderFilters();
-          renderList();
-        })
-        .catch(function (err) {
-          document.getElementById('list').innerHTML =
-            '<div class="browse-empty">Could not load articles.json (' + escapeHtml(err.message) + ').</div>';
-        });
-    })();
-  </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Content Manager — Mutare Mores</title>
+    <!-- Real site fonts, for the inline title/status/category widgets in
+         article-editor.js/.css that render as the actual site markup
+         directly in the admin form (not inside an isolated preview iframe,
+         so these need to be loaded here too). Same URL preview.js already
+         uses for its iframe previews. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="article-editor.css">
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Same markdown-it version/config scripts/build-articles-json.mjs uses
+         server-side, loaded here so the live preview (preview.js) renders
+         markdown fields identically to how the real build does. -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.3.0/dist/markdown-it.min.js"></script>
+    <!-- Block editor (Notion-style: headings, lists, drag-to-reorder) used
+         in place of the default markdown textarea — see article-editor.js.
+         Exact CDN paths/global names below were verified live before use,
+         since several of the "obvious" guesses (e.g. list.umd.js,
+         EditorjsDragDrop) turned out to be wrong. -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2/dist/editorjs.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2/dist/header.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2/dist/editorjs-list.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-drag-drop@1/dist/bundle.js"></script>
+    <script src="article-editor.js"></script>
+    <!-- Registers preview templates so the editor's preview pane shows an
+         accurate rendering of the real site (see preview.js) instead of
+         Decap's generic default preview. Must load after decap-cms.js and
+         markdown-it. -->
+    <script src="preview.js"></script>
+  </body>
 </html>

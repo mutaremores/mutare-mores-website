@@ -10,8 +10,6 @@ Prototype website for the Mutare Mores coaching business.
 
 Article copy lives in `content/articles/*.md` (one file per article, edited through the Decap CMS at `/admin`, which authenticates via GitHub). Site-wide text (About page, Work with Me page, Learn intro) lives in `content/settings/*.json`, also editable through `/admin`.
 
-`/admin` (`public/admin/index.html`) is a **Browse & Edit** landing page, not the Decap app itself: a clickable list of every article — title, status, category, topics — styled like the real Learn page. Clicking any row opens that article directly in the Decap editor (`/admin/editor.html#/collections/article/entries/<slug>`), instead of hunting for it in Decap's own list view. It reads `public/articles.json` at load time, same as the live site. The actual Decap CMS app lives at `/admin/editor.html` (linked from a bar at the top of the browse page, and from a bar at the top of every Decap screen back to the browse page).
-
 At build time, `scripts/build-articles-json.mjs` reads all of `content/articles/*.md` and `content/settings/*.json` and writes the combined `public/articles.json` that `public/index.html` fetches — so a content edit only shows up on the live site after that build runs (Cloudflare Workers Builds runs it automatically on every push, see Deploying below).
 
 ## Deploying

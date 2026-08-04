@@ -1,6 +1,6 @@
 /* Custom Decap CMS preview templates — makes the editor's preview pane show
    a genuinely accurate rendering of how each entry looks on the live site,
-   not an approximation. Loaded after decap-cms.js in public/admin/editor.html,
+   not an approximation. Loaded after decap-cms.js in public/admin/index.html,
    so the `CMS`, `createClass`, and `h` globals it exposes are already
    available (markdown-it, loaded via CDN in the same file, is used here too).
 
