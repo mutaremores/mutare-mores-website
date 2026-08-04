@@ -44,7 +44,7 @@
           } catch (e) {
                    return h('div', { className: 'mm-preview' },
                                     h('p', { className: 'article-body-text article-body-empty' },
-                                                'Preview unavailable for this entry (' + (e && e.message ? e.message : 'unknown error') + '). This does not affect the saved content — check the Netlify deploy preview to see the real page.'
+                                                'Preview unavailable for this entry (' + (e && e.message ? e.message : 'unknown error') + '). This does not affect the saved content — check the real deployed site to see the real page.'
                                               )
                                   );
           }
