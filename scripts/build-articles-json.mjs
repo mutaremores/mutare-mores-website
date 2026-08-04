@@ -41,15 +41,6 @@ withoutLegacy.sort((a, b) => a.file.localeCompare(b.file));
 
 const ordered = [...withLegacy, ...withoutLegacy];
 
-// Build a map from filename slug -> new array position, so the `related`
-// field (a list of slugs picked via the CMS's relation widget) can be
-// translated into the new array positions the site's JS indexes by.
-const slugToNewPos = new Map();
-ordered.forEach((p, newPos) => {
-  const slug = p.file.replace(/\.md$/, "");
-  slugToNewPos.set(slug, newPos);
-});
-
 const notionEntries = [];
 const noteContent = [];
 const articleLinks = [];
@@ -81,20 +72,13 @@ for (const p of ordered) {
     tldr: htmlFromMarkdown(d.tldr || ""),
     notes: notesHtml,
     resources: htmlFromMarkdown(d.resources || ""),
-    // Trust the editor's own "Has been written up?" checkbox exactly — some
-    // not-yet-written stubs carry leftover placeholder text (e.g. "Explain")
-    // in their body, so inferring "has content" from a non-empty body would
-    // wrongly flip those to written.
-    has: !!d.hasContent,
+    // "Has this been written up?" is derived from the body field itself
+    // now, not a separate manual checkbox — if there's real body content,
+    // it's written up.
+    has: !!(p.body && p.body.trim()),
   });
 
-  const out = (d.related || [])
-    .map((slug) => slugToNewPos.get(slug))
-    .filter((v) => v !== undefined);
-
   articleLinks.push({
-    out,
-    in: [],
     last: d.lastEdited || "",
   });
 }

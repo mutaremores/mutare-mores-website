@@ -75,8 +75,6 @@
 .mm-preview .article-section-label:first-child{margin-top:0;}
 .mm-preview .article-body-text{font-size:14px;line-height:1.75;color:var(--ink);}
 .mm-preview .article-body-empty{color:var(--ink-soft);font-style:italic;}
-.mm-preview .linked-articles-list{list-style:none;margin:0 0 16px;padding:12px 14px;background:var(--paper);display:flex;flex-direction:column;gap:2px;}
-.mm-preview .linked-articles-list li{font-size:12.5px;margin-bottom:0;padding:5px 0;}
 
 /* Welcome-panel preview (Learn "Start Here") */
 .mm-preview .learn-links{list-style:none;margin:0;padding:0;}

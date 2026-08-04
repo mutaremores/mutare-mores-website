@@ -131,10 +131,10 @@
         var category = data.get('category') || 'Uncategorized';
         var status = data.get('status') || 'Not started';
         var lastEdited = data.get('lastEdited') || '';
-        var hasContent = data.get('hasContent');
         var tldr = data.get('tldr') || '';
         var body = data.get('body') || '';
         var resources = data.get('resources') || '';
+        var hasContent = !!(body && body.trim());
 
         var bodyHtml = hasContent
           ? (
@@ -142,7 +142,7 @@
             '<div class="article-section-label">Notes</div>' + renderMarkdown(body) +
             renderMarkdown(resources)
           )
-          : '<p class="article-body-text article-body-empty">This note hasn’t been written up yet — check back soon, or explore a related article below.</p>';
+          : '<p class="article-body-text article-body-empty">This note hasn’t been written up yet — check back soon.</p>';
 
         var html =
           '<div class="learn-col">' +
@@ -153,10 +153,8 @@
           '<span class="status-badge badge-category">' + escapeHtml(category) + '</span>' +
           '</div>' +
           '<div class="article-meta-row2">' +
-          '<button class="linked-articles-toggle" type="button">Linked articles <span class="caret-icon"></span></button>' +
           (lastEdited ? '<span class="article-date">Last edited ' + escapeHtml(lastEdited) + '</span>' : '') +
           '</div>' +
-          '<div class="linked-articles-panel" hidden><div class="linked-articles-empty">No linked articles yet.</div></div>' +
           bodyHtml +
           '</div>';
 

@@ -883,10 +883,6 @@ function statusBadgeClass(prog){
   return 'badge-notstarted';
 }
 
-function linkedArticlesListHtml(idxList){
-  return idxList.map(i=>`<li><a data-idx="${i}">${notionEntries[i].t}</a></li>`).join('');
-}
-
 function articleColumnEl(idx, afterIndex){
   const entry = notionEntries[idx];
   const nc = noteContent[idx];
@@ -899,15 +895,7 @@ function articleColumnEl(idx, afterIndex){
       ${nc.notes ? `<div class="article-section-label">Notes</div>${nc.notes}` : ''}
       ${nc.resources || ''}
     `
-    : `<p class="article-body-text article-body-empty">This note hasn't been written up yet — check back soon, or explore a related article below.</p>`;
-  const hasLinks = links.in.length || links.out.length;
-  const linkedPanelHtml = hasLinks
-    ? `
-      ${links.in.length ? `<ul class="linked-articles-list">${linkedArticlesListHtml(links.in)}</ul>` : ''}
-      ${links.in.length && links.out.length ? `<hr class="linked-articles-divider">` : ''}
-      ${links.out.length ? `<ul class="linked-articles-list">${linkedArticlesListHtml(links.out)}</ul>` : ''}
-    `
-    : `<div class="linked-articles-empty">No linked articles yet.</div>`;
+    : `<p class="article-body-text article-body-empty">This note hasn't been written up yet — check back soon.</p>`;
   el.innerHTML = `
     <div class="kicker">Article</div>
     <h3 class="article-title">${entry.t}</h3>
@@ -916,20 +904,9 @@ function articleColumnEl(idx, afterIndex){
       <span class="status-badge badge-category">${entry.cat||'Uncategorized'}</span>
     </div>
     <div class="article-meta-row2">
-      <button class="linked-articles-toggle" type="button">Linked articles <span class="caret-icon"></span></button>
       <span class="article-date">Last edited ${links.last}</span>
     </div>
-    <div class="linked-articles-panel" hidden>${linkedPanelHtml}</div>
     ${bodyHtml}`;
-  const toggleBtn = el.querySelector('.linked-articles-toggle');
-  const panel = el.querySelector('.linked-articles-panel');
-  toggleBtn.addEventListener('click', ()=>{
-    panel.hidden = !panel.hidden;
-    toggleBtn.classList.toggle('open', !panel.hidden);
-  });
-  el.querySelectorAll('[data-idx]').forEach(a=>{
-    a.addEventListener('click', ()=>openArticleColumn(+a.dataset.idx, afterIndex+1));
-  });
   return el;
 }
 
