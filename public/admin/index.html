@@ -22,9 +22,14 @@
     </div>
     <div id="nc-root"></div>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-    <!-- Registers preview templates so the editor's preview pane mirrors the
-         real site's look (see preview.js / preview.css) instead of Decap's
-         generic default preview. Must load after decap-cms.js. -->
+    <!-- Same markdown-it version/config scripts/build-articles-json.mjs uses
+         server-side, loaded here so the live preview (preview.js) renders
+         markdown fields identically to how the real build does. -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.3.0/dist/markdown-it.min.js"></script>
+    <!-- Registers preview templates so the editor's preview pane shows an
+         accurate rendering of the real site (see preview.js) instead of
+         Decap's generic default preview. Must load after decap-cms.js and
+         markdown-it. -->
     <script src="preview.js"></script>
   </body>
 </html>
