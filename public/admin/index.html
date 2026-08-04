@@ -15,6 +15,7 @@
       }
       .cms-topbar a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
     </style>
+    <link rel="stylesheet" href="article-editor.css">
   </head>
   <body>
     <div class="cms-topbar">
@@ -26,6 +27,16 @@
          server-side, loaded here so the live preview (preview.js) renders
          markdown fields identically to how the real build does. -->
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.3.0/dist/markdown-it.min.js"></script>
+    <!-- Block editor (Notion-style: headings, lists, drag-to-reorder) used
+         in place of the default markdown textarea — see article-editor.js.
+         Exact CDN paths/global names below were verified live before use,
+         since several of the "obvious" guesses (e.g. list.umd.js,
+         EditorjsDragDrop) turned out to be wrong. -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2/dist/editorjs.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2/dist/header.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2/dist/editorjs-list.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-drag-drop@1/dist/bundle.js"></script>
+    <script src="article-editor.js"></script>
     <!-- Registers preview templates so the editor's preview pane shows an
          accurate rendering of the real site (see preview.js) instead of
          Decap's generic default preview. Must load after decap-cms.js and

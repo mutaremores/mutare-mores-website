@@ -27,16 +27,21 @@ collections:
       - { label: "Has been written up", field: hasContent, pattern: true }
     fields:
       - { label: "Title", name: "title", widget: "string", required: true }
+      # Status/Category/Sources/Topics are grouped here (rather than
+      # interleaved with the date/relation fields below) so
+      # article-editor.css can lay them out as one Notion-style property
+      # row instead of Decap's default stacked form.
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        required: true
+        default: "Not started"
+        options: ["Not started", "In progress", "Done"]
       - label: "Category"
         name: "category"
         widget: "select"
         required: false
         options: ["Concepts", "Notes", "Thoughts", "Types"]
-      - label: "Topics"
-        name: "topics"
-        widget: "list"
-        required: false
-        default: []
       - label: "Sources"
         name: "sources"
         widget: "select"
@@ -44,12 +49,11 @@ collections:
         required: false
         default: []
         options: ["Article", "Books", "Image", "Study", "Video", "Website"]
-      - label: "Status"
-        name: "status"
-        widget: "select"
-        required: true
-        default: "Not started"
-        options: ["Not started", "In progress", "Done"]
+      - label: "Topics"
+        name: "topics"
+        widget: "list"
+        required: false
+        default: []
       - label: "First Published"
         name: "firstPublished"
         widget: "datetime"
@@ -78,18 +82,16 @@ collections:
       - { label: "Original Index", name: "origIndex", widget: "hidden", required: false }
       - label: "TL;DR"
         name: "tldr"
-        widget: "markdown"
+        widget: "block-editor"
         required: false
-        minimal: true
       - label: "Notes (main article body)"
         name: "body"
-        widget: "markdown"
+        widget: "block-editor"
         required: false
       - label: "Resources"
         name: "resources"
-        widget: "markdown"
+        widget: "block-editor"
         required: false
-        minimal: true
 
   - name: "settings"
     label: "Site Settings"

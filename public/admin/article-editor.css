@@ -1,0 +1,86 @@
+/* Notion-style theming for the article editor: (1) a property row for
+   Status/Category/Sources/Topics instead of Decap's default stacked form,
+   and (2) the block editor (Editor.js) itself.
+
+   Targeting note: this deliberately uses positional (:nth-of-type)
+   selectors on the fields container, not class-name selectors. Decap CMS
+   3.x's internals use CSS-in-JS, so its class names are generated/hashed
+   and not a stable target. Field ORDER is stable (it's set directly by
+   this same repo's config.yml — Title, then Status, Category, Sources,
+   Topics, in that order), so position is the reliable thing to key off of.
+   This is CSS-only (no DOM reparenting): moving Decap's own React-managed
+   nodes from outside React risks the exact "NotFoundError: removeChild"
+   crash that came up repeatedly while testing this locally, so styling
+   only ever repositions via flexbox, never touches the DOM tree itself. */
+
+/* Fields 2-5 (Status, Category, Sources, Topics) laid out as one row.
+   Decap wraps each top-level field in a sibling <div> under a shared
+   fields-list container; :nth-of-type(2)-(5) picks those four out
+   regardless of their (hashed) class names. */
+[class*="ControlPane"] > div:nth-of-type(2),
+[class*="ControlPane"] > div:nth-of-type(3),
+[class*="ControlPane"] > div:nth-of-type(4),
+[class*="ControlPane"] > div:nth-of-type(5) {
+  display: inline-block;
+  vertical-align: top;
+  width: auto;
+  min-width: 160px;
+  margin-right: 12px;
+}
+[class*="ControlPane"] > div:nth-of-type(2) label,
+[class*="ControlPane"] > div:nth-of-type(3) label,
+[class*="ControlPane"] > div:nth-of-type(4) label,
+[class*="ControlPane"] > div:nth-of-type(5) label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #8d8d8d;
+}
+[class*="ControlPane"] > div:nth-of-type(2) select,
+[class*="ControlPane"] > div:nth-of-type(3) select,
+[class*="ControlPane"] > div:nth-of-type(4) select {
+  border-radius: 999px;
+  padding: 4px 14px;
+  border: 1px solid #dcdcda;
+  background: #f6f6f4;
+  font-size: 13px;
+}
+
+/* ---- Block editor (Editor.js) Notion-style theme ---- */
+.block-editor-wrap {
+  border: 1px solid #dcdcda;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: #fff;
+  font-family: Helvetica, Arial, sans-serif;
+}
+.block-editor-wrap .codex-editor__redactor {
+  padding-bottom: 40px !important;
+}
+.block-editor-wrap .ce-block__content,
+.block-editor-wrap .ce-toolbar__content {
+  max-width: none;
+}
+.block-editor-wrap .ce-paragraph {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #2b2b2b;
+}
+.block-editor-wrap .ce-header {
+  font-weight: 600;
+}
+.block-editor-wrap .cdx-list__item {
+  font-size: 15px;
+  line-height: 1.6;
+}
+/* Editor.js's own "+" block-insert toolbox already supports typing to
+   filter block types, which is Notion's actual "/" behavior once
+   triggered — this just makes the trigger button itself read closer to
+   Notion's plus-in-the-margin affordance instead of the library default. */
+.block-editor-wrap .ce-toolbar__plus {
+  color: #8d8d8d;
+}
+.block-editor-wrap .ce-toolbar__plus:hover {
+  background: #f6f6f4;
+  color: #111111;
+}
