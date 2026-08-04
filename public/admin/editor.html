@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Content Manager — Mutare Mores</title>
+    <style>
+      /* Small persistent bar above the CMS app. Decap CMS only mounts into
+         #nc-root (see https://decapcms.org/docs/custom-mounting/) — anything
+         outside that div is ours and stays put across every CMS screen. */
+      .cms-topbar{
+        display:flex;align-items:center;justify-content:flex-end;gap:16px;
+        padding:8px 16px;font-family:Helvetica,Arial,sans-serif;font-size:13px;
+        background:#1e2532;color:#fff;
+      }
+      .cms-topbar a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
+    </style>
+    <!-- Real site fonts, for the inline title/status/category widgets in
+         article-editor.js/.css that render as the actual site markup
+         directly in the admin form (not inside an isolated preview iframe,
+         so these need to be loaded here too). Same URL preview.js already
+         uses for its iframe previews. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="article-editor.css">
+  </head>
+  <body>
+    <div class="cms-topbar">
+      <a href="index.html">&larr; Back to browse &amp; edit</a>
+    </div>
+    <div id="nc-root"></div>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <!-- Same markdown-it version/config scripts/build-articles-json.mjs uses
+         server-side, loaded here so the live preview (preview.js) renders
+         markdown fields identically to how the real build does. -->
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.3.0/dist/markdown-it.min.js"></script>
+    <!-- Block editor (Notion-style: headings, lists, drag-to-reorder) used
+         in place of the default markdown textarea — see article-editor.js.
+         Exact CDN paths/global names below were verified live before use,
+         since several of the "obvious" guesses (e.g. list.umd.js,
+         EditorjsDragDrop) turned out to be wrong. -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2/dist/editorjs.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2/dist/header.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@2/dist/editorjs-list.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-drag-drop@1/dist/bundle.js"></script>
+    <script src="article-editor.js"></script>
+    <!-- Registers preview templates so the editor's preview pane shows an
+         accurate rendering of the real site (see preview.js) instead of
+         Decap's generic default preview. Must load after decap-cms.js and
+         markdown-it. -->
+    <script src="preview.js"></script>
+  </body>
+</html>
