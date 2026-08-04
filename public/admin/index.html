@@ -4,8 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Content Manager — Mutare Mores</title>
+    <style>
+      /* Small persistent bar above the CMS app. Decap CMS only mounts into
+         #nc-root (see https://decapcms.org/docs/custom-mounting/) — anything
+         outside that div is ours and stays put across every CMS screen. */
+      .cms-topbar{
+        display:flex;align-items:center;justify-content:flex-end;gap:16px;
+        padding:8px 16px;font-family:Helvetica,Arial,sans-serif;font-size:13px;
+        background:#1e2532;color:#fff;
+      }
+      .cms-topbar a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
+    </style>
   </head>
   <body>
+    <div class="cms-topbar">
+      <a href="browse.html">Browse &amp; edit articles →</a>
+    </div>
+    <div id="nc-root"></div>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <!-- Registers preview templates so the editor's preview pane mirrors the
          real site's look (see preview.js / preview.css) instead of Decap's

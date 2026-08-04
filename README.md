@@ -15,6 +15,8 @@ Both share the same overall structure: all HTML/CSS/JS for a given file live in 
 
 Article copy lives in `content/articles/*.md` (one file per article, edited through the Decap CMS at `/admin`, which authenticates via GitHub). Site-wide text (About page, Work with Me page, Learn intro) lives in `content/settings/*.json`, also editable through `/admin`.
 
+`/admin/browse.html` (linked from a bar at the top of every `/admin` screen) is a second way into the same editor: a clickable list of every article — title, status, category, topics — styled like the real Learn page. Clicking any row opens that article directly in the Decap editor (`/admin/#/collections/article/entries/<slug>`), instead of hunting for it in Decap's own list view. It reads `public/articles.json` at load time, same as the live site.
+
 At build time, `scripts/build-articles-json.mjs` reads all of `content/articles/*.md` and `content/settings/*.json` and writes the combined `public/articles.json` that `public/index.html` fetches — so a content edit only shows up on the live site after that build runs (Cloudflare Pages runs it automatically on every push, see Deploying below).
 
 ## Deploying

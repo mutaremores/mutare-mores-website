@@ -70,6 +70,10 @@ for (const p of ordered) {
     // to point at one specific article — e.g. the radar chart's per-dimension
     // "read more" links. Only legacy-migrated articles have one.
     oi: Number.isInteger(d.origIndex) ? d.origIndex : null,
+    // The CMS's own entry identifier (filename minus .md), needed to link
+    // straight from public/admin/browse.html into this article's editor at
+    // /admin/#/collections/article/entries/<slug>.
+    slug: p.file.replace(/\.md$/, ""),
   });
 
   const notesHtml = htmlFromMarkdown(p.body);

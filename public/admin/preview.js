@@ -14,7 +14,7 @@
    shown as plain text rather than fully rendered markdown, to keep this
    preview from crashing. Good enough to check headings, order, badges, and
    overall shape before publishing — not a substitute for checking the
-   Netlify deploy preview for anything that needs to be pixel-exact. */
+   real deployed site for anything that needs to be pixel-exact. */
 (function () {
      if (typeof CMS === 'undefined' || typeof createClass === 'undefined' || typeof h === 'undefined') {
             return;
