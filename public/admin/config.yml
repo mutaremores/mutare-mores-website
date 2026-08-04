@@ -55,9 +55,11 @@ collections:
         options: ["Article", "Books", "Image", "Study", "Video", "Website"]
       - label: "Topics"
         name: "topics"
-        widget: "list"
+        widget: "select"
+        multiple: true
         required: false
         default: []
+        options: ["Adaptability", "Coaching", "Communication", "Creativity", "Culture", "EQ", "Execution", "Influence", "Leadership", "Learning", "Organizational development", "Personal development", "Personality", "Philosophy", "Procrastination", "Productivity", "Psychology", "Systems design", "Systems thinking", "Task management", "Team dynamics", "Time management", "Training", "Vision"]
       - label: "First Published"
         name: "firstPublished"
         widget: "datetime"
