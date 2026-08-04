@@ -15,6 +15,14 @@
       }
       .cms-topbar a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
     </style>
+    <!-- Real site fonts, for the inline title/status/category widgets in
+         article-editor.js/.css that render as the actual site markup
+         directly in the admin form (not inside an isolated preview iframe,
+         so these need to be loaded here too). Same URL preview.js already
+         uses for its iframe previews. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="article-editor.css">
   </head>
   <body>

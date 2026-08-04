@@ -4,6 +4,12 @@
    so the `CMS`, `createClass`, and `h` globals it exposes are already
    available (markdown-it, loaded via CDN in the same file, is used here too).
 
+   Covers the Settings entries (Learn welcome panel, About, Work) only —
+   the article collection's editor.preview is turned off in config.yml
+   instead, since article-editor.js's title/status/category widgets render
+   as the real site markup directly in the form, making a separate preview
+   pane redundant for articles specifically.
+
    How the accuracy works: each preview renders inside an isolated <iframe>
    whose document links the site's own extracted stylesheet
    (shared-site-styles.css — the exact same file public/index.html uses,
@@ -38,12 +44,6 @@
   function renderMarkdown(src) {
     if (!src) return '';
     return md ? md.render(src) : '<p>' + escapeHtml(src) + '</p>';
-  }
-
-  function statusBadgeClass(status) {
-    if (status === 'Done') return 'badge-done';
-    if (status === 'In progress') return 'badge-progress';
-    return 'badge-notstarted';
   }
 
   // Entry "data" is an Immutable-ish structure; nested list fields come back
@@ -111,57 +111,15 @@
     });
   }
 
-  var ArticleFrame = makeFramePreview('roomLearn');
   var WelcomeFrame = makeFramePreview('roomLearn');
   var AboutFrame = makeFramePreview('roomAbout');
   var WorkFrame = makeFramePreview('roomWork');
 
   // Markup below is a deliberate byte-for-byte match of the real render
-  // functions in public/index.html (articleColumnEl, welcomeColumnEl,
-  // renderAboutRoom, renderWorkRoom) — kept in sync by hand since there's
-  // no shared JS module between the site and the CMS admin, but the CSS
-  // driving how it *looks* is no longer a separate copy (see above).
-
-  var ArticlePreview = createClass({
-    render: function () {
-      var props = this.props;
-      return safeRender(function () {
-        var data = props.entry.get('data');
-        var title = data.get('title') || 'Untitled';
-        var category = data.get('category') || 'Uncategorized';
-        var status = data.get('status') || 'Not started';
-        var lastEdited = data.get('lastEdited') || '';
-        var tldr = data.get('tldr') || '';
-        var body = data.get('body') || '';
-        var resources = data.get('resources') || '';
-        var hasContent = !!(body && body.trim());
-
-        var bodyHtml = hasContent
-          ? (
-            '<div class="article-section-label">TL;DR</div>' + renderMarkdown(tldr) +
-            '<div class="article-section-label">Notes</div>' + renderMarkdown(body) +
-            renderMarkdown(resources)
-          )
-          : '<p class="article-body-text article-body-empty">This note hasn’t been written up yet — check back soon.</p>';
-
-        var html =
-          '<div class="learn-col">' +
-          '<div class="kicker">Article</div>' +
-          '<h3 class="article-title">' + escapeHtml(title) + '</h3>' +
-          '<div class="article-meta-line">' +
-          '<span class="status-badge ' + statusBadgeClass(status) + '">' + escapeHtml(status) + '</span>' +
-          '<span class="status-badge badge-category">' + escapeHtml(category) + '</span>' +
-          '</div>' +
-          '<div class="article-meta-row2">' +
-          (lastEdited ? '<span class="article-date">Last edited ' + escapeHtml(lastEdited) + '</span>' : '') +
-          '</div>' +
-          bodyHtml +
-          '</div>';
-
-        return h(ArticleFrame, { html: html });
-      });
-    },
-  });
+  // functions in public/index.html (welcomeColumnEl, renderAboutRoom,
+  // renderWorkRoom) — kept in sync by hand since there's no shared JS
+  // module between the site and the CMS admin, but the CSS driving how it
+  // *looks* is no longer a separate copy (see above).
 
   var WelcomePreview = createClass({
     render: function () {
@@ -234,7 +192,6 @@
     },
   });
 
-  CMS.registerPreviewTemplate('article', ArticlePreview);
   CMS.registerPreviewTemplate('learn_welcome', WelcomePreview);
   CMS.registerPreviewTemplate('about', AboutPreview);
   CMS.registerPreviewTemplate('work', WorkPreview);

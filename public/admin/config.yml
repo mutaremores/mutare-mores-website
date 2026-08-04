@@ -17,6 +17,11 @@ collections:
     create: true
     slug: "{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}"
     identifier_field: title
+    # The editor form itself is styled to look like the real article card
+    # (see article-editor.js/.css), so the default split preview pane would
+    # just be a redundant second copy — turned off here.
+    editor:
+      preview: false
     view_groups:
       - { label: "Category", field: category }
       - { label: "Status", field: status }
@@ -25,20 +30,20 @@ collections:
       - { label: "In progress", field: status, pattern: "In progress" }
       - { label: "Done", field: status, pattern: "Done" }
     fields:
-      - { label: "Title", name: "title", widget: "string", required: true }
+      - { label: "Title", name: "title", widget: "article-title", required: true }
       # Status/Category/Sources/Topics are grouped here (rather than
       # interleaved with the date/relation fields below) so
       # article-editor.css can lay them out as one Notion-style property
       # row instead of Decap's default stacked form.
       - label: "Status"
         name: "status"
-        widget: "select"
+        widget: "article-status"
         required: true
         default: "Not started"
         options: ["Not started", "In progress", "Done"]
       - label: "Category"
         name: "category"
-        widget: "select"
+        widget: "article-category"
         required: false
         options: ["Concepts", "Notes", "Thoughts", "Types"]
       - label: "Sources"

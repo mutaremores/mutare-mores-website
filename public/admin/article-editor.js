@@ -1,18 +1,28 @@
-/* Custom Decap CMS widget: a Notion-style block editor (Editor.js) in place
-   of the default markdown textarea, for the article collection's body/tldr/
-   resources fields (wired in config.yml).
+/* Custom Decap CMS widgets for the article collection (wired in
+   config.yml), registered here so the editor form reads as the real
+   article card instead of a generic stacked form:
 
-   Storage format is unchanged on purpose: content/articles/*.md still holds
-   plain markdown, so scripts/build-articles-json.mjs and the live site need
-   no changes. This widget just converts markdown -> Editor.js blocks on
-   load, and blocks -> markdown on every change, entirely in the browser.
+   - BlockEditorControl: a Notion-style block editor (Editor.js) in place
+     of the default markdown textarea, for the body/tldr/resources fields.
+     Storage format is unchanged on purpose: content/articles/*.md still
+     holds plain markdown, so scripts/build-articles-json.mjs and the live
+     site need no changes. This widget just converts markdown -> Editor.js
+     blocks on load, and blocks -> markdown on every change, entirely in
+     the browser.
+     Scope: headings (#/##/###), paragraphs with bold, italic, and
+     [link](url) markdown, and ordered/unordered/checklist lists (one
+     level of nesting) -- matching what this site's actual content uses.
+     Anything outside that (tables, code blocks, images, etc.) round-trips
+     as a plain paragraph rather than being silently dropped, so nothing is
+     ever lost, even if the block-editor representation of it is
+     imperfect.
 
-   Scope: headings (#/##/###), paragraphs with bold, italic, and [link](url)
-   markdown, and ordered/unordered/checklist lists (one level of nesting) --
-   matching what this site's actual content uses. Anything outside that
-   (tables, code blocks, images, etc.) round-trips as a plain paragraph
-   rather than being silently dropped, so nothing is ever lost, even if the
-   block-editor representation of it is imperfect. */
+   - ArticleTitleControl / ArticleStatusControl / ArticleCategoryControl:
+     render the title/status/category fields as the real site's own
+     .article-title / .status-badge markup, directly editable in place
+     (click the title to type, click a badge for a dropdown of the other
+     options) -- the editor form IS the article preview now, so the
+     collection's split preview pane is turned off in config.yml. */
 (function () {
   if (typeof CMS === 'undefined' || typeof createClass === 'undefined' || typeof h === 'undefined') {
     return;
@@ -197,4 +207,122 @@
   });
 
   CMS.registerWidget('block-editor', BlockEditorControl);
+
+  // ---- Inline editing widgets: title/status/category rendered as the
+  // real site markup (article-title / status-badge), directly editable in
+  // place -- the editor form IS the article card, not a separate set of
+  // form fields next to a read-only preview of one. ----
+
+  function statusBadgeClass(status) {
+    if (status === 'Done') return 'badge-done';
+    if (status === 'In progress') return 'badge-progress';
+    return 'badge-notstarted';
+  }
+
+  var ArticleTitleControl = createClass({
+    componentDidMount: function () {
+      var self = this;
+      var node = this._node;
+      node.textContent = this.props.value || '';
+      node.addEventListener('input', function () {
+        self.props.onChange(node.textContent);
+      });
+    },
+    // Editing happens on a real DOM node this widget owns directly (not a
+    // React-controlled contentEditable, which fights the browser for
+    // cursor position on every keystroke); Decap re-rendering the form
+    // elsewhere (status/category changes) must never touch this node's
+    // subtree or the caret position/focus would be lost mid-edit.
+    shouldComponentUpdate: function () {
+      return false;
+    },
+    render: function () {
+      var self = this;
+      return h('h3', {
+        id: this.props.forID,
+        className: (this.props.classNameWrapper || '') + ' article-title',
+        contentEditable: true,
+        suppressContentEditableWarning: true,
+        ref: function (node) { self._node = node; },
+      });
+    },
+  });
+
+  // Shared control for a single-select field rendered as a clickable pill
+  // badge that opens a small dropdown of the other options on click.
+  function makeBadgeSelectControl(extraClassName) {
+    return createClass({
+      getInitialState: function () {
+        return { open: false };
+      },
+      componentDidMount: function () {
+        var self = this;
+        this._outsideHandler = function (e) {
+          if (self._rootNode && !self._rootNode.contains(e.target)) {
+            self.setState({ open: false });
+          }
+        };
+        this._escHandler = function (e) {
+          if (e.key === 'Escape') self.setState({ open: false });
+        };
+        document.addEventListener('mousedown', this._outsideHandler);
+        document.addEventListener('keydown', this._escHandler);
+      },
+      componentWillUnmount: function () {
+        document.removeEventListener('mousedown', this._outsideHandler);
+        document.removeEventListener('keydown', this._escHandler);
+      },
+      toggle: function () {
+        this.setState({ open: !this.state.open });
+      },
+      pick: function (value) {
+        this.props.onChange(value);
+        this.setState({ open: false });
+      },
+      render: function () {
+        var self = this;
+        var value = this.props.value || '';
+        var options = toPlainArray(this.props.field.get('options'));
+        var others = options.filter(function (o) { return o !== value; });
+        var badgeClass = extraClassName === 'badge-category'
+          ? 'badge-category'
+          : statusBadgeClass(value);
+
+        return h('div', {
+          id: this.props.forID,
+          className: (this.props.classNameWrapper || '') + ' badge-select-control',
+          ref: function (node) { self._rootNode = node; },
+        },
+          h('span', {
+            className: 'status-badge ' + badgeClass + ' badge-select-trigger',
+            onClick: function () { self.toggle(); },
+          }, value || '—'),
+          this.state.open
+            ? h('div', { className: 'badge-select-menu' },
+              others.map(function (opt) {
+                return h('div', {
+                  key: opt,
+                  className: 'badge-select-menu-item',
+                  onClick: function () { self.pick(opt); },
+                }, opt);
+              })
+            )
+            : null
+        );
+      },
+    });
+  }
+
+  function toPlainArray(value) {
+    if (value == null) return [];
+    if (typeof value.toJS === 'function') return value.toJS();
+    return Array.isArray(value) ? value : [];
+  }
+
+  var ArticleStatusControl = makeBadgeSelectControl('status');
+  var ArticleCategoryControl = makeBadgeSelectControl('badge-category');
+
+  CMS.registerWidget('article-title', ArticleTitleControl);
+  CMS.registerWidget('article-status', ArticleStatusControl);
+  CMS.registerWidget('article-category', ArticleCategoryControl);
 })();

@@ -13,12 +13,32 @@
    crash that came up repeatedly while testing this locally, so styling
    only ever repositions via flexbox, never touches the DOM tree itself. */
 
-/* Fields 2-5 (Status, Category, Sources, Topics) laid out as one row.
-   Decap wraps each top-level field in a sibling <div> under a shared
-   fields-list container; :nth-of-type(2)-(5) picks those four out
-   regardless of their (hashed) class names. */
+/* Field 1 (Title) is now the ArticleTitleControl widget below -- it
+   already reads as a heading, so Decap's own "Title" label above it would
+   be redundant with what the real site shows. */
+[class*="ControlPane"] > div:nth-of-type(1) label {
+  display: none;
+}
+
+/* Fields 2-3 (Status, Category) are now ArticleStatusControl/
+   ArticleCategoryControl -- badge widgets that already look like the real
+   site's status-badge pills, so (like Title) their Decap field labels are
+   hidden and they're laid out side by side on one line, mirroring the
+   real site's .article-meta-line. */
 [class*="ControlPane"] > div:nth-of-type(2),
-[class*="ControlPane"] > div:nth-of-type(3),
+[class*="ControlPane"] > div:nth-of-type(3) {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 8px 16px 0;
+}
+[class*="ControlPane"] > div:nth-of-type(2) label,
+[class*="ControlPane"] > div:nth-of-type(3) label {
+  display: none;
+}
+
+/* Fields 4-5 (Sources, Topics) stay as Decap's default widgets (out of
+   scope for the inline-editing pass), just pill-styled and given a little
+   room to breathe below the title/status/category "card header" above. */
 [class*="ControlPane"] > div:nth-of-type(4),
 [class*="ControlPane"] > div:nth-of-type(5) {
   display: inline-block;
@@ -26,9 +46,8 @@
   width: auto;
   min-width: 160px;
   margin-right: 12px;
+  clear: both;
 }
-[class*="ControlPane"] > div:nth-of-type(2) label,
-[class*="ControlPane"] > div:nth-of-type(3) label,
 [class*="ControlPane"] > div:nth-of-type(4) label,
 [class*="ControlPane"] > div:nth-of-type(5) label {
   font-size: 11px;
@@ -36,14 +55,130 @@
   letter-spacing: .05em;
   color: #8d8d8d;
 }
-[class*="ControlPane"] > div:nth-of-type(2) select,
-[class*="ControlPane"] > div:nth-of-type(3) select,
 [class*="ControlPane"] > div:nth-of-type(4) select {
   border-radius: 999px;
   padding: 4px 14px;
   border: 1px solid #dcdcda;
   background: #f6f6f4;
   font-size: 13px;
+}
+
+/* Card framing for the whole form -- with the split preview pane off for
+   articles (config.yml: editor.preview:false), this container is now the
+   entire editing surface, so it gets a max-width + "Article" kicker label
+   matching the real site's article card instead of a full-width gray
+   Decap form strip. Generated content instead of an extra wrapper div,
+   since Decap owns this container's DOM and reparenting its own React
+   nodes is what caused repeated "NotFoundError: removeChild" crashes when
+   tried during earlier work on this admin. */
+[class*="ControlPane"] {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: 8px;
+}
+[class*="ControlPane"]::before {
+  content: "Article";
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+  margin-bottom: 6px;
+}
+
+/* ---- Inline title/status/category widgets ----
+   Values below are copied from public/shared-site-styles.css's real
+   .article-title (via #roomLearn .learn-col h3) and .status-badge rules,
+   not re-guessed -- but hand-duplicated rather than loading that
+   stylesheet globally here, since it has unscoped rules (body{overflow:
+   hidden} etc.) meant for the site's own full-page layout that would
+   break the rest of the admin UI, the same reason preview.js renders
+   inside an isolated iframe instead of linking the stylesheet directly. */
+.article-title {
+  font-family: 'Unbounded', Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: clamp(22px, 3vw, 40px);
+  line-height: 1.15;
+  margin: 0 0 14px;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #2b2b2b;
+  cursor: text;
+  outline: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-left: -4px;
+}
+.article-title:hover {
+  background: #f6f6f4;
+}
+.article-title:focus {
+  background: #fff;
+  box-shadow: 0 0 0 2px #111111;
+}
+
+.badge-select-control {
+  position: relative;
+  display: inline-block;
+}
+.badge-select-trigger {
+  cursor: pointer;
+}
+.badge-select-trigger:hover {
+  opacity: .7;
+}
+.badge-select-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  z-index: 20;
+  background: #fff;
+  border: 1px solid #dcdcda;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .1);
+  min-width: 120px;
+  padding: 4px;
+}
+.badge-select-menu-item {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #2b2b2b;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+}
+.badge-select-menu-item:hover {
+  background: #f6f6f4;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 9.5px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid #dcdcda;
+  color: #8d8d8d;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+}
+.status-badge.badge-done {
+  border-color: #111111;
+  color: #111111;
+}
+.status-badge.badge-progress {
+  border-color: #2b2b2b;
+  color: #2b2b2b;
+}
+.status-badge.badge-notstarted {
+  border-color: #dcdcda;
+  color: #8d8d8d;
+}
+.status-badge.badge-category {
+  border-color: #dcdcda;
+  color: #2b2b2b;
+  background: #f6f6f4;
 }
 
 /* ---- Block editor (Editor.js) Notion-style theme ---- */
