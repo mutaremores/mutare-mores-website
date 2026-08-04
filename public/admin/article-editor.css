@@ -11,12 +11,24 @@
    This is CSS-only (no DOM reparenting): moving Decap's own React-managed
    nodes from outside React risks the exact "NotFoundError: removeChild"
    crash that came up repeatedly while testing this locally, so styling
-   only ever repositions via flexbox, never touches the DOM tree itself. */
+   only ever repositions via flexbox, never touches the DOM tree itself.
+
+   Gotcha found while testing this: Decap actually renders TWO nested
+   elements matching [class*="ControlPane"] -- an outer split-pane wrapper
+   (class includes "PreviewPaneContainer-ControlPaneContainer", exactly 1
+   child) and the real fields container inside it (class is just
+   "ControlPaneContainer", one child per field). A bare `nth-of-type(1)`
+   rule matches the OUTER's single child too (which is the entire inner
+   container), so any such rule -- and any unconditional [class*="ControlPane"]
+   rule -- needs :not([class*="PreviewPaneContainer"]) to stay scoped to
+   just the inner, real fields container. nth-of-type(2) and up don't have
+   this problem: the outer only ever has one child, so those positions
+   never match it. */
 
 /* Field 1 (Title) is now the ArticleTitleControl widget below -- it
    already reads as a heading, so Decap's own "Title" label above it would
    be redundant with what the real site shows. */
-[class*="ControlPane"] > div:nth-of-type(1) label {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) > div:nth-of-type(1) label {
   display: none;
 }
 
@@ -34,6 +46,18 @@
 [class*="ControlPane"] > div:nth-of-type(2) label,
 [class*="ControlPane"] > div:nth-of-type(3) label {
   display: none;
+}
+
+/* Decap wraps every field's control in a bordered/padded white box
+   ([class*="ControlContainer"]) -- fine for a real form field, but it
+   fights the "this IS the article, not a form" effect for Title/Status/
+   Category specifically, whose widgets already supply their own look. */
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) > div:nth-of-type(1) [class*="ControlContainer"],
+[class*="ControlPane"] > div:nth-of-type(2) [class*="ControlContainer"],
+[class*="ControlPane"] > div:nth-of-type(3) [class*="ControlContainer"] {
+  border: none;
+  padding: 0;
+  background: transparent;
 }
 
 /* Fields 4-5 (Sources, Topics) stay as Decap's default widgets (out of
@@ -71,12 +95,12 @@
    since Decap owns this container's DOM and reparenting its own React
    nodes is what caused repeated "NotFoundError: removeChild" crashes when
    tried during earlier work on this admin. */
-[class*="ControlPane"] {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) {
   max-width: 720px;
   margin: 0 auto;
   padding-top: 8px;
 }
-[class*="ControlPane"]::before {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"])::before {
   content: "Article";
   display: block;
   font-size: 10.5px;
