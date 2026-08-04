@@ -9,5 +9,15 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
+  },
+  // GITHUB_OAUTH_ID is the GitHub OAuth App's public client ID (see
+  // src/worker.js's handleAuth) -- safe to commit, unlike
+  // GITHUB_OAUTH_SECRET, which must stay a dashboard-only Cloudflare
+  // secret and is never written here. Declaring the public ID here (rather
+  // than leaving it as a dashboard-only "Variable") makes it part of every
+  // deploy instead of depending on dashboard state, which repeatedly got
+  // dropped by Workers Builds redeploys.
+  "vars": {
+    "GITHUB_OAUTH_ID": "Ov23liXbq3bhBqSsEDwE"
   }
 }
