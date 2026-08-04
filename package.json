@@ -9,8 +9,5 @@
   "dependencies": {
     "gray-matter": "^4.0.3",
     "markdown-it": "^14.3.0"
-  },
-  "devDependencies": {
-    "wrangler": "^4.118.0"
   }
 }
