@@ -110,37 +110,114 @@ collections:
         label: "Discovery Assessment Results page"
         file: "content/settings/discovery-results.json"
         fields:
-          - &discoveryDimension
-            label: "Creativity"
+          - label: "Creativity"
             name: "creativity"
             widget: "object"
             fields:
-              - &discoveryLevel
-                label: "High"
+              - label: "High"
                 name: "high"
                 widget: "object"
                 fields:
-                  - { label: "What it means", name: "whatItMeans", widget: "list", default: [] }
-                  - { label: "Strengths", name: "strengths", widget: "list", default: [] }
-                  - { label: "Considerations", name: "considerations", widget: "list", default: [] }
-              - <<: *discoveryLevel
-                label: "Low"
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
                 name: "low"
-          - <<: *discoveryDimension
-            label: "EQ"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+          - label: "EQ"
             name: "eq"
-          - <<: *discoveryDimension
-            label: "Vision"
+            widget: "object"
+            fields:
+              - label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
+                name: "low"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+          - label: "Vision"
             name: "vision"
-          - <<: *discoveryDimension
-            label: "Influence"
+            widget: "object"
+            fields:
+              - label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
+                name: "low"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+          - label: "Influence"
             name: "influence"
-          - <<: *discoveryDimension
-            label: "Execution"
+            widget: "object"
+            fields:
+              - label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
+                name: "low"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+          - label: "Execution"
             name: "execution"
-          - <<: *discoveryDimension
-            label: "Adaptability"
+            widget: "object"
+            fields:
+              - label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
+                name: "low"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+          - label: "Adaptability"
             name: "adaptability"
+            widget: "object"
+            fields:
+              - label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
+              - label: "Low"
+                name: "low"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list" }
+                  - { label: "Strengths", name: "strengths", widget: "list" }
+                  - { label: "Considerations", name: "considerations", widget: "list" }
 
       - name: "about"
         label: "About page"
