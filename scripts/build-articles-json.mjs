@@ -156,8 +156,17 @@ if (fs.existsSync(workPath)) {
 // written to content/settings/discovery-results.json. Shown as one page by
 // public/index.html's insertResultsColumn, instead of linking out to
 // separate per-dimension articles the way it used to.
+//
+// Stored flat (36 top-level keys like "creativityHighStrengths") rather
+// than nested -- Decap's nested object-widget version crashed the whole
+// Site Settings collection's data loading (see the comment in
+// public/admin/config.yml next to this entry). Reassembled into the
+// nested { dim: { high/low: { category: [...] } } } shape here, once, so
+// public/index.html's insertResultsColumn doesn't need to know about the
+// storage-format workaround.
 const DISCOVERY_DIMENSIONS = ["creativity", "eq", "vision", "influence", "execution", "adaptability"];
 const DISCOVERY_CATEGORIES = ["whatItMeans", "strengths", "considerations"];
+const capitalize = (s) => s[0].toUpperCase() + s.slice(1);
 let discoveryResults = {};
 const discoveryResultsPath = path.resolve("content/settings/discovery-results.json");
 if (fs.existsSync(discoveryResultsPath)) {
@@ -166,13 +175,13 @@ if (fs.existsSync(discoveryResultsPath)) {
     DISCOVERY_DIMENSIONS.forEach((dim) => {
       discoveryResults[dim] = {};
       ["high", "low"].forEach((level) => {
-        const levelData = (parsed[dim] && parsed[dim][level]) || {};
         discoveryResults[dim][level] = {};
         DISCOVERY_CATEGORIES.forEach((cat) => {
+          const flatKey = dim + capitalize(level) + capitalize(cat);
           // renderInline (not render) -- these are single-line bullets, so
           // this keeps bold/italic/link support without wrapping each one
           // in a stray <p>.
-          discoveryResults[dim][level][cat] = (levelData[cat] || []).map((b) =>
+          discoveryResults[dim][level][cat] = (parsed[flatKey] || []).map((b) =>
             mdRenderer.renderInline(String(b || ""))
           );
         });
