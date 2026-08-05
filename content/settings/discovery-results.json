@@ -1,0 +1,254 @@
+{
+  "creativity": {
+    "high": {
+      "whatItMeans": [
+        "Creativity is a default mode, not something switched on only when asked — new angles show up unprompted, in routine work as much as big projects",
+        "Constraints (tight budget, short deadline, limited people) tend to sharpen thinking rather than shut it down",
+        "Comfortable holding multiple possible approaches at once instead of collapsing quickly to \"the\" answer",
+        "Genuinely energized by ambiguous or undefined problems, where the first step isn't obvious"
+      ],
+      "strengths": [
+        "Regularly reframes problems and offers alternative approaches instead of defaulting to the first idea",
+        "Turns constraints into fuel — creative output often increases, not decreases, under real limits",
+        "A strong brainstorming partner who unblocks teams stuck on a single approach",
+        "Spots non-obvious connections between unrelated ideas, people, or projects"
+      ],
+      "considerations": [
+        "Setting a hard stop for idea generation, so exploration doesn't quietly replace a decision that needs to get made",
+        "Noticing when interest fades once a project moves from \"figuring it out\" to repetitive execution — and building in accountability for the finish, not just the start",
+        "Checking the team's actual pace before introducing another new idea; more options aren't always useful mid-execution",
+        "Pairing with someone execution-minded (or deliberately building execution habits) so good ideas don't stall before they ship"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Reaches for known, proven approaches first, and generally sees that as the responsible choice rather than a limitation",
+        "Generates a new idea when the situation calls for one, but it isn't a running habit",
+        "More comfortable executing a clear plan than sitting in an undefined, ambiguous problem",
+        "Trusts what's already been tested over what's merely interesting"
+      ],
+      "strengths": [
+        "Reliable, low-risk execution — sticks with approaches that are known to work",
+        "Filters out impractical ideas quickly; stays grounded in what's realistic",
+        "Predictable to work with, and doesn't introduce unnecessary change",
+        "Keeps a team focused rather than chasing every new idea that comes up"
+      ],
+      "considerations": [
+        "Building a habit of asking \"is there a different way to do this\" before defaulting to the familiar approach, even when the familiar one seems to be working",
+        "Creating space for the team to float alternative ideas without it feeling like second-guessing the plan",
+        "Noticing early when a standard playbook stops fitting a situation, rather than after it's clearly failed",
+        "Borrowing creative thinking deliberately — a second opinion, a structured brainstorm, someone whose default mode is generating options"
+      ]
+    }
+  },
+  "eq": {
+    "high": {
+      "whatItMeans": [
+        "Reads emotional cues — tone, body language, what's not being said — in real time, including in tense or high-stakes moments",
+        "Regulates their own reactions under pressure rather than being visibly rattled by them",
+        "Adjusts approach based on how a message is likely to land for a specific person, not just its content",
+        "Notices when someone on the team is struggling before it's announced"
+      ],
+      "strengths": [
+        "Builds trust quickly — people feel heard and understood",
+        "Reads the room and adjusts approach in most situations, including tense ones",
+        "Effective at defusing conflict before it escalates",
+        "Gets more honest, complete information from people because they feel safe bringing it"
+      ],
+      "considerations": [
+        "Noticing when emotional investment is slowing down a decision that needs to be made quickly and cleanly",
+        "Practicing directness — delivering a hard message clearly, without over-cushioning it to protect the other person's feelings",
+        "Setting boundaries around absorbing other people's stress, so it doesn't become a personal cost",
+        "Watching for a bias toward harmony over necessary conflict, especially in decisions with a clear right answer"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Evaluates situations primarily on facts and outcomes, with less attention to the emotional undercurrent in the room",
+        "Notices emotional cues mainly when they're pointed out directly or the setting is calm, not automatically",
+        "Tends to treat \"how people feel about it\" as separate from \"what's the right call\"",
+        "Can be personally difficult to read, even when not intending to be"
+      ],
+      "strengths": [
+        "Stays task-focused and unaffected by emotional noise in the room",
+        "Makes decisions without being swayed by how people will feel about them",
+        "Steady under conditions that would rattle a more emotionally reactive leader",
+        "Doesn't personalize conflict or take feedback as an attack"
+      ],
+      "considerations": [
+        "Building a habit of checking in on how a decision landed, not just whether it was correct",
+        "Naming feelings explicitly when they come up, since they often won't be inferred without being said",
+        "Asking directly how someone is doing, especially before or after a high-stress period, rather than assuming things are fine because nothing was said",
+        "Watching for trust eroding quietly — it often shows up as people going around a leader rather than to them"
+      ]
+    }
+  },
+  "vision": {
+    "high": {
+      "whatItMeans": [
+        "Holds a clear picture of where things are headed and returns to it often, not just at kickoff meetings or annual planning",
+        "Naturally connects today's decisions back to a longer-term direction",
+        "Communicates the \"why\" behind the work in a way that gives people something to orient around during uncertainty",
+        "Thinks in terms of where the team/business needs to be in a year or more, not just this quarter"
+      ],
+      "strengths": [
+        "Anchors the team during ambiguity with a clear sense of where things are headed",
+        "Vision consistently shapes day-to-day decisions, not just big-picture ones",
+        "Exceptional at aligning people around a future state they can't yet see",
+        "Gives people a reason to push through short-term friction because the destination is clear"
+      ],
+      "considerations": [
+        "Checking in on present-day problems that are easy to wave past in service of the bigger story — a real complaint today deserves a real answer today",
+        "Translating the vision into concrete near-term steps for people who need something tangible, not just direction",
+        "Staying close enough to daily operations that the vision doesn't start to feel disconnected from what the team is actually experiencing",
+        "Confirming that managers and team members are actually aligned with the stated direction, rather than assuming buy-in because the vision has been communicated"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Oriented toward what's happening right now — today's problems, this week's priorities — more than a multi-year direction",
+        "Can state a goal or direction when asked, but it doesn't come up unprompted in day-to-day decisions",
+        "More comfortable executing within a direction someone else has set than generating that direction",
+        "Judges progress by what got done, not by how it connects to a longer-term story"
+      ],
+      "strengths": [
+        "Highly responsive to what's actually happening day-to-day",
+        "Doesn't get distracted by abstract future-state thinking when there's real work in front of them",
+        "Comfortable letting others supply the \"why\" while focusing on the \"what\"",
+        "Keeps plans grounded in present reality instead of over-indexing on a future that may not play out as imagined"
+      ],
+      "considerations": [
+        "Naming a direction out loud, even a simple one, so the team has something to orient around beyond this week's task list",
+        "Noticing when the team seems to be drifting or losing motivation — that's often a signal that a \"why\" is missing, not just a \"what\"",
+        "Revisiting stated goals regularly rather than only when directly asked, so they actually stick",
+        "Partnering with someone vision-oriented, or deliberately blocking time to think beyond the immediate horizon"
+      ]
+    }
+  },
+  "influence": {
+    "high": {
+      "whatItMeans": [
+        "Moves people to act, agree, or change their mind regardless of formal title or authority",
+        "Adjusts the pitch depending on the audience — what lands with one group won't necessarily land with another, and that's accounted for",
+        "Comfortable building support before a decision is made official, not just announcing it afterward",
+        "Reads what actually matters to a given person or group and leads with that, rather than a one-size-fits-all argument"
+      ],
+      "strengths": [
+        "Earns buy-in across audiences without needing to lean on formal authority",
+        "Mobilizes people effectively, including cross-functionally",
+        "Builds coalitions and gets people moving in the same direction",
+        "Turns a good idea into something people will actually champion, not just tolerate"
+      ],
+      "considerations": [
+        "Checking that an idea has been fully vetted before selling it hard — persuasiveness can outrun the underlying substance if it isn't",
+        "Making room for quieter voices in the room rather than letting natural presence dominate the conversation",
+        "Being transparent about the ask, rather than relying on charisma to smooth over a case that hasn't been made explicit",
+        "Noticing when \"getting buy-in\" starts to matter more than whether the decision itself is the right one"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Relies on position, facts, or established relationships to move people, rather than persuasion as a practiced skill",
+        "Effective one-on-one or in small, familiar groups, less so scaling that to a room of strangers",
+        "States a case plainly and lets it stand on its own merits rather than building a deliberate pitch",
+        "Doesn't naturally reach for storytelling or framing to make an argument land"
+      ],
+      "strengths": [
+        "Straightforward — doesn't rely on manipulation or persuasion tactics to get buy-in",
+        "Effective in close, familiar relationships where trust is already established",
+        "What they say is what they mean; no hidden agenda in how they influence",
+        "Earns durable trust precisely because they aren't seen as \"working\" people"
+      ],
+      "considerations": [
+        "Practicing framing a case for a specific audience rather than presenting it the same way regardless of who's listening",
+        "Speaking up earlier and more often in group settings, where quieter voices are easy to lose",
+        "Building relationships beyond the immediate circle, since influence without an existing relationship is a learnable skill, not a fixed trait",
+        "Recognizing that being right isn't the same as being convincing — a good idea still needs a case made for it"
+      ]
+    }
+  },
+  "execution": {
+    "high": {
+      "whatItMeans": [
+        "Turns plans into finished outcomes reliably, including when volume or pressure picks up",
+        "Has systems and habits (not just willpower) that keep work moving even when things get busy",
+        "Treats a plan as something to be delivered, not just discussed",
+        "Tracks follow-through closely — commitments made are commitments tracked to completion"
+      ],
+      "strengths": [
+        "Exceptionally dependable — consistent output even under high volume or pressure",
+        "Systems and habits hold up when things get busy, not just when conditions are calm",
+        "Reliably turns vague goals into concrete next steps",
+        "Gives a team confidence that what gets committed to actually gets delivered"
+      ],
+      "considerations": [
+        "Building in a deliberate checkpoint to ask \"is this still the right plan,\" rather than pushing through momentum alone",
+        "Making space for creative input mid-execution instead of treating the plan as fixed once it's in motion",
+        "Watching for process becoming the priority over the people or outcomes it's meant to serve",
+        "Noticing when a plan needs to break — persistence is a strength until it's protecting a decision that's already wrong"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Plans and good intentions don't reliably turn into finished outcomes, especially once real pressure or volume shows up",
+        "Follow-through tends to hold up when conditions are calm and falls off when things get busy",
+        "Comfortable abandoning an approach that isn't working, sometimes before giving it a full chance to",
+        "Tends to rely on motivation in the moment rather than systems that carry the work when motivation dips"
+      ],
+      "strengths": [
+        "Comfortable pivoting away from a plan that isn't working",
+        "Doesn't get overly attached to a single approach or process",
+        "Open to changing direction without much friction",
+        "Quick to recognize when something genuinely isn't working, rather than pushing through out of stubbornness"
+      ],
+      "considerations": [
+        "Building a simple system (even a basic one — a checklist, a weekly review) rather than relying on remembering everything",
+        "Committing to fewer things at once, so what does get committed to has a real chance of being finished",
+        "Noticing the pattern of abandoning a plan under pressure specifically, and building in extra structure for exactly those moments",
+        "Separating \"this isn't working\" from \"this is hard\" before deciding to change direction"
+      ]
+    }
+  },
+  "adaptability": {
+    "high": {
+      "whatItMeans": [
+        "Adjusts quickly when plans, information, or circumstances change, without needing much recovery time",
+        "Functions well with incomplete information rather than waiting for full certainty before acting",
+        "Treats disruption as a normal condition to work within, not an emergency",
+        "Comfortable holding a loose plan that's expected to change, rather than a fixed one"
+      ],
+      "strengths": [
+        "Thrives in flux — setbacks barely slow them down",
+        "Functions well under ambiguity and incomplete information",
+        "Steadies the team during disruption instead of adding to it",
+        "Recovers quickly from a plan not working out, without losing momentum"
+      ],
+      "considerations": [
+        "Giving a new direction time to actually work before moving to the next one — not every plan needs a pivot",
+        "Communicating changes clearly enough that the rest of the team can track what's current, since what's obvious to a highly adaptable leader isn't always obvious to others",
+        "Watching for a pattern of the newest idea always looking better than the one already in motion",
+        "Building in occasional stability on purpose, even when it isn't strictly necessary, so the team has something steady to hold onto"
+      ]
+    },
+    "low": {
+      "whatItMeans": [
+        "Prefers stability and clear rules — a well-defined process feels safer and more reliable than an open-ended one",
+        "Change, especially unplanned change, is genuinely disruptive rather than a minor adjustment",
+        "Needs more time and information than a highly adaptable leader before feeling ready to shift direction",
+        "Builds real depth by staying with an approach long enough to master it, rather than moving on quickly"
+      ],
+      "strengths": [
+        "Brings real consistency and deep expertise within a stable lane",
+        "Predictable — people know what they're going to get",
+        "Strong when the environment doesn't require constant change",
+        "Sees a plan through rather than abandoning it at the first sign of difficulty"
+      ],
+      "considerations": [
+        "Practicing making a decision with incomplete information on lower-stakes situations, to build comfort before it's forced by a real crisis",
+        "Naming the discomfort of a needed change directly, rather than delaying it while waiting to feel more ready",
+        "Building a small \"what if this changes\" contingency into plans upfront, so a shift doesn't require starting over",
+        "Noticing the cost of staying the course too long — sometimes the harder call is the more adaptable one"
+      ]
+    }
+  }
+}

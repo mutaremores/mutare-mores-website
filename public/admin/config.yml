@@ -101,6 +101,47 @@ collections:
             widget: "text"
             default: "This library grows out of real coaching notes and reading. Pick a way in, or browse everything."
 
+      # Feeds the single "Your Discovery Assessment Results" page shown
+      # after completing the Discovery Test (public/index.html's
+      # insertResultsColumn) -- one What it means / Strengths /
+      # Considerations set per dimension per High/Low reading, instead of
+      # 12 separate articles.
+      - name: "discovery_results"
+        label: "Discovery Assessment Results page"
+        file: "content/settings/discovery-results.json"
+        fields:
+          - &discoveryDimension
+            label: "Creativity"
+            name: "creativity"
+            widget: "object"
+            fields:
+              - &discoveryLevel
+                label: "High"
+                name: "high"
+                widget: "object"
+                fields:
+                  - { label: "What it means", name: "whatItMeans", widget: "list", default: [] }
+                  - { label: "Strengths", name: "strengths", widget: "list", default: [] }
+                  - { label: "Considerations", name: "considerations", widget: "list", default: [] }
+              - <<: *discoveryLevel
+                label: "Low"
+                name: "low"
+          - <<: *discoveryDimension
+            label: "EQ"
+            name: "eq"
+          - <<: *discoveryDimension
+            label: "Vision"
+            name: "vision"
+          - <<: *discoveryDimension
+            label: "Influence"
+            name: "influence"
+          - <<: *discoveryDimension
+            label: "Execution"
+            name: "execution"
+          - <<: *discoveryDimension
+            label: "Adaptability"
+            name: "adaptability"
+
       - name: "about"
         label: "About page"
         file: "content/settings/about.json"
