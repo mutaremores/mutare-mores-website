@@ -160,10 +160,14 @@ if (fs.existsSync(workPath)) {
 // Stored flat (36 top-level keys like "creativityHighStrengths") rather
 // than nested -- Decap's nested object-widget version crashed the whole
 // Site Settings collection's data loading (see the comment in
-// public/admin/config.yml next to this entry). Reassembled into the
-// nested { dim: { high/low: { category: [...] } } } shape here, once, so
-// public/index.html's insertResultsColumn doesn't need to know about the
-// storage-format workaround.
+// public/admin/config.yml next to this entry). Each field is one plain
+// text widget (one bullet per line) rather than a list widget -- list
+// versions never populated existing data even when otherwise correctly
+// configured, for reasons not fully pinned down; text is the pattern
+// already proven reliable elsewhere in this file. Split on newlines and
+// reassembled into the nested { dim: { high/low: { category: [...] } } }
+// shape here, once, so public/index.html's insertResultsColumn doesn't
+// need to know about the storage-format workaround.
 const DISCOVERY_DIMENSIONS = ["creativity", "eq", "vision", "influence", "execution", "adaptability"];
 const DISCOVERY_CATEGORIES = ["whatItMeans", "strengths", "considerations"];
 const capitalize = (s) => s[0].toUpperCase() + s.slice(1);
@@ -178,12 +182,14 @@ if (fs.existsSync(discoveryResultsPath)) {
         discoveryResults[dim][level] = {};
         DISCOVERY_CATEGORIES.forEach((cat) => {
           const flatKey = dim + capitalize(level) + capitalize(cat);
+          const bullets = String(parsed[flatKey] || "")
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
           // renderInline (not render) -- these are single-line bullets, so
           // this keeps bold/italic/link support without wrapping each one
           // in a stray <p>.
-          discoveryResults[dim][level][cat] = (parsed[flatKey] || []).map((b) =>
-            mdRenderer.renderInline(String(b || ""))
-          );
+          discoveryResults[dim][level][cat] = bullets.map((b) => mdRenderer.renderInline(b));
         });
       });
     });

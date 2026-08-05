@@ -107,57 +107,63 @@ collections:
       # Considerations bullet list per dimension per High/Low reading,
       # instead of 12 separate articles.
       #
-      # Deliberately flat (36 top-level list fields, name = dimension +
-      # level + category, e.g. "creativityHighStrengths") rather than
-      # nested object widgets (dimension > level > category) -- the nested
+      # Deliberately flat (36 top-level fields, name = dimension + level +
+      # category, e.g. "creativityHighStrengths") rather than nested
+      # object widgets (dimension > level > category) -- the nested
       # version rendered fine but silently failed to load ANY existing
       # data for the whole "Site Settings" files collection (not just this
-      # entry), consistently reproduced across removing YAML anchors and
-      # confirmed by temporarily deleting this block entirely and watching
-      # the About/Work entries recover. Flat list widgets are the one
-      # pattern already proven reliable elsewhere in this file (Sources,
-      # the original Topics). scripts/build-articles-json.mjs reassembles
-      # these back into the nested shape public/index.html expects.
+      # entry), confirmed by temporarily deleting this block entirely and
+      # watching About/Work recover. Each field is a plain "text" widget
+      # (one bullet per line) rather than a "list" widget -- list, even
+      # flattened and with an explicit field: {widget:string}, exhibited
+      # the same symptom: correct widget UI, but existing array data never
+      # populated on load, reproduced even after clearing all local
+      # storage/IndexedDB and starting a fresh login. Root cause not fully
+      # pinned down; "text" is the pattern already proven reliable
+      # elsewhere in this file (About/Work's markdown fields) rather than
+      # continuing to debug list. scripts/build-articles-json.mjs splits
+      # each field on newlines and reassembles the nested shape
+      # public/index.html expects.
       - name: "discovery_results"
         label: "Discovery Assessment Results page"
         file: "content/settings/discovery-results.json"
         fields:
-          - { label: "Creativity — High — What it means", name: "creativityHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Creativity — High — Strengths", name: "creativityHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Creativity — High — Considerations", name: "creativityHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Creativity — Low — What it means", name: "creativityLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Creativity — Low — Strengths", name: "creativityLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Creativity — Low — Considerations", name: "creativityLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — High — What it means", name: "eqHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — High — Strengths", name: "eqHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — High — Considerations", name: "eqHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — Low — What it means", name: "eqLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — Low — Strengths", name: "eqLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "EQ — Low — Considerations", name: "eqLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — High — What it means", name: "visionHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — High — Strengths", name: "visionHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — High — Considerations", name: "visionHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — Low — What it means", name: "visionLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — Low — Strengths", name: "visionLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Vision — Low — Considerations", name: "visionLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — High — What it means", name: "influenceHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — High — Strengths", name: "influenceHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — High — Considerations", name: "influenceHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — Low — What it means", name: "influenceLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — Low — Strengths", name: "influenceLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Influence — Low — Considerations", name: "influenceLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — High — What it means", name: "executionHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — High — Strengths", name: "executionHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — High — Considerations", name: "executionHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — Low — What it means", name: "executionLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — Low — Strengths", name: "executionLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Execution — Low — Considerations", name: "executionLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — High — What it means", name: "adaptabilityHighWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — High — Strengths", name: "adaptabilityHighStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — High — Considerations", name: "adaptabilityHighConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — Low — What it means", name: "adaptabilityLowWhatItMeans", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — Low — Strengths", name: "adaptabilityLowStrengths", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
-          - { label: "Adaptability — Low — Considerations", name: "adaptabilityLowConsiderations", widget: "list", field: { label: "Bullet", name: "bullet", widget: "string" } }
+          - { label: "Creativity — High — What it means", name: "creativityHighWhatItMeans", widget: "text" }
+          - { label: "Creativity — High — Strengths", name: "creativityHighStrengths", widget: "text" }
+          - { label: "Creativity — High — Considerations", name: "creativityHighConsiderations", widget: "text" }
+          - { label: "Creativity — Low — What it means", name: "creativityLowWhatItMeans", widget: "text" }
+          - { label: "Creativity — Low — Strengths", name: "creativityLowStrengths", widget: "text" }
+          - { label: "Creativity — Low — Considerations", name: "creativityLowConsiderations", widget: "text" }
+          - { label: "EQ — High — What it means", name: "eqHighWhatItMeans", widget: "text" }
+          - { label: "EQ — High — Strengths", name: "eqHighStrengths", widget: "text" }
+          - { label: "EQ — High — Considerations", name: "eqHighConsiderations", widget: "text" }
+          - { label: "EQ — Low — What it means", name: "eqLowWhatItMeans", widget: "text" }
+          - { label: "EQ — Low — Strengths", name: "eqLowStrengths", widget: "text" }
+          - { label: "EQ — Low — Considerations", name: "eqLowConsiderations", widget: "text" }
+          - { label: "Vision — High — What it means", name: "visionHighWhatItMeans", widget: "text" }
+          - { label: "Vision — High — Strengths", name: "visionHighStrengths", widget: "text" }
+          - { label: "Vision — High — Considerations", name: "visionHighConsiderations", widget: "text" }
+          - { label: "Vision — Low — What it means", name: "visionLowWhatItMeans", widget: "text" }
+          - { label: "Vision — Low — Strengths", name: "visionLowStrengths", widget: "text" }
+          - { label: "Vision — Low — Considerations", name: "visionLowConsiderations", widget: "text" }
+          - { label: "Influence — High — What it means", name: "influenceHighWhatItMeans", widget: "text" }
+          - { label: "Influence — High — Strengths", name: "influenceHighStrengths", widget: "text" }
+          - { label: "Influence — High — Considerations", name: "influenceHighConsiderations", widget: "text" }
+          - { label: "Influence — Low — What it means", name: "influenceLowWhatItMeans", widget: "text" }
+          - { label: "Influence — Low — Strengths", name: "influenceLowStrengths", widget: "text" }
+          - { label: "Influence — Low — Considerations", name: "influenceLowConsiderations", widget: "text" }
+          - { label: "Execution — High — What it means", name: "executionHighWhatItMeans", widget: "text" }
+          - { label: "Execution — High — Strengths", name: "executionHighStrengths", widget: "text" }
+          - { label: "Execution — High — Considerations", name: "executionHighConsiderations", widget: "text" }
+          - { label: "Execution — Low — What it means", name: "executionLowWhatItMeans", widget: "text" }
+          - { label: "Execution — Low — Strengths", name: "executionLowStrengths", widget: "text" }
+          - { label: "Execution — Low — Considerations", name: "executionLowConsiderations", widget: "text" }
+          - { label: "Adaptability — High — What it means", name: "adaptabilityHighWhatItMeans", widget: "text" }
+          - { label: "Adaptability — High — Strengths", name: "adaptabilityHighStrengths", widget: "text" }
+          - { label: "Adaptability — High — Considerations", name: "adaptabilityHighConsiderations", widget: "text" }
+          - { label: "Adaptability — Low — What it means", name: "adaptabilityLowWhatItMeans", widget: "text" }
+          - { label: "Adaptability — Low — Strengths", name: "adaptabilityLowStrengths", widget: "text" }
+          - { label: "Adaptability — Low — Considerations", name: "adaptabilityLowConsiderations", widget: "text" }
 
       - name: "about"
         label: "About page"
