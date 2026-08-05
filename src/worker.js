@@ -61,39 +61,44 @@ async function handleCallback(request, env) {
     );
   }
 
-  const tokenResp = await fetch(
-    "https://github.com/login/oauth/access_token",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-      }),
-    }
-  );
+  let tokenData;
+  try {
+    const tokenResp = await fetch(
+      "https://github.com/login/oauth/access_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+        }),
+      }
+    );
 
-  const tokenData = await tokenResp.json();
+    if (!tokenResp.ok) {
+      return oauthErrorResponse(
+        `GitHub returned ${tokenResp.status} exchanging the login code`
+      );
+    }
+
+    tokenData = await tokenResp.json();
+  } catch (err) {
+    // Network failure reaching GitHub, or a response body that isn't valid
+    // JSON (e.g. GitHub serving an HTML error page during an outage) --
+    // without this, either throws uncaught and the popup is left on a bare
+    // Cloudflare error page with no way for the CMS to know login failed.
+    return oauthErrorResponse(
+      `Could not reach GitHub to complete login (${err.message || "network error"})`
+    );
+  }
 
   if (tokenData.error || !tokenData.access_token) {
     const message = tokenData.error_description || tokenData.error || "unknown error";
-    return htmlResponse(
-      `(function() {
-        function receiveMessage(e) {
-          window.opener.postMessage(
-            'authorization:github:error:' + JSON.stringify({ message: ${JSON.stringify(message)} }),
-            e.origin
-          );
-          window.removeEventListener('message', receiveMessage, false);
-        }
-        window.addEventListener('message', receiveMessage, false);
-        window.opener.postMessage('authorizing:github', '*');
-      })();`
-    );
+    return oauthErrorResponse(message);
   }
 
   const payload = JSON.stringify({
@@ -106,6 +111,27 @@ async function handleCallback(request, env) {
       function receiveMessage(e) {
         window.opener.postMessage(
           'authorization:github:success:${payload.replace(/'/g, "\\'")}',
+          e.origin
+        );
+        window.removeEventListener('message', receiveMessage, false);
+      }
+      window.addEventListener('message', receiveMessage, false);
+      window.opener.postMessage('authorizing:github', '*');
+    })();`
+  );
+}
+
+// Posts Decap's expected error message back to the CMS popup's opener
+// window, instead of leaving the popup on a bare error page the CMS has no
+// way to react to. Shared by all three ways the token exchange can fail:
+// GitHub reporting an OAuth error, a non-2xx HTTP status, or the fetch/JSON
+// parse itself throwing (network failure, non-JSON response body).
+function oauthErrorResponse(message) {
+  return htmlResponse(
+    `(function() {
+      function receiveMessage(e) {
+        window.opener.postMessage(
+          'authorization:github:error:' + JSON.stringify({ message: ${JSON.stringify(message)} }),
           e.origin
         );
         window.removeEventListener('message', receiveMessage, false);
