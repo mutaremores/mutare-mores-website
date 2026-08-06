@@ -442,56 +442,27 @@
   var ArticleStatusControl = makeBadgeSelectControl('status');
   var ArticleCategoryControl = makeBadgeSelectControl('badge-category');
 
-  // Same short "Aug 5" style every existing article's lastEdited already
-  // uses -- shared by the widget's own Now button and the preSave hook
-  // below, so both ever produce is this one plain string, never a real
-  // Date/datetime object (see config.yml's comment on this field for why
-  // that matters: Decap's native datetime widget's <input type="date">
-  // can't parse a year-less string like this and silently invents one).
-  var MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  function todayStamp() {
-    var d = new Date();
-    return MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
-  }
-
-  var ArticleLastEditedControl = createClass({
-    onNowClick: function () {
-      this.props.onChange(todayStamp());
-    },
-    render: function () {
-      var value = this.props.value || '';
-      return h('div', {
-        id: this.props.forID,
-        className: (this.props.classNameWrapper || '') + ' last-edited-control',
-      },
-        h('span', { className: 'last-edited-value' }, value || '—'),
-        h('button', {
-          type: 'button',
-          className: 'last-edited-now-btn',
-          onClick: this.onNowClick,
-        }, 'Now')
-      );
-    },
-  });
-
   CMS.registerWidget('article-title', ArticleTitleControl);
   CMS.registerWidget('article-status', ArticleStatusControl);
   CMS.registerWidget('article-category', ArticleCategoryControl);
-  CMS.registerWidget('article-last-edited', ArticleLastEditedControl);
 
-  // Keeps "Last Edited" accurate without relying on remembering to click
-  // Now: stamps today's date on every save of an article entry,
-  // overwriting whatever was there. preSave is a global Decap event (not
-  // scoped per-collection in config.yml), so this checks
+  // Last Edited isn't a form field at all (config.yml: widget "hidden") --
+  // this is the only thing that ever sets it: stamps today's date on
+  // every save of an article entry, automatically, overwriting whatever
+  // was there. preSave is a global Decap event (not scoped per-collection
+  // in config.yml), so this checks
   // entry.get('collection') itself -- confirmed against Decap's own
   // source that the entry passed to preSave carries that key (the same
   // pattern CMS.js itself uses internally, e.g. publishUnpublishedEntry).
+  var MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   CMS.registerEventListener({
     name: 'preSave',
     handler: function (payload) {
       var entry = payload.entry;
       if (entry.get('collection') !== 'article') return entry.get('data');
-      return entry.get('data').set('lastEdited', todayStamp());
+      var today = new Date();
+      var stamped = MONTH_NAMES[today.getMonth()] + ' ' + today.getDate();
+      return entry.get('data').set('lastEdited', stamped);
     },
   });
 })();
