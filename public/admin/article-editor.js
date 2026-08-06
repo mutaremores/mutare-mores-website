@@ -446,23 +446,37 @@
   CMS.registerWidget('article-status', ArticleStatusControl);
   CMS.registerWidget('article-category', ArticleCategoryControl);
 
-  // Last Edited isn't a form field at all (config.yml: widget "hidden") --
-  // this is the only thing that ever sets it: stamps today's date on
-  // every save of an article entry, automatically, overwriting whatever
-  // was there. preSave is a global Decap event (not scoped per-collection
-  // in config.yml), so this checks
-  // entry.get('collection') itself -- confirmed against Decap's own
-  // source that the entry passed to preSave carries that key (the same
-  // pattern CMS.js itself uses internally, e.g. publishUnpublishedEntry).
+  // Last Edited and First Published aren't form fields at all (config.yml:
+  // widget "hidden" on both) -- this is the only thing that ever sets
+  // either. Last Edited is stamped with today's date on every save,
+  // unconditionally. First Published is only filled in the first time
+  // (i.e. only if it's still empty) and left alone after that, since
+  // "first" stops meaning anything if it moved with every edit -- kept as
+  // YYYY-MM-DD (not the short "Aug 5" style) to match every existing
+  // article's stored format and what scripts/build-articles-json.mjs
+  // already expects (d.firstPublished.slice(0,10)).
+  // preSave is a global Decap event (not scoped per-collection in
+  // config.yml), so this checks entry.get('collection') itself --
+  // confirmed against Decap's own source that the entry passed to preSave
+  // carries that key (the same pattern CMS.js itself uses internally,
+  // e.g. publishUnpublishedEntry).
   var MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
   CMS.registerEventListener({
     name: 'preSave',
     handler: function (payload) {
       var entry = payload.entry;
       if (entry.get('collection') !== 'article') return entry.get('data');
       var today = new Date();
-      var stamped = MONTH_NAMES[today.getMonth()] + ' ' + today.getDate();
-      return entry.get('data').set('lastEdited', stamped);
+      var data = entry.get('data').set(
+        'lastEdited',
+        MONTH_NAMES[today.getMonth()] + ' ' + today.getDate()
+      );
+      if (!data.get('firstPublished')) {
+        var iso = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-' + pad2(today.getDate());
+        data = data.set('firstPublished', iso);
+      }
+      return data;
     },
   });
 })();

@@ -60,13 +60,12 @@ collections:
         required: false
         default: []
         options: ["Adaptability", "Coaching", "Communication", "Creativity", "Culture", "EQ", "Execution", "Influence", "Leadership", "Learning", "Organizational development", "Personal development", "Personality", "Philosophy", "Procrastination", "Productivity", "Psychology", "Systems design", "Systems thinking", "Task management", "Team dynamics", "Time management", "Training", "Vision"]
-      - label: "First Published"
-        name: "firstPublished"
-        widget: "datetime"
-        format: "YYYY-MM-DD"
-        date_format: "YYYY-MM-DD"
-        time_format: false
-        required: false
+      # Also not user-editable, same as Last Edited below -- but unlike
+      # Last Edited, the preSave hook only fills this in the *first* time
+      # an entry is saved (i.e. only if it's still empty) and leaves it
+      # alone on every save after that, since "first" published stops
+      # meaning anything if it moved with every edit.
+      - { label: "First Published", name: "firstPublished", widget: "hidden", required: false }
       # Not user-editable at all -- the preSave hook in article-editor.js
       # stamps today's date on every save, automatically, so there's
       # nothing for a person to set here. (Earlier tried a visible
