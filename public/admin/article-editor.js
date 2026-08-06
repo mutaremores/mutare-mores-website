@@ -10,12 +10,12 @@
      blocks on load, and blocks -> markdown on every change, entirely in
      the browser.
      Scope: headings (#/##/###), paragraphs with bold, italic, and
-     [link](url) markdown, and ordered/unordered/checklist lists (one
-     level of nesting) -- matching what this site's actual content uses.
-     Anything outside that (tables, code blocks, images, etc.) round-trips
-     as a plain paragraph rather than being silently dropped, so nothing is
-     ever lost, even if the block-editor representation of it is
-     imperfect.
+     [link](url) markdown, ordered/unordered/checklist lists (one level of
+     nesting), and image/file blocks (ImageBlockTool/FileBlockTool below)
+     -- matching what this site's actual content uses. Anything outside
+     that (tables, code blocks, etc.) round-trips as a plain paragraph
+     rather than being silently dropped, so nothing is ever lost, even if
+     the block-editor representation of it is imperfect.
 
    - ArticleTitleControl / ArticleStatusControl / ArticleCategoryControl:
      render the title/status/category fields as the real site's own
@@ -75,6 +75,24 @@
       var heading = line.match(/^(#{1,3})\s+(.*)$/);
       if (heading) {
         blocks.push({ type: 'header', data: { text: inlineMdToHtml(heading[2]), level: heading[1].length } });
+        i++;
+        continue;
+      }
+
+      // Image/file blocks: a line that's *only* an image or a file link
+      // (see blocksToMarkdown below for the exact markdown shape each
+      // produces). Checked as whole-line matches, not inline replacements,
+      // so a real image/file link mentioned inline within normal prose
+      // still round-trips as plain inline markdown instead.
+      var imageLine = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imageLine) {
+        blocks.push({ type: 'image', data: { alt: imageLine[1], url: imageLine[2] } });
+        i++;
+        continue;
+      }
+      var fileLine = line.match(/^\[📎\s*([^\]]*)\]\(([^)]+)\)$/);
+      if (fileLine) {
+        blocks.push({ type: 'file', data: { name: fileLine[1], url: fileLine[2] } });
         i++;
         continue;
       }
@@ -142,10 +160,110 @@
       if (block.type === 'paragraph') {
         return inlineHtmlToMd(block.data.text || '');
       }
+      if (block.type === 'image') {
+        return '![' + (block.data.alt || '') + '](' + (block.data.url || '') + ')';
+      }
+      if (block.type === 'file') {
+        return '[📎 ' + (block.data.name || 'Download') + '](' + (block.data.url || '') + ')';
+      }
       // Unknown block type: never silently drop content.
       return JSON.stringify(block.data || {});
     }).join('\n\n') + '\n';
   }
+
+  // ---- Image / File block types ----
+  // Editor.js's official Image tool needs an upload endpoint this static
+  // site doesn't have. Instead: upload the file through the CMS's
+  // existing Media Library tab (already works, GitHub-backed), then paste
+  // the resulting URL here. Plain constructor-function + prototype
+  // "class" (not ES6 `class`) to match this file's existing style and
+  // Editor.js's own Tool contract (new ToolClass({data}), then
+  // .render()/.save() on the instance) exactly -- no external dependency,
+  // so no CDN version/global-name risk like the other Editor.js plugins.
+  function ImageBlockTool(opts) {
+    this.data = { url: (opts.data && opts.data.url) || '', alt: (opts.data && opts.data.alt) || '' };
+  }
+  ImageBlockTool.toolbox = {
+    title: 'Image',
+    icon: '<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" fill="none" stroke-width="1.2"/><circle cx="4.5" cy="4.5" r="1.2" fill="currentColor"/><path d="M1.5 10L5 6.5L7.5 9L10 6L12.5 9.5" stroke="currentColor" fill="none" stroke-width="1.2"/></svg>',
+  };
+  ImageBlockTool.prototype.render = function () {
+    var self = this;
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ce-media-block';
+
+    var urlInput = document.createElement('input');
+    urlInput.className = 'ce-media-block-input';
+    urlInput.placeholder = 'Paste image URL (upload it via the Media tab first)';
+    urlInput.value = this.data.url;
+
+    var altInput = document.createElement('input');
+    altInput.className = 'ce-media-block-input';
+    altInput.placeholder = 'Alt text (optional)';
+    altInput.value = this.data.alt;
+
+    var preview = document.createElement('img');
+    preview.className = 'ce-media-block-preview';
+
+    function refreshPreview() {
+      if (self.data.url) {
+        preview.src = self.data.url;
+        preview.style.display = '';
+      } else {
+        preview.style.display = 'none';
+      }
+    }
+
+    urlInput.addEventListener('input', function () {
+      self.data.url = urlInput.value;
+      refreshPreview();
+    });
+    altInput.addEventListener('input', function () {
+      self.data.alt = altInput.value;
+    });
+
+    refreshPreview();
+    wrapper.appendChild(urlInput);
+    wrapper.appendChild(altInput);
+    wrapper.appendChild(preview);
+    return wrapper;
+  };
+  ImageBlockTool.prototype.save = function () {
+    return { url: this.data.url, alt: this.data.alt };
+  };
+
+  function FileBlockTool(opts) {
+    this.data = { url: (opts.data && opts.data.url) || '', name: (opts.data && opts.data.name) || '' };
+  }
+  FileBlockTool.toolbox = {
+    title: 'File / PDF',
+    icon: '<svg width="12" height="14" viewBox="0 0 12 14" xmlns="http://www.w3.org/2000/svg"><path d="M1 1H7L11 5V13H1V1Z" stroke="currentColor" fill="none" stroke-width="1.2"/><path d="M7 1V5H11" stroke="currentColor" fill="none" stroke-width="1.2"/></svg>',
+  };
+  FileBlockTool.prototype.render = function () {
+    var self = this;
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ce-media-block';
+
+    var urlInput = document.createElement('input');
+    urlInput.className = 'ce-media-block-input';
+    urlInput.placeholder = 'Paste file URL (upload it via the Media tab first)';
+    urlInput.value = this.data.url;
+
+    var nameInput = document.createElement('input');
+    nameInput.className = 'ce-media-block-input';
+    nameInput.placeholder = 'Display name (e.g. Annual Report.pdf)';
+    nameInput.value = this.data.name;
+
+    urlInput.addEventListener('input', function () { self.data.url = urlInput.value; });
+    nameInput.addEventListener('input', function () { self.data.name = nameInput.value; });
+
+    wrapper.appendChild(urlInput);
+    wrapper.appendChild(nameInput);
+    return wrapper;
+  };
+  FileBlockTool.prototype.save = function () {
+    return { url: this.data.url, name: this.data.name };
+  };
 
   // ---- Decap widget: mounts an Editor.js instance, round-trips markdown ----
   var editorSeq = 0;
@@ -174,6 +292,8 @@
           tools: {
             header: { class: window.Header, inlineToolbar: true, config: { levels: [2, 3], defaultLevel: 2 } },
             list: { class: window.EditorjsList, inlineToolbar: true },
+            image: { class: ImageBlockTool },
+            file: { class: FileBlockTool },
           },
           onChange: function () {
             self._editor.save().then(function (data) {
@@ -325,4 +445,23 @@
   CMS.registerWidget('article-title', ArticleTitleControl);
   CMS.registerWidget('article-status', ArticleStatusControl);
   CMS.registerWidget('article-category', ArticleCategoryControl);
+
+  // Keeps "Last Edited" accurate without relying on remembering to click
+  // Now: stamps today's date on every save of an article entry,
+  // overwriting whatever was there. preSave is a global Decap event (not
+  // scoped per-collection in config.yml), so this checks
+  // entry.get('collection') itself -- confirmed against Decap's own
+  // source that the entry passed to preSave carries that key (the same
+  // pattern CMS.js itself uses internally, e.g. publishUnpublishedEntry).
+  var MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  CMS.registerEventListener({
+    name: 'preSave',
+    handler: function (payload) {
+      var entry = payload.entry;
+      if (entry.get('collection') !== 'article') return entry.get('data');
+      var today = new Date();
+      var stamped = MONTH_NAMES[today.getMonth()] + ' ' + today.getDate();
+      return entry.get('data').set('lastEdited', stamped);
+    },
+  });
 })();

@@ -254,3 +254,34 @@ div.badge-select-control {
   background: #f6f6f4;
   color: #111111;
 }
+
+/* Image/File blocks (ImageBlockTool/FileBlockTool in article-editor.js) --
+   paste-a-URL inputs, not a real uploader, so kept visually simple: a
+   couple of stacked inputs and an optional preview. */
+.ce-media-block {
+  border: 1px dashed #dcdcda;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fcfcfb;
+}
+.ce-media-block-input {
+  font-family: inherit;
+  font-size: 13.5px;
+  padding: 6px 8px;
+  border: 1px solid #dcdcda;
+  border-radius: 4px;
+  background: #fff;
+  color: #2b2b2b;
+}
+.ce-media-block-input::placeholder {
+  color: #8d8d8d;
+}
+.ce-media-block-preview {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 4px;
+  margin-top: 2px;
+}

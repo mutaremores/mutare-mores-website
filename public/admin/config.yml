@@ -67,9 +67,18 @@ collections:
         date_format: "YYYY-MM-DD"
         time_format: false
         required: false
+      # Datetime widget (not string) purely to get Decap's native Now/Clear
+      # buttons, same as First Published above -- format/date_format keep
+      # the stored value as the short "Aug 5" style every existing article
+      # already uses, so no content migration needed. The value itself is
+      # kept in sync automatically on every save by the preSave hook in
+      # article-editor.js, regardless of whether Now was clicked.
       - label: "Last Edited"
         name: "lastEdited"
-        widget: "string"
+        widget: "datetime"
+        format: "MMM D"
+        date_format: "MMM D"
+        time_format: false
         required: false
       - { label: "Original Index", name: "origIndex", widget: "hidden", required: false }
       - label: "TL;DR"
