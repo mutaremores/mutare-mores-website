@@ -1,6 +1,6 @@
 ---
 title: Fiedler contingency model
-status: Done
+status: In progress
 category: null
 sources: []
 topics: []
