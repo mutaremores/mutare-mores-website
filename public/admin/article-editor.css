@@ -69,31 +69,27 @@
   background: transparent;
 }
 
-/* Fields 4-5 (Sources, Topics) stay as Decap's default widgets (out of
-   scope for the inline-editing pass), just pill-styled and given a little
-   room to breathe below the title/status/category "card header" above. */
-[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4),
-[class*="ControlPane"]:has(.article-title) > div:nth-of-type(5) {
+/* Sources/Topics (ArticleSourcesControl/ArticleTopicsControl below) --
+   targeted by widget class via :has() rather than nth-of-type like Status/
+   Category above, so this doesn't depend on staying at fields 4-5
+   specifically. Same inline-with-Status/Category treatment: label hidden,
+   bordered container stripped, trigger badge sits on the property-card's
+   top line while its own selected-tags row (see .multi-badge-tags) flows
+   onto the line below within the same field -- inline-block naturally
+   lets a taller item (trigger + tags) sit beside shorter ones (Status,
+   Category) without needing flexbox. */
+[class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) {
   display: inline-block;
   vertical-align: top;
-  width: auto;
-  min-width: 160px;
-  margin-right: 12px;
-  clear: both;
+  margin: 0 8px 16px 0;
 }
-[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4) label,
-[class*="ControlPane"]:has(.article-title) > div:nth-of-type(5) label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: #8d8d8d;
+[class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) label {
+  display: none;
 }
-[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4) select {
-  border-radius: 999px;
-  padding: 4px 14px;
-  border: 1px solid #dcdcda;
-  background: #f6f6f4;
-  font-size: 13px;
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:has(.multi-badge-control) [class*="ControlContainer"] {
+  border: none;
+  padding: 0;
+  background: transparent;
 }
 
 /* Card framing for the whole form -- with the split preview pane off for
@@ -404,4 +400,122 @@ div.badge-select-control {
 }
 .article-context-menu-item:hover {
   background: #f6f6f4;
+}
+
+/* ---- Sources/Topics multi-select badge widgets ---- */
+.multi-badge-menu {
+  min-width: 180px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.multi-badge-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.multi-badge-checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid #dcdcda;
+  border-radius: 3px;
+  font-size: 10px;
+  color: #fff;
+  flex-shrink: 0;
+}
+.multi-badge-checkbox.checked {
+  background: #111111;
+  border-color: #111111;
+}
+.multi-badge-tags {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 220px;
+}
+.multi-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.multi-badge-tag-remove {
+  cursor: pointer;
+  opacity: .6;
+  font-size: 11px;
+  line-height: 1;
+}
+.multi-badge-tag-remove:hover {
+  opacity: 1;
+}
+
+/* ---- Read-only Date Created / Last Edited (ArticleDateDisplayControl) --
+   compact inline label+value pairs rather than Decap's default full-width
+   stacked field, since there's nothing to interact with here at all. */
+[class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) {
+  display: inline-block;
+  margin: 0 16px 12px 0;
+}
+[class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #b0b0b0;
+  margin-right: 4px;
+}
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:has(.article-date-display) [class*="ControlContainer"] {
+  border: none;
+  padding: 0;
+  background: transparent;
+  display: inline;
+}
+.article-date-display {
+  display: inline;
+  font-size: 12px;
+  color: #8d8d8d;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+}
+
+/* ---- Left sidebar: full article list, visible while editing one ---- */
+.article-nav-sidebar {
+  position: fixed;
+  left: 24px;
+  top: 96px;
+  width: 220px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+}
+.article-nav-sidebar-title {
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+  margin-bottom: 8px;
+}
+.article-nav-sidebar-list {
+  display: flex;
+  flex-direction: column;
+}
+.article-nav-sidebar-item {
+  font-size: 13px;
+  color: #2b2b2b;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.article-nav-sidebar-item:hover {
+  background: #f6f6f4;
+}
+/* Narrow viewports: the centered 720px-max-width form has no room to
+   spare beside it, and a fixed sidebar would just overlap the content. */
+@media (max-width: 1100px) {
+  .article-nav-sidebar {
+    display: none !important;
+  }
 }

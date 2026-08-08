@@ -305,6 +305,31 @@
             if (window.DragDrop) {
               try { new window.DragDrop(self._editor); } catch (e) { /* non-fatal */ }
             }
+            // "-" then Tab starts a bullet list -- editorjs-list's own Tab/
+            // Shift+Tab nesting (used for the "Enter then Tab" sub-bullet
+            // case) only kicks in once inside an actual list block, so this
+            // is the one list-creation shortcut that needs handling here.
+            // Capture phase, so this runs before Editor.js's own Tab
+            // handling (block-to-block focus shifting) sees the event.
+            var holderNode = document.getElementById(self._domId);
+            if (holderNode) {
+              holderNode.addEventListener('keydown', function (e) {
+                if (e.key !== 'Tab' || e.shiftKey) return;
+                var active = document.activeElement;
+                if (!active || (active.textContent || '').trim() !== '-') return;
+                e.preventDefault();
+                var idx = self._editor.blocks.getCurrentBlockIndex();
+                if (idx < 0) return;
+                self._editor.blocks.delete(idx);
+                self._editor.blocks.insert(
+                  'list',
+                  { style: 'unordered', items: [{ content: '', meta: {}, items: [] }] },
+                  {},
+                  idx,
+                  true
+                );
+              }, true);
+            }
           },
         });
       }, 0);
@@ -443,9 +468,122 @@
   var ArticleStatusControl = makeBadgeSelectControl('status');
   var ArticleCategoryControl = makeBadgeSelectControl('badge-category');
 
+  // Same trigger-badge-opens-a-dropdown shape as makeBadgeSelectControl
+  // above, but for multi-select fields (Sources/Topics): the trigger shows
+  // a count instead of a single value, the dropdown is checkboxes instead
+  // of single-pick options, and selected values render as removable tag
+  // pills directly below the trigger -- CSS (see .multi-badge-tags in
+  // article-editor.css) lets that tag row wrap onto its own line while the
+  // triggers themselves still sit inline with Status/Category above it.
+  function makeMultiBadgeSelectControl() {
+    return createClass({
+      getInitialState: function () {
+        return { open: false };
+      },
+      componentDidMount: function () {
+        var self = this;
+        this._outsideHandler = function (e) {
+          if (self._rootNode && !self._rootNode.contains(e.target)) {
+            self.setState({ open: false });
+          }
+        };
+        this._escHandler = function (e) {
+          if (e.key === 'Escape') self.setState({ open: false });
+        };
+        document.addEventListener('mousedown', this._outsideHandler);
+        document.addEventListener('keydown', this._escHandler);
+      },
+      componentWillUnmount: function () {
+        document.removeEventListener('mousedown', this._outsideHandler);
+        document.removeEventListener('keydown', this._escHandler);
+      },
+      toggle: function () {
+        this.setState({ open: !this.state.open });
+      },
+      toggleValue: function (opt) {
+        var current = toPlainArray(this.props.value);
+        var next = current.indexOf(opt) === -1
+          ? current.concat([opt])
+          : current.filter(function (v) { return v !== opt; });
+        this.props.onChange(next);
+      },
+      remove: function (opt, e) {
+        e.stopPropagation();
+        var current = toPlainArray(this.props.value);
+        this.props.onChange(current.filter(function (v) { return v !== opt; }));
+      },
+      render: function () {
+        var self = this;
+        var selected = toPlainArray(this.props.value);
+        var options = toPlainArray(this.props.field.get('options'));
+        var label = this.props.field.get('label') || '';
+
+        return h('div', {
+          id: this.props.forID,
+          className: (this.props.classNameWrapper || '') + ' badge-select-control multi-badge-control',
+          ref: function (node) { self._rootNode = node; },
+        },
+          h('span', {
+            className: 'status-badge badge-category badge-select-trigger',
+            onClick: function () { self.toggle(); },
+          }, label + (selected.length ? ' (' + selected.length + ')' : '')),
+          this.state.open
+            ? h('div', { className: 'badge-select-menu multi-badge-menu' },
+              options.map(function (opt) {
+                var checked = selected.indexOf(opt) !== -1;
+                return h('div', {
+                  key: opt,
+                  className: 'badge-select-menu-item multi-badge-menu-item',
+                  onClick: function () { self.toggleValue(opt); },
+                },
+                  h('span', { className: 'multi-badge-checkbox' + (checked ? ' checked' : '') }, checked ? '✓' : ''),
+                  opt
+                );
+              })
+            )
+            : null,
+          selected.length
+            ? h('div', { className: 'multi-badge-tags' },
+              selected.map(function (opt) {
+                return h('span', { key: opt, className: 'status-badge badge-category multi-badge-tag' },
+                  opt,
+                  h('span', {
+                    className: 'multi-badge-tag-remove',
+                    onClick: function (e) { self.remove(opt, e); },
+                  }, '×')
+                );
+              })
+            )
+            : null
+        );
+      },
+    });
+  }
+
+  var ArticleSourcesControl = makeMultiBadgeSelectControl();
+  var ArticleTopicsControl = makeMultiBadgeSelectControl();
+
+  // Fully read-only -- no input of any kind. Used for firstPublished/
+  // lastEdited, which are only ever set by the preSave hook further down;
+  // showing them is purely informational.
+  var ArticleDateDisplayControl = createClass({
+    shouldComponentUpdate: function () {
+      return false;
+    },
+    render: function () {
+      return h('div', {
+        id: this.props.forID,
+        className: (this.props.classNameWrapper || '') + ' article-date-display',
+      }, this.props.value || '—');
+    },
+  });
+
   CMS.registerWidget('article-title', ArticleTitleControl);
   CMS.registerWidget('article-status', ArticleStatusControl);
   CMS.registerWidget('article-category', ArticleCategoryControl);
+  CMS.registerWidget('article-sources', ArticleSourcesControl);
+  CMS.registerWidget('article-topics', ArticleTopicsControl);
+  CMS.registerWidget('article-date-display', ArticleDateDisplayControl);
 
   // Last Edited and First Published aren't form fields at all (config.yml:
   // widget "hidden" on both) -- this is the only thing that ever sets
@@ -818,7 +956,10 @@
     if (!m) return;
     var slug = m[1];
     var titleEl = link.querySelector('h2');
-    var title = titleEl ? titleEl.textContent : slug;
+    // Decap's own list rows wrap the title in an <h2>; the sidebar's rows
+    // (below) are plain <a> text nodes instead, so this falls back to the
+    // link's own text either way rather than the less useful raw slug.
+    var title = titleEl ? titleEl.textContent : (link.textContent || slug).trim();
 
     var menu = document.createElement('div');
     menu.id = 'article-context-menu';
@@ -843,4 +984,71 @@
     var menu = document.getElementById('article-context-menu');
     if (menu && !menu.contains(e.target)) closeArticleContextMenu();
   });
+
+  // ---- Strip the "(optional)" Decap appends to non-required field labels
+  // ---- every field in this form is optional except Title/Status, so the
+  // suffix is just noise repeated on nearly every label. Text-node-only
+  // replacement (never touches child elements) so this can't clobber any
+  // of the custom widgets' own label-hiding CSS or markup. Debounced since
+  // it's a subtree-wide observer and the block editor mutates the DOM on
+  // every keystroke -- without the debounce this would re-scan the whole
+  // form after every character typed.
+  function stripOptionalSuffix() {
+    document.querySelectorAll('label').forEach(function (el) {
+      if (!/\(optional\)\s*$/i.test(el.textContent)) return;
+      el.childNodes.forEach(function (n) {
+        if (n.nodeType === 3) n.nodeValue = n.nodeValue.replace(/\s*\(optional\)\s*$/i, '');
+      });
+    });
+  }
+  var stripOptionalTimer = null;
+  new MutationObserver(function () {
+    if (stripOptionalTimer) return;
+    stripOptionalTimer = setTimeout(function () {
+      stripOptionalTimer = null;
+      stripOptionalSuffix();
+    }, 200);
+  }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  stripOptionalSuffix();
+
+  // ---- Left sidebar: every article, visible while editing one, so you can
+  // jump between them without going back to the list view. Right-click
+  // still works for "Copy link to article" -- the rows are real
+  // <a href="#/collections/article/entries/<slug>"> elements, matching the
+  // exact pattern the contextmenu listener above already looks for. Left-
+  // click navigates via Decap's own hash router (a plain anchor tag, not
+  // custom JS navigation), so its own "unsaved changes?" confirmation still
+  // applies exactly like any other in-app navigation.
+  var articleSidebarEl = null;
+  function renderArticleSidebar() {
+    var listEl = articleSidebarEl.querySelector('.article-nav-sidebar-list');
+    fetchArticleList().then(function (all) {
+      listEl.innerHTML = '';
+      all.forEach(function (a) {
+        var row = document.createElement('a');
+        row.href = '#/collections/article/entries/' + a.slug;
+        row.className = 'article-nav-sidebar-item';
+        row.textContent = a.title;
+        listEl.appendChild(row);
+      });
+    });
+  }
+  function updateArticleSidebar() {
+    var onArticleEntry = /^#\/collections\/article\/entries\//.test(location.hash);
+    if (!onArticleEntry) {
+      if (articleSidebarEl) articleSidebarEl.style.display = 'none';
+      return;
+    }
+    if (!articleSidebarEl) {
+      articleSidebarEl = document.createElement('div');
+      articleSidebarEl.className = 'article-nav-sidebar';
+      articleSidebarEl.innerHTML = '<div class="article-nav-sidebar-title">Articles</div>'
+        + '<div class="article-nav-sidebar-list">Loading…</div>';
+      document.body.appendChild(articleSidebarEl);
+      renderArticleSidebar();
+    }
+    articleSidebarEl.style.display = '';
+  }
+  window.addEventListener('hashchange', updateArticleSidebar);
+  updateArticleSidebar();
 })();

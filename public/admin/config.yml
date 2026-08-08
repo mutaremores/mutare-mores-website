@@ -48,31 +48,28 @@ collections:
         options: ["Concepts", "Notes", "Thoughts", "Types"]
       - label: "Sources"
         name: "sources"
-        widget: "select"
+        widget: "article-sources"
         multiple: true
         required: false
         default: []
         options: ["Article", "Books", "Image", "Study", "Video", "Website"]
       - label: "Topics"
         name: "topics"
-        widget: "select"
+        widget: "article-topics"
         multiple: true
         required: false
         default: []
         options: ["Adaptability", "Coaching", "Communication", "Creativity", "Culture", "EQ", "Execution", "Influence", "Leadership", "Learning", "Organizational development", "Personal development", "Personality", "Philosophy", "Procrastination", "Productivity", "Psychology", "Systems design", "Systems thinking", "Task management", "Team dynamics", "Time management", "Training", "Vision"]
-      # Also not user-editable, same as Last Edited below -- but unlike
-      # Last Edited, the preSave hook only fills this in the *first* time
-      # an entry is saved (i.e. only if it's still empty) and leaves it
-      # alone on every save after that, since "first" published stops
-      # meaning anything if it moved with every edit.
-      - { label: "First Published", name: "firstPublished", widget: "hidden", required: false }
-      # Not user-editable at all -- the preSave hook in article-editor.js
-      # stamps today's date on every save, automatically, so there's
-      # nothing for a person to set here. (Earlier tried a visible
-      # datetime widget, then a visible custom widget with its own Now
-      # button; owner asked to just remove the field from the form
-      # entirely instead.)
-      - { label: "Last Edited", name: "lastEdited", widget: "hidden", required: false }
+      # Read-only display (article-date-display widget: no inputs at all,
+      # just renders the stored value as text) -- the preSave hook below is
+      # the only thing that ever sets either value, so there's nothing for
+      # a person to edit here regardless of the field being visible again.
+      # firstPublished is only filled the *first* time an entry is saved
+      # (i.e. only if still empty) and left alone after that, since "first"
+      # stops meaning anything if it moved with every edit; lastEdited is
+      # unconditionally restamped to today on every save.
+      - { label: "Date Created", name: "firstPublished", widget: "article-date-display", required: false }
+      - { label: "Last Edited", name: "lastEdited", widget: "article-date-display", required: false }
       - { label: "Original Index", name: "origIndex", widget: "hidden", required: false }
       - label: "TL;DR"
         name: "tldr"
