@@ -81,8 +81,13 @@
 /* This div IS the ControlContainer itself (Decap nests no extra wrapper
    between ControlPaneContainer and each field's ControlContainer, verified
    directly against the live DOM), so the border/padding reset needs to
-   target it directly rather than look for a nested descendant. */
-[class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) {
+   target it directly rather than look for a nested descendant.
+   :has(> X) (direct child only), not :has(X) (any depth) -- :has(X) at any
+   depth also matches the WHOLE ControlPaneContainer itself, since it
+   obviously "has" X somewhere inside it too, several levels down. Confirmed
+   via element.matches() that the unscoped version was applying this rule
+   to the entire form container, not just the one intended field. */
+[class*="ControlPane"]:has(.article-title) > div:has(> .multi-badge-control) {
   display: inline-block;
   vertical-align: top;
   margin: 0 8px 16px 0;
@@ -478,7 +483,7 @@ div.badge-select-control {
    nested wrapper to reach through) -- and here the label needs to stay
    visible (just small/muted), so its own wrapper (Decap's ControlTopbar)
    is put on the same flex line as the value instead of stacking above it. */
-[class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) {
+[class*="ControlPane"]:has(.article-title) > div:has(> .article-date-display) {
   display: inline-flex;
   align-items: baseline;
   gap: 4px;
