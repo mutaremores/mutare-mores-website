@@ -320,13 +320,14 @@
                 e.preventDefault();
                 var idx = self._editor.blocks.getCurrentBlockIndex();
                 if (idx < 0) return;
-                // A separate delete() + insert() shifted indices (deleting
-                // the editor's only/last block makes Editor.js auto-insert
-                // its own trailing empty paragraph before the insert() call
-                // runs, so idx no longer pointed at the new list block by
-                // the time caret.setToBlock ran). insert()'s own replace
-                // param (7th arg true) swaps the block at idx in one atomic
-                // step instead, with no separate delete and no index drift.
+                // replace:true (7th arg) swaps the block at idx atomically
+                // -- a separate delete()+insert() let Editor.js's own
+                // "always keep a trailing empty paragraph" behavior shift
+                // idx out from under the insert call. needToFocus (6th arg)
+                // is left to Editor.js's own focus handling; an explicit
+                // caret.setToBlock() call here was intermittently hanging
+                // the tab (reproduced repeatedly), so this doesn't fight it
+                // -- worst case the new bullet needs one click to type into.
                 self._editor.blocks.insert(
                   'list',
                   { style: 'unordered', items: [{ content: '', meta: {}, items: [] }] },
@@ -335,9 +336,6 @@
                   true,
                   true
                 );
-                if (self._editor.caret && self._editor.caret.setToBlock) {
-                  self._editor.caret.setToBlock(idx, 'start');
-                }
               }, true);
             }
           },
