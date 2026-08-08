@@ -108,12 +108,12 @@
      viewport, so it can't be relied on to leave the sidebar's exact gutter
      free. A fixed left offset is deterministic regardless of that outer
      width. Matches the sidebar's own @media cutoff below 1100px. */
-  margin: 0 auto 0 280px;
+  margin: 0 auto 0 280px !important;
   padding-top: 8px;
 }
 @media (max-width: 1100px) {
   [class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) {
-    margin: 0 auto;
+    margin: 0 auto !important;
   }
 }
 [class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title)::before {
