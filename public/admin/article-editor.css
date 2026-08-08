@@ -78,18 +78,20 @@
    onto the line below within the same field -- inline-block naturally
    lets a taller item (trigger + tags) sit beside shorter ones (Status,
    Category) without needing flexbox. */
+/* This div IS the ControlContainer itself (Decap nests no extra wrapper
+   between ControlPaneContainer and each field's ControlContainer, verified
+   directly against the live DOM), so the border/padding reset needs to
+   target it directly rather than look for a nested descendant. */
 [class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) {
   display: inline-block;
   vertical-align: top;
   margin: 0 8px 16px 0;
+  border: none !important;
+  padding: 0 !important;
+  background: transparent !important;
 }
 [class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) label {
   display: none;
-}
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:has(.multi-badge-control) [class*="ControlContainer"] {
-  border: none;
-  padding: 0;
-  background: transparent;
 }
 
 /* Card framing for the whole form -- with the split preview pane off for
@@ -464,26 +466,28 @@ div.badge-select-control {
 
 /* ---- Read-only Date Created / Last Edited (ArticleDateDisplayControl) --
    compact inline label+value pairs rather than Decap's default full-width
-   stacked field, since there's nothing to interact with here at all. */
+   stacked field, since there's nothing to interact with here at all. Same
+   direct-ControlContainer targeting as the multi-badge rules above (no
+   nested wrapper to reach through) -- and here the label needs to stay
+   visible (just small/muted), so its own wrapper (Decap's ControlTopbar)
+   is put on the same flex line as the value instead of stacking above it. */
 [class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
   margin: 0 16px 12px 0;
+  border: none !important;
+  padding: 0 !important;
+  background: transparent !important;
 }
 [class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) label {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: .05em;
   color: #b0b0b0;
-  margin-right: 4px;
-}
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:has(.article-date-display) [class*="ControlContainer"] {
-  border: none;
-  padding: 0;
-  background: transparent;
-  display: inline;
+  white-space: nowrap;
 }
 .article-date-display {
-  display: inline;
   font-size: 12px;
   color: #8d8d8d;
   font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;

@@ -995,7 +995,13 @@
   // form after every character typed.
   function stripOptionalSuffix() {
     document.querySelectorAll('label').forEach(function (el) {
-      if (!/\(optional\)\s*$/i.test(el.textContent)) return;
+      if (!/\(optional\)/i.test(el.textContent)) return;
+      // Decap renders the suffix as its own child <span> (not a plain
+      // trailing text node) -- remove that directly rather than trying to
+      // regex the label's own text, which never contains it in this case.
+      Array.prototype.slice.call(el.children).forEach(function (child) {
+        if (/\(optional\)/i.test(child.textContent)) child.parentNode.removeChild(child);
+      });
       el.childNodes.forEach(function (n) {
         if (n.nodeType === 3) n.nodeValue = n.nodeValue.replace(/\s*\(optional\)\s*$/i, '');
       });
