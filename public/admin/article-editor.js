@@ -320,21 +320,21 @@
                 e.preventDefault();
                 var idx = self._editor.blocks.getCurrentBlockIndex();
                 if (idx < 0) return;
-                self._editor.blocks.delete(idx);
+                // A separate delete() + insert() shifted indices (deleting
+                // the editor's only/last block makes Editor.js auto-insert
+                // its own trailing empty paragraph before the insert() call
+                // runs, so idx no longer pointed at the new list block by
+                // the time caret.setToBlock ran). insert()'s own replace
+                // param (7th arg true) swaps the block at idx in one atomic
+                // step instead, with no separate delete and no index drift.
                 self._editor.blocks.insert(
                   'list',
                   { style: 'unordered', items: [{ content: '', meta: {}, items: [] }] },
                   {},
                   idx,
+                  true,
                   true
                 );
-                // blocks.insert's own needToFocus wasn't landing inside the
-                // new empty list item's own contenteditable (focus ended up
-                // on the editor's trailing empty paragraph instead, so
-                // typing went there rather than into the bullet). Editor.js's
-                // own caret API (not a raw DOM .focus() call, which fought
-                // Editor.js's internal focus tracking and hung the tab) is
-                // the supported way to move the caret into a specific block.
                 if (self._editor.caret && self._editor.caret.setToBlock) {
                   self._editor.caret.setToBlock(idx, 'start');
                 }
