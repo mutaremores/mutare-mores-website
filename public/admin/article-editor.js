@@ -328,6 +328,18 @@
                   idx,
                   true
                 );
+                // blocks.insert's own needToFocus wasn't landing inside the
+                // new empty list item's own contenteditable (focus ended up
+                // on the editor's trailing empty paragraph instead, so
+                // typing went there rather than into the bullet) -- find
+                // and focus that contenteditable directly once Editor.js
+                // has finished rendering the new block.
+                setTimeout(function () {
+                  var blockApi = self._editor.blocks.getBlockByIndex(idx);
+                  var holder = blockApi && blockApi.holder;
+                  var editable = holder && holder.querySelector('[contenteditable="true"]');
+                  if (editable) editable.focus();
+                }, 0);
               }, true);
             }
           },
