@@ -90,7 +90,14 @@
   padding: 0 !important;
   background: transparent !important;
 }
-[class*="ControlPane"]:has(.article-title) > div:has(.multi-badge-control) label {
+/* label[for*=...] rather than the :has()-based descendant selector used
+   for border/margin above -- empirically confirmed (via element.matches()
+   in devtools) that a compound selector ending in a bare descendant after
+   :has() over-matches, hiding OTHER fields' labels too, not just this
+   div's own. Attribute-matching the label's own `for` (which encodes the
+   field name Decap generated it for) is exact and immune to that. */
+label[for*="sources"],
+label[for*="topics"] {
   display: none;
 }
 
@@ -480,8 +487,8 @@ div.badge-select-control {
   padding: 0 !important;
   background: transparent !important;
 }
-[class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) label {
-  display: inline-block !important;
+label[for*="firstPublished"],
+label[for*="lastEdited"] {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: .05em;
