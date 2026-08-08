@@ -659,6 +659,11 @@ let articleLinks = [];
 // popup) reference a specific article by a ref that survives other
 // articles being added or removed, instead of a raw array index.
 let oiToPos = new Map();
+// slug (filename minus .md, every article has one) -> current array
+// position -- how in-body cross-links (article:<slug> hrefs, inserted via
+// the CMS's "Link to Article" tool) find the article they point to. See
+// articleColumnEl's click delegation below.
+let slugToPos = new Map();
 // One What it means / Strengths / Considerations bullet set per dimension
 // per High/Low reading, shown on the Discovery Test results page (see
 // insertResultsColumn) -- edited via the CMS's "Discovery Assessment
@@ -903,6 +908,19 @@ function articleColumnEl(idx, afterIndex){
       <span class="article-date">Last edited ${links.last}</span>
     </div>
     ${bodyHtml}`;
+  // In-body cross-links to other articles (inserted via the CMS's "Link to
+  // Article" tool) render as plain <a href="article:<slug>"> from the
+  // markdown -> HTML pass; there's no real URL behind that scheme, so
+  // clicking one is intercepted here and turned into opening that article
+  // as the next column instead of letting the browser try to navigate.
+  el.querySelectorAll('a[href^="article:"]').forEach(a=>{
+    const slug = a.getAttribute('href').slice('article:'.length);
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const pos = slugToPos.get(slug);
+      if(pos != null) openArticleColumn(pos, afterIndex);
+    });
+  });
   return el;
 }
 
@@ -997,6 +1015,7 @@ fetch('articles.json')
     oiToPos = new Map(
       notionEntries.map((e,i)=>[e.oi, i]).filter(([oi])=>oi != null)
     );
+    slugToPos = new Map(notionEntries.map((e,i)=>[e.slug, i]));
     buildLearnColumns();
     renderAboutRoom(data.about);
     renderWorkRoom(data.work);

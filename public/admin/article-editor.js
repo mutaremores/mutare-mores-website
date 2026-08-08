@@ -294,6 +294,7 @@
             list: { class: window.EditorjsList, inlineToolbar: true },
             image: { class: ImageBlockTool },
             file: { class: FileBlockTool },
+            articleLink: { class: ArticleLinkInlineTool },
           },
           onChange: function () {
             self._editor.save().then(function (data) {
@@ -478,5 +479,368 @@
       }
       return data;
     },
+  });
+
+  // ==================================================================
+  // Article cross-linking: a "Link to Article" inline tool (search/pick an
+  // existing article, or create a new one on the spot) for the block
+  // editor, plus "Copy link to article" on right-click in the CMS's own
+  // article list. Both produce/consume the same reference: a plain
+  // markdown link whose href is `article:<slug>` -- not a real URL, just a
+  // token public/index.html's articleColumnEl (see slugToPos there)
+  // recognizes and resolves to whatever array position that slug
+  // currently lives at, since array position shifts as articles are
+  // added/removed but the filename-derived slug never does.
+  //
+  // Creating a new article from inside another article's editor has to
+  // skip Decap's own save flow entirely -- its plugin API (registerWidget,
+  // registerEventListener, custom control components) has no path to
+  // persist a second, unrelated entry from within a widget, and its Redux
+  // store isn't reachable from here either (confirmed empirically: no
+  // window.CMS.store). So this commits the new file straight to GitHub's
+  // Contents API instead, reusing the OAuth token Decap already stores in
+  // localStorage under 'decap-cms-user' -- the same credential, just a
+  // second, narrower write path alongside Decap's own. The new file's
+  // shape (frontmatter fields, slug format) is hand-matched to what
+  // config.yml's article collection + Decap's own slug template
+  // ({{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}-{{slug}}) would
+  // produce, including running the same lastEdited/firstPublished stamping
+  // the preSave hook above does -- that hook only fires on Decap's own
+  // save path, so a file created here would otherwise skip it entirely.
+  var GITHUB_REPO = 'mutaremores/mutare-mores-website';
+  var GITHUB_BRANCH = 'main';
+
+  function getGithubToken() {
+    try {
+      var raw = localStorage.getItem('decap-cms-user');
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && parsed.token;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function slugifyTitle(title) {
+    return (String(title || '')
+      .toLowerCase()
+      .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')) || 'untitled';
+  }
+
+  function makeArticleSlug(title) {
+    var d = new Date();
+    return '' + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate())
+      + pad2(d.getHours()) + pad2(d.getMinutes()) + pad2(d.getSeconds())
+      + '-' + slugifyTitle(title);
+  }
+
+  function yamlQuote(s) {
+    return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+  }
+
+  function buildNewArticleMarkdown(title) {
+    var today = new Date();
+    var iso = today.getFullYear() + '-' + pad2(today.getMonth() + 1) + '-' + pad2(today.getDate());
+    var short = MONTH_NAMES[today.getMonth()] + ' ' + today.getDate();
+    return [
+      '---',
+      'title: ' + yamlQuote(title),
+      'status: Not started',
+      'category: null',
+      'sources: []',
+      'topics: []',
+      'firstPublished: ' + iso,
+      'lastEdited: ' + short,
+      '---',
+      '',
+      '',
+    ].join('\n');
+  }
+
+  // Commits a new article file directly to GitHub. Resolves to
+  // {slug, title}, or rejects with a message safe to show the user as-is.
+  function createArticleOnGithub(title) {
+    var token = getGithubToken();
+    if (!token) {
+      return Promise.reject(new Error('Not signed in to GitHub -- reload the page and try again.'));
+    }
+    var slug = makeArticleSlug(title);
+    var path = 'content/articles/' + slug + '.md';
+    var content = buildNewArticleMarkdown(title);
+    var body = {
+      message: 'Create Learn Articles "' + slug + '"',
+      content: btoa(unescape(encodeURIComponent(content))),
+      branch: GITHUB_BRANCH,
+    };
+    return fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'token ' + token,
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github+json',
+      },
+      body: JSON.stringify(body),
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.json().catch(function () { return {}; }).then(function (err) {
+          throw new Error((err && err.message) || ('GitHub returned ' + res.status));
+        });
+      }
+      return { slug: slug, title: title };
+    });
+  }
+
+  // Fetches the site's own built article list (title + slug for every
+  // article) for the picker's search/browse list. Same slight staleness
+  // tradeoff as any client-side search index -- an article created seconds
+  // ago by someone else might not show up until the next site build, but
+  // "Add new article" always works regardless of this list's freshness.
+  var articleListCache = null;
+  function fetchArticleList() {
+    if (articleListCache) return Promise.resolve(articleListCache);
+    return fetch('/articles.json')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        articleListCache = (data.notionEntries || []).map(function (e) {
+          return { title: e.t, slug: e.slug };
+        });
+        return articleListCache;
+      })
+      .catch(function () {
+        return [];
+      });
+  }
+
+  function closeArticlePicker() {
+    var existing = document.getElementById('article-picker-overlay');
+    if (existing) existing.parentNode.removeChild(existing);
+  }
+
+  // Callback-based (not a Promise) since the two ways out -- picking an
+  // existing article, or creating a new one -- both just need to hand back
+  // {slug, title} to the same caller.
+  function openArticlePicker(onPick) {
+    closeArticlePicker();
+    var overlay = document.createElement('div');
+    overlay.id = 'article-picker-overlay';
+    overlay.className = 'article-picker-overlay';
+
+    var panel = document.createElement('div');
+    panel.className = 'article-picker-panel';
+    overlay.appendChild(panel);
+
+    function renderBrowseUI() {
+      panel.innerHTML = '';
+
+      var search = document.createElement('input');
+      search.className = 'article-picker-search';
+      search.placeholder = 'Search articles…';
+      panel.appendChild(search);
+
+      var list = document.createElement('div');
+      list.className = 'article-picker-list';
+      panel.appendChild(list);
+
+      var addRow = document.createElement('button');
+      addRow.type = 'button';
+      addRow.className = 'article-picker-add-btn';
+      addRow.textContent = '+ Add new article';
+      panel.appendChild(addRow);
+
+      function renderList(items) {
+        list.innerHTML = '';
+        if (!items.length) {
+          var empty = document.createElement('div');
+          empty.className = 'article-picker-empty';
+          empty.textContent = 'No matching articles.';
+          list.appendChild(empty);
+          return;
+        }
+        items.forEach(function (a) {
+          var row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'article-picker-item';
+          row.textContent = a.title;
+          row.addEventListener('click', function () {
+            closeArticlePicker();
+            onPick(a);
+          });
+          list.appendChild(row);
+        });
+      }
+
+      list.textContent = 'Loading…';
+      fetchArticleList().then(function (all) {
+        renderList(all);
+        search.addEventListener('input', function () {
+          var q = search.value.trim().toLowerCase();
+          renderList(!q ? all : all.filter(function (a) {
+            return a.title.toLowerCase().indexOf(q) !== -1;
+          }));
+        });
+      });
+
+      addRow.addEventListener('click', renderCreateUI);
+      search.focus();
+    }
+
+    function renderCreateUI() {
+      panel.innerHTML = '';
+
+      var backBtn = document.createElement('button');
+      backBtn.type = 'button';
+      backBtn.className = 'article-picker-back-btn';
+      backBtn.textContent = '← Back to search';
+      backBtn.addEventListener('click', renderBrowseUI);
+
+      var titleInput = document.createElement('input');
+      titleInput.className = 'article-picker-search';
+      titleInput.placeholder = 'New article title';
+
+      var createBtn = document.createElement('button');
+      createBtn.type = 'button';
+      createBtn.className = 'article-picker-add-btn';
+      createBtn.textContent = 'Create & link';
+
+      var status = document.createElement('div');
+      status.className = 'article-picker-status';
+
+      panel.appendChild(backBtn);
+      panel.appendChild(titleInput);
+      panel.appendChild(createBtn);
+      panel.appendChild(status);
+      titleInput.focus();
+
+      function doCreate() {
+        var title = titleInput.value.trim();
+        if (!title) { status.textContent = 'Enter a title first.'; return; }
+        createBtn.disabled = true;
+        status.textContent = 'Creating…';
+        createArticleOnGithub(title).then(function (result) {
+          articleListCache = null; // stale now; refetched next time the picker opens
+          closeArticlePicker();
+          onPick(result);
+        }).catch(function (err) {
+          createBtn.disabled = false;
+          status.textContent = err.message || 'Failed to create article.';
+        });
+      }
+      createBtn.addEventListener('click', doCreate);
+      titleInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); doCreate(); }
+      });
+    }
+
+    renderBrowseUI();
+
+    overlay.addEventListener('mousedown', function (e) {
+      if (e.target === overlay) closeArticlePicker();
+    });
+    document.addEventListener('keydown', function escHandler(e) {
+      if (e.key !== 'Escape') return;
+      closeArticlePicker();
+      document.removeEventListener('keydown', escHandler);
+    });
+
+    document.body.appendChild(overlay);
+  }
+
+  function ArticleLinkInlineTool(opts) {
+    this.api = opts.api;
+    this.button = null;
+    this._savedRange = null;
+  }
+  ArticleLinkInlineTool.isInline = true;
+  ArticleLinkInlineTool.title = 'Link to Article';
+  ArticleLinkInlineTool.prototype.render = function () {
+    this.button = document.createElement('button');
+    this.button.type = 'button';
+    this.button.classList.add(this.api.styles.inlineToolButton);
+    this.button.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg">'
+      + '<path d="M6.5 4L7.3 3.2C8.2 2.3 9.7 2.3 10.6 3.2C11.5 4.1 11.5 5.6 10.6 6.5L9.8 7.3" stroke="currentColor" fill="none" stroke-width="1.3"/>'
+      + '<path d="M7.5 10L6.7 10.8C5.8 11.7 4.3 11.7 3.4 10.8C2.5 9.9 2.5 8.4 3.4 7.5L4.2 6.7" stroke="currentColor" fill="none" stroke-width="1.3"/>'
+      + '<path d="M5.5 8.5L8.5 5.5" stroke="currentColor" stroke-width="1.3"/></svg>';
+    return this.button;
+  };
+  ArticleLinkInlineTool.prototype.surround = function (range) {
+    if (!range) return;
+    // Opening the picker moves focus into its search input, which
+    // collapses/loses the live selection -- clone it now so there's still
+    // something to wrap once the user actually picks an article.
+    this._savedRange = range.cloneRange();
+    var self = this;
+    openArticlePicker(function (article) {
+      var savedRange = self._savedRange;
+      if (!savedRange) return;
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+      var a = document.createElement('a');
+      a.href = 'article:' + article.slug;
+      try {
+        savedRange.surroundContents(a);
+      } catch (e) {
+        // Selection crosses a partial element boundary (not expected for
+        // plain paragraph/list text, but don't leave the click silently
+        // doing nothing if it happens) -- replace it with the article's
+        // title as fresh link text instead.
+        a.textContent = article.title;
+        savedRange.deleteContents();
+        savedRange.insertNode(a);
+      }
+      if (self.api && self.api.selection && self.api.selection.expandToTag) {
+        self.api.selection.expandToTag(a);
+      }
+    });
+  };
+  ArticleLinkInlineTool.prototype.checkState = function () {
+    return false;
+  };
+
+  // ---- "Copy link to article" on right-click in the CMS's own article
+  // list ---- Decap's list rows are real <a href="#/collections/article/
+  // entries/<slug>"> elements (verified directly against the live DOM);
+  // that href pattern is the one stable thing to key off, same reasoning
+  // article-editor.css uses positional selectors instead of Decap's own
+  // hashed, version-fragile class names.
+  function closeArticleContextMenu() {
+    var existing = document.getElementById('article-context-menu');
+    if (existing) existing.parentNode.removeChild(existing);
+  }
+  document.addEventListener('contextmenu', function (e) {
+    var link = e.target.closest && e.target.closest('a[href*="/collections/article/entries/"]');
+    if (!link) return;
+    e.preventDefault();
+    closeArticleContextMenu();
+    var m = link.getAttribute('href').match(/\/entries\/([^/?#]+)/);
+    if (!m) return;
+    var slug = m[1];
+    var titleEl = link.querySelector('h2');
+    var title = titleEl ? titleEl.textContent : slug;
+
+    var menu = document.createElement('div');
+    menu.id = 'article-context-menu';
+    menu.className = 'article-context-menu';
+    menu.style.left = e.clientX + 'px';
+    menu.style.top = e.clientY + 'px';
+    var item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'article-context-menu-item';
+    item.textContent = 'Copy link to article';
+    item.addEventListener('click', function () {
+      var text = '[' + title + '](article:' + slug + ')';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function () {});
+      }
+      closeArticleContextMenu();
+    });
+    menu.appendChild(item);
+    document.body.appendChild(menu);
+  });
+  document.addEventListener('click', function (e) {
+    var menu = document.getElementById('article-context-menu');
+    if (menu && !menu.contains(e.target)) closeArticleContextMenu();
   });
 })();
