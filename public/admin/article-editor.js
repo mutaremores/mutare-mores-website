@@ -331,15 +331,13 @@
                 // blocks.insert's own needToFocus wasn't landing inside the
                 // new empty list item's own contenteditable (focus ended up
                 // on the editor's trailing empty paragraph instead, so
-                // typing went there rather than into the bullet) -- find
-                // and focus that contenteditable directly once Editor.js
-                // has finished rendering the new block.
-                setTimeout(function () {
-                  var blockApi = self._editor.blocks.getBlockByIndex(idx);
-                  var holder = blockApi && blockApi.holder;
-                  var editable = holder && holder.querySelector('[contenteditable="true"]');
-                  if (editable) editable.focus();
-                }, 0);
+                // typing went there rather than into the bullet). Editor.js's
+                // own caret API (not a raw DOM .focus() call, which fought
+                // Editor.js's internal focus tracking and hung the tab) is
+                // the supported way to move the caret into a specific block.
+                if (self._editor.caret && self._editor.caret.setToBlock) {
+                  self._editor.caret.setToBlock(idx, 'start');
+                }
               }, true);
             }
           },
