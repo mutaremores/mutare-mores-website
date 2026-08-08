@@ -376,6 +376,8 @@
 
   /* ============= ARTICLE (single note) COLUMN VARIANT ============= */
   .article-body-text{font-size:14px;line-height:1.75;color:var(--ink);}
+  .room-body img{max-width:100%;height:auto;border-radius:4px;display:block;margin:12px 0;}
+  .article-body-text a,.article-bullets a{color:var(--accent-bright);text-decoration:underline;text-underline-offset:2px;}
   .article-body-empty{color:var(--ink-soft);font-style:italic;}
   /* row 1: status + category badges */
   .article-meta-line{font-size:11.5px;color:var(--ink-soft);margin-bottom:8px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
