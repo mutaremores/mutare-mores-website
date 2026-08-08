@@ -621,15 +621,6 @@ function drawRadar(){
   });
 }
 
-/* Trait-concept lookup: each dimension's High/Low "strengths and blind
-   spots" stub has a fixed origIndex from the original migration (High =
-   TRAIT_CONCEPT_OI_START + i*2, Low = +1, in `dims` order). Resolved
-   through oiToPos (set once articles.json loads) rather than used as a
-   raw array position, so it keeps pointing at the right article even as
-   unrelated articles get added or removed. */
-const TRAIT_CONCEPT_OI_START = 62;
-const RECS_PER_DIM = 3;
-
 function showAssessmentResult(){
   const profile = dims.map(d=>{
     const lvl = Math.max(1, Math.min(4, Math.round(scores[d])));
@@ -664,10 +655,15 @@ let notionEntries = [];
 let noteContent = [];
 let articleLinks = [];
 // origIndex -> current array position, rebuilt whenever notionEntries
-// loads/reloads. Lets a few places (dimArticleOrigIdx, trait-concept
-// recommendations) reference a specific article by a ref that survives
-// other articles being added or removed, instead of a raw array index.
+// loads/reloads. Lets dimArticleOrigIdx (the radar-axis-label definition
+// popup) reference a specific article by a ref that survives other
+// articles being added or removed, instead of a raw array index.
 let oiToPos = new Map();
+// One What it means / Strengths / Considerations bullet set per dimension
+// per High/Low reading, shown on the Discovery Test results page (see
+// insertResultsColumn) -- edited via the CMS's "Discovery Assessment
+// Results page" Site Settings entry.
+let discoveryResults = {};
 let learnWelcome = {
   heading: 'Start Here',
   intro: 'This library grows out of real coaching notes and reading. Pick a way in, or browse everything.'
@@ -947,29 +943,14 @@ function openArticleColumn(idx, afterIndex){
   renderLearnScroller();
 }
 
-// Picks up to RECS_PER_DIM articles to recommend for one dimension's
-// High/Low reading: the exact trait-concept stub first (via its stable
-// origIndex), then other same-topic articles, preferring ones that
-// actually have content written up (Done, then In progress, then Not
-// started) over bare stubs.
-function recommendationsForDim(i, high){
-  const dim = dims[i];
-  const picks = [];
-  const seen = new Set();
-  const add = idx => {
-    if(idx != null && notionEntries[idx] && !seen.has(idx)){ seen.add(idx); picks.push(idx); }
-  };
-  add(oiToPos.get(TRAIT_CONCEPT_OI_START + i*2 + (high?0:1)));
-  const progRank = {Done:0, 'In progress':1, 'Not started':2};
-  const pool = notionEntries
-    .map((e,idx)=>({e,idx}))
-    .filter(({e,idx})=>!seen.has(idx) && (e.topics||[]).includes(dim))
-    .sort((a,b)=>(progRank[a.e.prog] ?? 2) - (progRank[b.e.prog] ?? 2) || a.idx - b.idx);
-  for(const {idx} of pool){
-    if(picks.length >= RECS_PER_DIM) break;
-    add(idx);
-  }
-  return picks;
+// Renders one What it means / Strengths / Considerations bullet group
+// (skipped entirely if that category has no bullets yet, e.g. before the
+// owner has filled in the CMS content).
+function discoveryBulletGroup(label, items){
+  if(!items || !items.length) return '';
+  return `
+    <div class="article-section-label">${label}</div>
+    <ul class="article-bullets">${items.map(b=>`<li>${b}</li>`).join('')}</ul>`;
 }
 
 function insertResultsColumn(profile){
@@ -978,23 +959,23 @@ function insertResultsColumn(profile){
   el.className = 'learn-col active-type';
   const dimsHtml = dims.map((d,i)=>{
     const high = profile[i];
-    const recs = recommendationsForDim(i, high);
-    const linksHtml = recs.length
-      ? `<ul class="learn-links">${recs.map(idx=>`<li><a data-idx="${idx}">${notionEntries[idx].t}<span class="meta">${notionEntries[idx].cat||'Note'}</span></a></li>`).join('')}</ul>`
-      : `<p class="article-body-text article-body-empty">No recommendations yet for this one.</p>`;
+    const data = (discoveryResults[d.toLowerCase()] || {})[high ? 'high' : 'low'] || {};
+    const bulletsHtml = discoveryBulletGroup('What it means', data.whatItMeans)
+      + discoveryBulletGroup('Strengths', data.strengths)
+      + discoveryBulletGroup('Considerations', data.considerations);
     return `
       <div class="result-dim">
-        <div class="article-meta-line"><span class="status-badge ${high?'badge-done':'badge-notstarted'}">${d}: ${high?'High':'Low'}</span></div>
-        ${linksHtml}
+        <div class="article-meta-line">
+          <span class="result-dim-name">${d}</span>
+          <span class="status-badge ${high?'badge-done':'badge-notstarted'}">${high?'High':'Low'}</span>
+        </div>
+        ${bulletsHtml || '<p class="article-body-text article-body-empty">Content coming soon.</p>'}
       </div>`;
   }).join('');
   el.innerHTML = `
-    <div class="kicker">Your discovery profile</div>
-    <h3>Where you stand, and what to read next</h3>
+    <div class="kicker">Results</div>
+    <h3>Your Discovery Assessment Results</h3>
     ${dimsHtml}`;
-  el.querySelectorAll('[data-idx]').forEach(a=>{
-    a.addEventListener('click', ()=>openArticleColumn(+a.dataset.idx, 1));
-  });
   // sits right after Welcome (index 0)
   learnColumns = [learnColumns[0], {type:'result', el}, ...learnColumns.slice(2)];
   renderLearnScroller();
@@ -1012,6 +993,7 @@ fetch('articles.json')
     noteContent = data.noteContent;
     articleLinks = data.articleLinks;
     if (data.learnWelcome) learnWelcome = data.learnWelcome;
+    if (data.discoveryResults) discoveryResults = data.discoveryResults;
     oiToPos = new Map(
       notionEntries.map((e,i)=>[e.oi, i]).filter(([oi])=>oi != null)
     );

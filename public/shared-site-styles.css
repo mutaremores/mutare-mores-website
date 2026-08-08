@@ -269,6 +269,7 @@
   .learn-col.active-type{background:var(--paper);padding-left:20px;padding-top:4px;margin-left:-20px;}
   .result-dim{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
   .result-dim:first-of-type{margin-top:14px;padding-top:0;border-top:none;}
+  .result-dim-name{font-family:var(--font-display);font-weight:700;font-size:16px;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);}
 
   /* ============= ABOUT / WORK ============= */
   /* About's title/back-arrow read into the top-right corner and its CTA

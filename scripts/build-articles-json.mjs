@@ -150,11 +150,59 @@ if (fs.existsSync(workPath)) {
   }
 }
 
+// Discovery Assessment Results page: one What it means / Strengths /
+// Considerations bullet set per dimension per High/Low reading, edited via
+// the CMS's "Discovery Assessment Results page" Site Settings entry and
+// written to content/settings/discovery-results.json. Shown as one page by
+// public/index.html's insertResultsColumn, instead of linking out to
+// separate per-dimension articles the way it used to.
+//
+// Stored flat (36 top-level keys like "creativityHighStrengths") rather
+// than nested -- Decap's nested object-widget version crashed the whole
+// Site Settings collection's data loading (see the comment in
+// public/admin/config.yml next to this entry). Each field is one plain
+// text widget (one bullet per line) rather than a list widget -- list
+// versions never populated existing data even when otherwise correctly
+// configured, for reasons not fully pinned down; text is the pattern
+// already proven reliable elsewhere in this file. Split on newlines and
+// reassembled into the nested { dim: { high/low: { category: [...] } } }
+// shape here, once, so public/index.html's insertResultsColumn doesn't
+// need to know about the storage-format workaround.
+const DISCOVERY_DIMENSIONS = ["creativity", "eq", "vision", "influence", "execution", "adaptability"];
+const DISCOVERY_CATEGORIES = ["whatItMeans", "strengths", "considerations"];
+const capitalize = (s) => s[0].toUpperCase() + s.slice(1);
+let discoveryResults = {};
+const discoveryResultsPath = path.resolve("content/settings/discovery-results.json");
+if (fs.existsSync(discoveryResultsPath)) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(discoveryResultsPath, "utf-8"));
+    DISCOVERY_DIMENSIONS.forEach((dim) => {
+      discoveryResults[dim] = {};
+      ["high", "low"].forEach((level) => {
+        discoveryResults[dim][level] = {};
+        DISCOVERY_CATEGORIES.forEach((cat) => {
+          const flatKey = dim + capitalize(level) + capitalize(cat);
+          const bullets = String(parsed[flatKey] || "")
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+          // renderInline (not render) -- these are single-line bullets, so
+          // this keeps bold/italic/link support without wrapping each one
+          // in a stray <p>.
+          discoveryResults[dim][level][cat] = bullets.map((b) => mdRenderer.renderInline(b));
+        });
+      });
+    });
+  } catch (e) {
+    console.warn(`Could not parse ${discoveryResultsPath}, using defaults:`, e.message);
+  }
+}
+
 fs.mkdirSync(path.dirname(OUT_FILE), { recursive: true });
 fs.writeFileSync(
   OUT_FILE,
   JSON.stringify(
-    { notionEntries, noteContent, articleLinks, learnWelcome, about, work },
+    { notionEntries, noteContent, articleLinks, learnWelcome, about, work, discoveryResults },
     null,
     0
   )

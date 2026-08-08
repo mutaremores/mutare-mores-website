@@ -23,12 +23,21 @@
    rule -- needs :not([class*="PreviewPaneContainer"]) to stay scoped to
    just the inner, real fields container. nth-of-type(2) and up don't have
    this problem: the outer only ever has one child, so those positions
-   never match it. */
+   never match it.
+
+   Second gotcha, found when a Site Settings entry's first field lost its
+   label and picked up a stray "Article" kicker: these selectors match
+   [class*="ControlPane"] on ANY Decap entry form, not just the article
+   collection -- Decap has no collection-name hook to key off of in CSS.
+   Every rule below that isn't scoped to a specific widget class (i.e. the
+   positional nth-of-type rules and the card framing) needs
+   :has(.article-title) so it only ever fires on the one collection whose
+   form actually contains that widget. */
 
 /* Field 1 (Title) is now the ArticleTitleControl widget below -- it
    already reads as a heading, so Decap's own "Title" label above it would
    be redundant with what the real site shows. */
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) > div:nth-of-type(1) label {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:nth-of-type(1) label {
   display: none;
 }
 
@@ -37,14 +46,14 @@
    site's status-badge pills, so (like Title) their Decap field labels are
    hidden and they're laid out side by side on one line, mirroring the
    real site's .article-meta-line. */
-[class*="ControlPane"] > div:nth-of-type(2),
-[class*="ControlPane"] > div:nth-of-type(3) {
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(2),
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(3) {
   display: inline-block;
   vertical-align: top;
   margin: 0 8px 16px 0;
 }
-[class*="ControlPane"] > div:nth-of-type(2) label,
-[class*="ControlPane"] > div:nth-of-type(3) label {
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(2) label,
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(3) label {
   display: none;
 }
 
@@ -52,9 +61,9 @@
    ([class*="ControlContainer"]) -- fine for a real form field, but it
    fights the "this IS the article, not a form" effect for Title/Status/
    Category specifically, whose widgets already supply their own look. */
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) > div:nth-of-type(1) [class*="ControlContainer"],
-[class*="ControlPane"] > div:nth-of-type(2) [class*="ControlContainer"],
-[class*="ControlPane"] > div:nth-of-type(3) [class*="ControlContainer"] {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) > div:nth-of-type(1) [class*="ControlContainer"],
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(2) [class*="ControlContainer"],
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(3) [class*="ControlContainer"] {
   border: none;
   padding: 0;
   background: transparent;
@@ -63,8 +72,8 @@
 /* Fields 4-5 (Sources, Topics) stay as Decap's default widgets (out of
    scope for the inline-editing pass), just pill-styled and given a little
    room to breathe below the title/status/category "card header" above. */
-[class*="ControlPane"] > div:nth-of-type(4),
-[class*="ControlPane"] > div:nth-of-type(5) {
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4),
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(5) {
   display: inline-block;
   vertical-align: top;
   width: auto;
@@ -72,14 +81,14 @@
   margin-right: 12px;
   clear: both;
 }
-[class*="ControlPane"] > div:nth-of-type(4) label,
-[class*="ControlPane"] > div:nth-of-type(5) label {
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4) label,
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(5) label {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: .05em;
   color: #8d8d8d;
 }
-[class*="ControlPane"] > div:nth-of-type(4) select {
+[class*="ControlPane"]:has(.article-title) > div:nth-of-type(4) select {
   border-radius: 999px;
   padding: 4px 14px;
   border: 1px solid #dcdcda;
@@ -95,12 +104,12 @@
    since Decap owns this container's DOM and reparenting its own React
    nodes is what caused repeated "NotFoundError: removeChild" crashes when
    tried during earlier work on this admin. */
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]) {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title) {
   max-width: 720px;
   margin: 0 auto;
   padding-top: 8px;
 }
-[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"])::before {
+[class*="ControlPaneContainer"]:not([class*="PreviewPaneContainer"]):has(.article-title)::before {
   content: "Article";
   display: block;
   font-size: 10.5px;
