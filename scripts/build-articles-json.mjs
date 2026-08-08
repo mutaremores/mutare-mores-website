@@ -61,6 +61,11 @@ for (const p of ordered) {
     // to point at one specific article — e.g. the radar chart's per-dimension
     // "read more" links. Only legacy-migrated articles have one.
     oi: Number.isInteger(d.origIndex) ? d.origIndex : null,
+    // Filename (minus .md) doubles as this article's slug -- unlike oi
+    // above, every article has one, so it's what in-article cross-links
+    // (article:<slug> hrefs, inserted via the CMS's "Link to Article" tool)
+    // resolve against. See public/index.html's slugToPos.
+    slug: p.file.replace(/\.md$/, ""),
   });
 
   const notesHtml = htmlFromMarkdown(p.body);

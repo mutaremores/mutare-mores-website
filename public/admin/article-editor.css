@@ -294,3 +294,114 @@ div.badge-select-control {
   border-radius: 4px;
   margin-top: 2px;
 }
+
+/* ---- Article cross-linking: picker popup + list-view context menu ---- */
+.article-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 43, 43, .35);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.article-picker-panel {
+  width: 360px;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .2);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+}
+.article-picker-search {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid #dcdcda;
+  border-radius: 6px;
+  color: #2b2b2b;
+}
+.article-picker-list {
+  overflow-y: auto;
+  max-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.article-picker-item {
+  text-align: left;
+  font-family: inherit;
+  font-size: 13.5px;
+  padding: 7px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #2b2b2b;
+  cursor: pointer;
+}
+.article-picker-item:hover {
+  background: #f6f6f4;
+}
+.article-picker-empty {
+  font-size: 13px;
+  color: #8d8d8d;
+  padding: 8px;
+}
+.article-picker-add-btn,
+.article-picker-back-btn {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 1px solid #dcdcda;
+  border-radius: 6px;
+  background: #f6f6f4;
+  color: #2b2b2b;
+  cursor: pointer;
+  text-align: left;
+}
+.article-picker-add-btn:hover,
+.article-picker-back-btn:hover {
+  background: #eeeeec;
+}
+.article-picker-back-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 2px;
+  color: #8d8d8d;
+}
+.article-picker-status {
+  font-size: 12.5px;
+  color: #8d8d8d;
+  min-height: 16px;
+}
+
+.article-context-menu {
+  position: fixed;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #dcdcda;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  padding: 4px;
+}
+.article-context-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: 'Space Grotesk', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  padding: 7px 12px;
+  border: none;
+  background: transparent;
+  color: #2b2b2b;
+  cursor: pointer;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.article-context-menu-item:hover {
+  background: #f6f6f4;
+}
