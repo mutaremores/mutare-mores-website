@@ -481,6 +481,7 @@ div.badge-select-control {
   background: transparent !important;
 }
 [class*="ControlPane"]:has(.article-title) > div:has(.article-date-display) label {
+  display: inline-block !important;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: .05em;
