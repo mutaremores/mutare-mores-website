@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notion Sync — Mutare Mores</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        max-width: 480px;
+        margin: 80px auto;
+        padding: 0 20px;
+        color: #2b2b2b;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      button {
+        font-size: 15px;
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: 1px solid #2b2b2b;
+        background: #2b2b2b;
+        color: #fff;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+      a.login-link {
+        display: inline-block;
+        margin-top: 6px;
+      }
+      pre {
+        white-space: pre-wrap;
+        background: #f6f6f4;
+        border: 1px solid #dcdcda;
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 13px;
+        margin-top: 20px;
+      }
+      #status {
+        margin-top: 14px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Notion → Website Sync</h1>
+    <p id="intro">Pulls whatever's new or updated in Notion and publishes it to the site. Runs automatically once a day — this triggers it right now instead of waiting.</p>
+    <div id="loggedOut" style="display: none">
+      <p>Not logged in yet.</p>
+      <a class="login-link" href="/admin/">Log in via the CMS</a>, then come back to this page.
+    </div>
+    <div id="loggedIn" style="display: none">
+      <button id="syncBtn">Sync from Notion now</button>
+      <div id="status"></div>
+      <pre id="result" style="display: none"></pre>
+    </div>
+    <script>
+      // Reuses the same GitHub token Decap CMS stores after login (see
+      // public/admin/article-editor.js's getGithubToken) -- both pages
+      // share this origin, so localStorage is shared too. This just
+      // proves the caller can read the repo before running the sync; see
+      // src/worker.js's handleManualSyncTrigger.
+      function getGithubToken() {
+        try {
+          const raw = localStorage.getItem("decap-cms-user");
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          return parsed.token || null;
+        } catch {
+          return null;
+        }
+      }
+
+      const token = getGithubToken();
+      document.getElementById(token ? "loggedIn" : "loggedOut").style.display = "block";
+
+      if (token) {
+        const btn = document.getElementById("syncBtn");
+        const statusEl = document.getElementById("status");
+        const resultEl = document.getElementById("result");
+        btn.addEventListener("click", async () => {
+          btn.disabled = true;
+          statusEl.textContent = "Syncing… this can take a minute.";
+          resultEl.style.display = "none";
+          try {
+            const resp = await fetch("/notion-sync/trigger", {
+              method: "POST",
+              headers: { Authorization: "Bearer " + token },
+            });
+            const text = await resp.text();
+            if (!resp.ok) {
+              statusEl.textContent = "Sync failed (" + resp.status + ").";
+              resultEl.textContent = text;
+              resultEl.style.display = "block";
+            } else {
+              const summary = JSON.parse(text);
+              const parts = [];
+              if (summary.articles.length) parts.push(summary.articles.length + " article(s) updated");
+              if (summary.settings.length) parts.push(summary.settings.join(", ") + " updated");
+              if (!parts.length) parts.push("Nothing new — everything already up to date");
+              statusEl.textContent = parts.join("; ") + ".";
+              if (summary.errors.length) {
+                resultEl.textContent = summary.errors.join("\n");
+                resultEl.style.display = "block";
+              }
+            }
+          } catch (err) {
+            statusEl.textContent = "Sync failed: " + err.message;
+          } finally {
+            btn.disabled = false;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
