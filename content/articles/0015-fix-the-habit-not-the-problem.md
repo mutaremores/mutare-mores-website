@@ -1,8 +1,7 @@
 ---
-title: 'Fix the habit, not the problem'
+title: "Fix the habit, not the problem"
 status: In progress
-category:
-  - Thoughts
+category: Thoughts
 sources: []
 topics:
   - Psychology
@@ -13,8 +12,8 @@ topics:
   - Time management
   - Task management
   - Procrastination
-origIndex: 15
-firstPublished: '2026-07-22'
-lastEdited: '2026-07-27'
+origIndex: "15"
+firstPublished: 2026-07-22
+lastEdited: 2026-07-27
 ---
-
+---
