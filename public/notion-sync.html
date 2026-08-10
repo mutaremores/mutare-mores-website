@@ -15,152 +15,34 @@
       h1 {
         font-size: 20px;
       }
-      button {
+      a.button {
+        display: inline-block;
+        margin-top: 6px;
         font-size: 15px;
         padding: 10px 20px;
         border-radius: 6px;
         border: 1px solid #2b2b2b;
         background: #2b2b2b;
         color: #fff;
-        cursor: pointer;
+        text-decoration: none;
       }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
+      a.button:hover {
+        opacity: 0.85;
       }
-      a.login-link {
-        display: inline-block;
-        margin-top: 6px;
-      }
-      pre {
-        white-space: pre-wrap;
-        background: #f6f6f4;
-        border: 1px solid #dcdcda;
-        border-radius: 6px;
-        padding: 12px;
-        font-size: 13px;
-        margin-top: 20px;
-      }
-      #status {
-        margin-top: 14px;
-        font-size: 14px;
+      ol {
+        padding-left: 20px;
       }
     </style>
   </head>
   <body>
     <h1>Notion → Website Sync</h1>
-    <p id="intro">Pulls whatever's new or updated in Notion and publishes it to the site. Runs automatically once a day — this triggers it right now instead of waiting.</p>
-    <div id="loggedOut" style="display: none">
-      <p>Not logged in yet.</p>
-      <a class="login-link" href="/admin/">Log in via the CMS</a>, then come back to this page.
-    </div>
-    <div id="loggedIn" style="display: none">
-      <button id="syncBtn">Sync from Notion now</button>
-      <div id="status"></div>
-      <pre id="result" style="display: none"></pre>
-    </div>
-    <script>
-      // The sync itself runs as a GitHub Action (.github/workflows/notion-sync.yml),
-      // not on Cloudflare -- a full sync needs more outbound API calls than
-      // the Workers Free plan's 50-subrequest-per-request limit allows.
-      // This button just dispatches that workflow via GitHub's REST API,
-      // then polls the run's status. Reuses the same GitHub token Decap
-      // CMS stores after login (see public/admin/article-editor.js's
-      // getGithubToken) -- both pages share this origin, so localStorage
-      // is shared too. Needs the "repo" OAuth scope Decap's login already
-      // requests, which covers triggering/reading Actions runs.
-      const REPO = "mutaremores/mutare-mores-website";
-      const WORKFLOW = "notion-sync.yml";
-
-      function getGithubToken() {
-        try {
-          const raw = localStorage.getItem("decap-cms-user");
-          if (!raw) return null;
-          const parsed = JSON.parse(raw);
-          return parsed.token || null;
-        } catch {
-          return null;
-        }
-      }
-
-      async function gh(path, options = {}) {
-        return fetch(`https://api.github.com/repos/${REPO}${path}`, {
-          ...options,
-          headers: {
-            Authorization: "Bearer " + token,
-            Accept: "application/vnd.github+json",
-            ...(options.headers || {}),
-          },
-        });
-      }
-
-      const token = getGithubToken();
-      document.getElementById(token ? "loggedIn" : "loggedOut").style.display = "block";
-
-      if (token) {
-        const btn = document.getElementById("syncBtn");
-        const statusEl = document.getElementById("status");
-        const resultEl = document.getElementById("result");
-
-        async function pollRun(sinceIso) {
-          const since = new Date(sinceIso).getTime();
-          for (let attempt = 0; attempt < 40; attempt++) {
-            await new Promise((r) => setTimeout(r, 3000));
-            // GitHub's `created` query filter needs URL-encoded range
-            // operators (created=%3E...) that a plain template string
-            // doesn't produce -- simpler and just as reliable to fetch
-            // the newest few runs (already sorted newest-first) and pick
-            // the one that actually started after this click.
-            const resp = await gh(
-              `/actions/workflows/${WORKFLOW}/runs?event=workflow_dispatch&per_page=5`
-            );
-            if (!resp.ok) continue;
-            const data = await resp.json();
-            const run = (data.workflow_runs || []).find(
-              (r) => new Date(r.created_at).getTime() >= since
-            );
-            if (!run) continue;
-            if (run.status !== "completed") {
-              statusEl.textContent = `Syncing… (${run.status})`;
-              continue;
-            }
-            resultEl.style.display = "block";
-            resultEl.innerHTML = `<a href="${run.html_url}" target="_blank">View full run log on GitHub</a>`;
-            statusEl.textContent =
-              run.conclusion === "success"
-                ? "Sync finished successfully."
-                : `Sync finished with status: ${run.conclusion}.`;
-            return;
-          }
-          statusEl.textContent = "Still running — check the log link below.";
-        }
-
-        btn.addEventListener("click", async () => {
-          btn.disabled = true;
-          resultEl.style.display = "none";
-          statusEl.textContent = "Starting sync…";
-          const sinceIso = new Date(Date.now() - 5000).toISOString();
-          try {
-            const resp = await gh(`/actions/workflows/${WORKFLOW}/dispatches`, {
-              method: "POST",
-              body: JSON.stringify({ ref: "main" }),
-            });
-            if (!resp.ok) {
-              const text = await resp.text();
-              statusEl.textContent = "Could not start sync (" + resp.status + ").";
-              resultEl.textContent = text;
-              resultEl.style.display = "block";
-              return;
-            }
-            statusEl.textContent = "Sync started — this can take a minute.";
-            await pollRun(sinceIso);
-          } catch (err) {
-            statusEl.textContent = "Sync failed: " + err.message;
-          } finally {
-            btn.disabled = false;
-          }
-        });
-      }
-    </script>
+    <p>Pulls whatever's new or updated in Notion (Learn Articles, About, Work With Me) and publishes it to the site. Runs automatically every day — no action needed.</p>
+    <p>To publish something right now instead of waiting for the daily run:</p>
+    <ol>
+      <li>Open the sync workflow on GitHub (button below).</li>
+      <li>Click the <strong>"Run workflow"</strong> dropdown, then the green <strong>"Run workflow"</strong> button.</li>
+      <li>It finishes in under a minute — refresh the page to see it complete.</li>
+    </ol>
+    <a class="button" href="https://github.com/mutaremores/mutare-mores-website/actions/workflows/notion-sync.yml" target="_blank">Open sync workflow on GitHub</a>
   </body>
 </html>
