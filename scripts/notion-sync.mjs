@@ -541,6 +541,12 @@ async function main() {
   const summary = { articles: [], settings: [], errors: [] };
   loadManifest();
 
+  // The workflow's `git add` step names this path explicitly, which
+  // fails with "pathspec did not match any files" if it doesn't exist --
+  // ensured unconditionally here so a run with no new images doesn't
+  // break the commit step.
+  fs.mkdirSync(IMAGES_DIR, { recursive: true });
+
   try {
     await syncArticles(summary);
   } catch (e) {
