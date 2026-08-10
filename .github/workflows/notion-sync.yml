@@ -1,0 +1,45 @@
+name: Notion sync
+
+# Pulls whatever's new/updated in Notion (Learn Articles, About, Work With
+# Me) and commits it to main -- see scripts/notion-sync.mjs. Runs daily,
+# plus on demand via the "Run workflow" button here or the button on
+# public/notion-sync.html (which dispatches this same workflow through
+# GitHub's API). Cloudflare's existing build (npm run build) picks up the
+# commit automatically, same as any other push to main.
+on:
+  schedule:
+    # 9am UTC -- early morning US Eastern, before the workday starts.
+    - cron: "0 9 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - name: Run Notion sync
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: node scripts/notion-sync.mjs
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "notion-sync-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add content/articles content/settings public/images/notion-sync
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Notion sync: update site content"
+            git push
+          fi

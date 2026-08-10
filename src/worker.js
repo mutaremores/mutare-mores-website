@@ -1,12 +1,8 @@
-import { runSync } from "./notion-sync.js";
-
 // Worker entry point for mutaremores.com (see wrangler.jsonc).
 // Handles the two dynamic routes Decap CMS's GitHub OAuth login needs
 // (/auth, /callback) — same logic that used to live in Netlify Functions,
-// then briefly in Cloudflare Pages Functions — plus the Notion content
-// sync's manual-trigger route and daily Cron Trigger. Everything else
-// falls through to the static site files in public/ via the ASSETS
-// binding.
+// then briefly in Cloudflare Pages Functions. Everything else falls
+// through to the static site files in public/ via the ASSETS binding.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -17,79 +13,10 @@ export default {
     if (url.pathname === "/callback") {
       return handleCallback(request, env);
     }
-    if (url.pathname === "/notion-sync/trigger" && request.method === "POST") {
-      return handleManualSyncTrigger(request, env);
-    }
-    if (url.pathname === "/notion-sync/debug") {
-      return handleSyncDebug(env);
-    }
 
     return env.ASSETS.fetch(request);
   },
-
-  async scheduled(event, env, ctx) {
-    ctx.waitUntil(
-      runSync(env)
-        .then((summary) => console.log("Notion sync complete", JSON.stringify(summary)))
-        .catch((err) => console.error("Notion sync failed", err))
-    );
-  },
 };
-
-// TEMPORARY diagnostic for the NOTION_TOKEN 401s -- reports shape, not
-// value: whether the secret is bound at all, its length, and its first 4
-// chars (Notion's own token-type prefix, e.g. "ntn_", shared by every
-// internal integration token and not sensitive on its own). Remove once
-// the 401 is resolved.
-function handleSyncDebug(env) {
-  const t = env.NOTION_TOKEN;
-  const g = env.GITHUB_SYNC_TOKEN;
-  return new Response(
-    JSON.stringify(
-      {
-        notionTokenPresent: !!t,
-        notionTokenLength: t ? t.length : 0,
-        notionTokenPrefix: t ? t.slice(0, 4) : null,
-        notionTokenHasWhitespace: t ? /\s/.test(t) : null,
-        githubSyncTokenPresent: !!g,
-        githubSyncTokenLength: g ? g.length : 0,
-      },
-      null,
-      2
-    ),
-    { status: 200, headers: { "Content-Type": "application/json" } }
-  );
-}
-
-// Lets the owner kick off a sync on demand instead of waiting for the
-// daily cron. Reuses the GitHub token Decap CMS already stores in the
-// browser's localStorage after login (see public/notion-sync.html) rather
-// than introducing a second secret just for this -- the check below just
-// confirms the bearer token can actually read this repo before running.
-async function handleManualSyncTrigger(request, env) {
-  const auth = request.headers.get("Authorization") || "";
-  const token = auth.replace(/^Bearer\s+/i, "").trim();
-  if (!token) {
-    return new Response("Missing Authorization bearer token", { status: 401 });
-  }
-
-  const check = await fetch("https://api.github.com/repos/mutaremores/mutare-mores-website", {
-    headers: { Authorization: `Bearer ${token}`, "User-Agent": "mutare-mores-notion-sync" },
-  });
-  if (!check.ok) {
-    return new Response("Invalid or unauthorized token", { status: 403 });
-  }
-
-  try {
-    const summary = await runSync(env);
-    return new Response(JSON.stringify(summary, null, 2), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err) {
-    return new Response(`Sync failed: ${err.message}`, { status: 500 });
-  }
-}
 
 // Step 1 of the GitHub OAuth handshake: redirects the editor to GitHub's
 // authorize screen. GITHUB_OAUTH_ID is a public value (safe to expose);

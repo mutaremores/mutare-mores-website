@@ -60,11 +60,18 @@
       <pre id="result" style="display: none"></pre>
     </div>
     <script>
-      // Reuses the same GitHub token Decap CMS stores after login (see
-      // public/admin/article-editor.js's getGithubToken) -- both pages
-      // share this origin, so localStorage is shared too. This just
-      // proves the caller can read the repo before running the sync; see
-      // src/worker.js's handleManualSyncTrigger.
+      // The sync itself runs as a GitHub Action (.github/workflows/notion-sync.yml),
+      // not on Cloudflare -- a full sync needs more outbound API calls than
+      // the Workers Free plan's 50-subrequest-per-request limit allows.
+      // This button just dispatches that workflow via GitHub's REST API,
+      // then polls the run's status. Reuses the same GitHub token Decap
+      // CMS stores after login (see public/admin/article-editor.js's
+      // getGithubToken) -- both pages share this origin, so localStorage
+      // is shared too. Needs the "repo" OAuth scope Decap's login already
+      // requests, which covers triggering/reading Actions runs.
+      const REPO = "mutaremores/mutare-mores-website";
+      const WORKFLOW = "notion-sync.yml";
+
       function getGithubToken() {
         try {
           const raw = localStorage.getItem("decap-cms-user");
@@ -76,6 +83,17 @@
         }
       }
 
+      async function gh(path, options = {}) {
+        return fetch(`https://api.github.com/repos/${REPO}${path}`, {
+          ...options,
+          headers: {
+            Authorization: "Bearer " + token,
+            Accept: "application/vnd.github+json",
+            ...(options.headers || {}),
+          },
+        });
+      }
+
       const token = getGithubToken();
       document.getElementById(token ? "loggedIn" : "loggedOut").style.display = "block";
 
@@ -83,32 +101,51 @@
         const btn = document.getElementById("syncBtn");
         const statusEl = document.getElementById("status");
         const resultEl = document.getElementById("result");
+
+        async function pollRun(sinceIso) {
+          for (let attempt = 0; attempt < 40; attempt++) {
+            await new Promise((r) => setTimeout(r, 3000));
+            const resp = await gh(
+              `/actions/workflows/${WORKFLOW}/runs?event=workflow_dispatch&created=>${sinceIso}&per_page=1`
+            );
+            if (!resp.ok) continue;
+            const data = await resp.json();
+            const run = data.workflow_runs && data.workflow_runs[0];
+            if (!run) continue;
+            if (run.status !== "completed") {
+              statusEl.textContent = `Syncing… (${run.status})`;
+              continue;
+            }
+            resultEl.style.display = "block";
+            resultEl.innerHTML = `<a href="${run.html_url}" target="_blank">View full run log on GitHub</a>`;
+            statusEl.textContent =
+              run.conclusion === "success"
+                ? "Sync finished successfully."
+                : `Sync finished with status: ${run.conclusion}.`;
+            return;
+          }
+          statusEl.textContent = "Still running — check the log link below.";
+        }
+
         btn.addEventListener("click", async () => {
           btn.disabled = true;
-          statusEl.textContent = "Syncing… this can take a minute.";
           resultEl.style.display = "none";
+          statusEl.textContent = "Starting sync…";
+          const sinceIso = new Date(Date.now() - 5000).toISOString();
           try {
-            const resp = await fetch("/notion-sync/trigger", {
+            const resp = await gh(`/actions/workflows/${WORKFLOW}/dispatches`, {
               method: "POST",
-              headers: { Authorization: "Bearer " + token },
+              body: JSON.stringify({ ref: "main" }),
             });
-            const text = await resp.text();
             if (!resp.ok) {
-              statusEl.textContent = "Sync failed (" + resp.status + ").";
+              const text = await resp.text();
+              statusEl.textContent = "Could not start sync (" + resp.status + ").";
               resultEl.textContent = text;
               resultEl.style.display = "block";
-            } else {
-              const summary = JSON.parse(text);
-              const parts = [];
-              if (summary.articles.length) parts.push(summary.articles.length + " article(s) updated");
-              if (summary.settings.length) parts.push(summary.settings.join(", ") + " updated");
-              if (!parts.length) parts.push("Nothing new — everything already up to date");
-              statusEl.textContent = parts.join("; ") + ".";
-              if (summary.errors.length) {
-                resultEl.textContent = summary.errors.join("\n");
-                resultEl.style.display = "block";
-              }
+              return;
             }
+            statusEl.textContent = "Sync started — this can take a minute.";
+            await pollRun(sinceIso);
           } catch (err) {
             statusEl.textContent = "Sync failed: " + err.message;
           } finally {
