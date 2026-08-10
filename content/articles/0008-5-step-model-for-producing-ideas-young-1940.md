@@ -8,8 +8,8 @@ topics:
   - Team dynamics
   - Organizational development
 origIndex: "8"
-firstPublished: 2026-07-28
-lastEdited: 2026-07-28
+firstPublished: '2026-07-28'
+lastEdited: '2026-07-28'
 tldr: |
   ---
 

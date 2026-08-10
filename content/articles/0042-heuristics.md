@@ -6,7 +6,7 @@ sources: []
 topics:
   - Psychology
 origIndex: "42"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-22
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-22'
 ---
 

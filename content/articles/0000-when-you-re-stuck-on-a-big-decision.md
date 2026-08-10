@@ -6,8 +6,8 @@ sources: []
 topics:
   - Personal development
 origIndex: "0"
-firstPublished: 2026-07-29
-lastEdited: 2026-07-29
+firstPublished: '2026-07-29'
+lastEdited: '2026-07-29'
 tldr: |
   ---
 

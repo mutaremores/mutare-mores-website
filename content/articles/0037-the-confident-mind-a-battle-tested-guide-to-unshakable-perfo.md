@@ -8,7 +8,7 @@ topics:
   - Personal development
   - Psychology
 origIndex: "37"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-28
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-28'
 ---
 

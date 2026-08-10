@@ -7,8 +7,8 @@ topics:
   - Coaching
   - Systems thinking
   - Personal development
-firstPublished: 2026-08-03
-lastEdited: 2026-08-03
+firstPublished: '2026-08-03'
+lastEdited: '2026-08-03'
 tldr: |
   ---
 

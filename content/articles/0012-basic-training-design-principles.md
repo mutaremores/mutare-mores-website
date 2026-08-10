@@ -6,8 +6,8 @@ sources: []
 topics:
   - Training
 origIndex: "12"
-firstPublished: 2026-07-22
-lastEdited: 2026-07-28
+firstPublished: '2026-07-22'
+lastEdited: '2026-07-28'
 tldr: |
   ---
 

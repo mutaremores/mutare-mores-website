@@ -7,7 +7,7 @@ sources:
 topics:
   - Philosophy
 origIndex: "35"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-28
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-28'
 ---
 

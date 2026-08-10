@@ -10,7 +10,7 @@ topics:
   - Organizational development
   - Psychology
 origIndex: "21"
-firstPublished: 2026-07-22
-lastEdited: 2026-07-22
+firstPublished: '2026-07-22'
+lastEdited: '2026-07-22'
 ---
 

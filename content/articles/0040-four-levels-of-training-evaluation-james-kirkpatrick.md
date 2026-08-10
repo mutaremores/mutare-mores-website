@@ -9,8 +9,8 @@ topics:
   - Psychology
   - Training
 origIndex: "40"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-28
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-28'
 tldr: |
   ---
 

@@ -9,8 +9,8 @@ topics:
   - Coaching
   - Systems thinking
 origIndex: "22"
-firstPublished: 2026-07-19
-lastEdited: 2026-07-22
+firstPublished: '2026-07-19'
+lastEdited: '2026-07-22'
 tldr: |
   - If you’re facing the same problem over and over, you’re trying solutions for the wrong problem
   - Ask yourself “Why?” 5 times to figure out the root cause

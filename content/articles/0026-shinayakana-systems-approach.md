@@ -5,8 +5,8 @@ category: Concepts
 sources: []
 topics: []
 origIndex: "26"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-16
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-16'
 tldr: "- This is a Japanese-designed approach for complex and uncertain problems. It combines “hard” analysis with “soft” human judgment to get the best of both worlds, it’s more of a mindset than an actual analytical model. Taking an approach like this will help you use the tools at your disposal to be decision *supporters*, not decision-makers."
 ---
 - Developed in Japan in the 1980s

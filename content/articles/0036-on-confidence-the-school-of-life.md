@@ -9,7 +9,7 @@ topics:
   - Psychology
   - Philosophy
 origIndex: "36"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-28
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-28'
 ---
 

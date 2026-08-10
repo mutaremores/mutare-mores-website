@@ -6,7 +6,7 @@ sources:
   - Image
 topics: []
 origIndex: "52"
-firstPublished: 2026-07-13
-lastEdited: 2026-07-16
+firstPublished: '2026-07-13'
+lastEdited: '2026-07-16'
 ---
 

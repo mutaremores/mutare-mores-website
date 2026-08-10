@@ -10,7 +10,7 @@ topics:
   - Leadership
   - Team dynamics
 origIndex: "51"
-firstPublished: 2026-07-14
-lastEdited: 2026-07-22
+firstPublished: '2026-07-14'
+lastEdited: '2026-07-22'
 ---
 

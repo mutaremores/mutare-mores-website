@@ -5,7 +5,7 @@ category: Thoughts
 sources: []
 topics: []
 origIndex: "49"
-firstPublished: 2026-07-15
-lastEdited: 2026-07-16
+firstPublished: '2026-07-15'
+lastEdited: '2026-07-16'
 ---
 

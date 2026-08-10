@@ -8,8 +8,8 @@ topics:
   - Learning
   - Leadership
 origIndex: "6"
-firstPublished: 2026-07-28
-lastEdited: 2026-07-28
+firstPublished: '2026-07-28'
+lastEdited: '2026-07-28'
 tldr: |
   ---
 

@@ -9,8 +9,8 @@ topics:
   - Team dynamics
   - Creativity
 origIndex: "39"
-firstPublished: 2026-07-16
-lastEdited: 2026-07-28
+firstPublished: '2026-07-16'
+lastEdited: '2026-07-28'
 tldr: |
   ---
 

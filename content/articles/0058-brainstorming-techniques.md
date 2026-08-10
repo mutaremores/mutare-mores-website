@@ -8,7 +8,7 @@ topics:
   - Personal development
   - Systems thinking
 origIndex: "58"
-firstPublished: 2026-07-10
-lastEdited: 2026-07-22
+firstPublished: '2026-07-10'
+lastEdited: '2026-07-22'
 ---
 
