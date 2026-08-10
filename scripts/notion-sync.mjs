@@ -102,6 +102,17 @@ function getProp(page, name) {
   }
 }
 
+// gray-matter/js-yaml parses an unquoted bare date scalar (e.g.
+// `firstPublished: 2026-07-29`, which several legacy-migrated articles
+// have) into a real JS Date object, not a string -- re-stringifying that
+// unchanged would balloon it into a full ISO timestamp. Preserved date
+// values are normalized back to plain YYYY-MM-DD through this before
+// going into the frontmatter object handed to matter.stringify.
+function formatDateOnly(value) {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
+}
+
 function getTitleProp(page) {
   for (const key of Object.keys(page.properties)) {
     const p = page.properties[key];
@@ -387,19 +398,44 @@ function bootstrapManifestFromExistingFiles(notionPages) {
 
 // ---------- Article sync ----------
 
+// TL;DR / Notes / External Resources are heading_2 blocks, but not
+// necessarily toggles -- most migrated articles have them as plain
+// headings with the section's bullets as following siblings, not
+// children. Handles both shapes: a toggleable heading's content comes
+// from its children directly, otherwise everything up to the next
+// heading_2 is collected as that section's content.
 async function buildArticleContent(pageId) {
   const topBlocks = await getBlockChildren(pageId);
-  const sections = { tldr: "", notes: "", resources: "" };
   const nameMap = { "tl;dr": "tldr", notes: "notes", "external resources": "resources" };
-  for (const block of topBlocks) {
-    if (block.type !== "heading_2") continue;
-    const heading = richTextToMarkdown(block.heading_2.rich_text).trim().toLowerCase();
-    const key = nameMap[heading];
-    if (key && block.has_children) {
-      const children = await getBlockChildren(block.id);
-      sections[key] = await blocksToMarkdown(children, 0);
+  const sections = { tldr: "", notes: "", resources: "" };
+
+  let currentKey = null;
+  let buf = [];
+  const flushSiblings = async () => {
+    if (currentKey && buf.length) {
+      const md = await blocksToMarkdown(buf, 0);
+      if (md) sections[currentKey] = md;
     }
+    buf = [];
+  };
+
+  for (const block of topBlocks) {
+    if (block.type === "heading_2") {
+      await flushSiblings();
+      const heading = richTextToMarkdown(block.heading_2.rich_text).trim().toLowerCase();
+      currentKey = nameMap[heading] || null;
+      if (currentKey && block.has_children) {
+        const children = await getBlockChildren(block.id);
+        const md = await blocksToMarkdown(children, 0);
+        if (md) sections[currentKey] = md;
+        currentKey = null;
+      }
+      continue;
+    }
+    if (currentKey) buf.push(block);
   }
+  await flushSiblings();
+
   return sections;
 }
 
@@ -425,11 +461,16 @@ async function syncArticles(summary) {
     }
 
     const status = getProp(page, "Progress") || "Not started";
-    const category = getProp(page, "Category");
+    // Category is a Notion multi_select property, but the site's schema
+    // (config.yml's article-category widget) only ever shows/stores one
+    // value -- take the first, matching how the field is actually used.
+    const categoryValues = getProp(page, "Category") || [];
+    const category = categoryValues[0] || null;
     const sources = getProp(page, "Sources") || [];
     const topics = getProp(page, "Topics") || [];
-    const firstPublished =
-      existingParsed?.data.firstPublished || (getProp(page, "First edit") || page.created_time).slice(0, 10);
+    const firstPublished = existingParsed?.data.firstPublished
+      ? formatDateOnly(existingParsed.data.firstPublished)
+      : (getProp(page, "First edit") || page.created_time).slice(0, 10);
     const lastEdited = (getProp(page, "Last edit") || page.last_edited_time).slice(0, 10);
 
     const sections = await buildArticleContent(page.id);
