@@ -9,7 +9,7 @@ topics:
   - Personal development
   - Leadership
   - Team dynamics
-origIndex: "51"
+origIndex: 51
 firstPublished: '2026-07-14'
 lastEdited: '2026-07-22'
 ---

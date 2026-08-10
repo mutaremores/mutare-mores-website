@@ -12,7 +12,7 @@ topics:
   - Time management
   - Task management
   - Procrastination
-origIndex: "15"
+origIndex: 15
 firstPublished: '2026-07-22'
 lastEdited: '2026-07-27'
 ---

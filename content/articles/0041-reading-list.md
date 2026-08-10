@@ -5,7 +5,7 @@ category: Notes
 sources:
   - Books
 topics: []
-origIndex: "41"
+origIndex: 41
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 ---

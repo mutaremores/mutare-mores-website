@@ -8,7 +8,7 @@ topics:
   - Organizational development
   - Psychology
   - Training
-origIndex: "40"
+origIndex: 40
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 tldr: |

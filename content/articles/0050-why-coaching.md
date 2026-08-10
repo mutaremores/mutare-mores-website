@@ -5,7 +5,7 @@ category: Thoughts
 sources: []
 topics:
   - Coaching
-origIndex: "50"
+origIndex: 50
 firstPublished: '2026-07-14'
 lastEdited: '2026-07-22'
 tldr: |

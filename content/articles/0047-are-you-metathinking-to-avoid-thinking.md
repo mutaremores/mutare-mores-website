@@ -4,7 +4,7 @@ status: In progress
 category: Thoughts
 sources: []
 topics: []
-origIndex: "47"
+origIndex: 47
 firstPublished: '2026-07-15'
 lastEdited: '2026-07-15'
 ---

@@ -8,7 +8,7 @@ topics:
   - Productivity
   - Coaching
   - Systems thinking
-origIndex: "22"
+origIndex: 22
 firstPublished: '2026-07-19'
 lastEdited: '2026-07-22'
 tldr: |

@@ -3,7 +3,7 @@ title: Fiedler contingency model
 status: In progress
 sources: []
 topics: []
-origIndex: "2"
+origIndex: 2
 firstPublished: '2026-07-28'
 lastEdited: '2026-07-28'
 tldr: |

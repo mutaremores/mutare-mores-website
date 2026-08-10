@@ -8,7 +8,7 @@ topics:
   - Organizational development
   - Creativity
   - Culture
-origIndex: "9"
+origIndex: 9
 firstPublished: '2026-07-27'
 lastEdited: '2026-07-28'
 tldr: |

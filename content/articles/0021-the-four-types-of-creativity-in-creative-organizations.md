@@ -9,7 +9,7 @@ topics:
   - Team dynamics
   - Organizational development
   - Psychology
-origIndex: "21"
+origIndex: 21
 firstPublished: '2026-07-22'
 lastEdited: '2026-07-22'
 ---

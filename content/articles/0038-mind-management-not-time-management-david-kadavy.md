@@ -9,7 +9,7 @@ topics:
   - Task management
   - Creativity
   - Psychology
-origIndex: "38"
+origIndex: 38
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 tldr: |

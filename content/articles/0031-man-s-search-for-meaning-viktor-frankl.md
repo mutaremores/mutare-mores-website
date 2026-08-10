@@ -7,7 +7,7 @@ sources:
 topics:
   - Philosophy
   - Personal development
-origIndex: "31"
+origIndex: 31
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 ---

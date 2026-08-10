@@ -6,7 +6,7 @@ sources:
   - Books
 topics:
   - Personal development
-origIndex: "28"
+origIndex: 28
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 ---

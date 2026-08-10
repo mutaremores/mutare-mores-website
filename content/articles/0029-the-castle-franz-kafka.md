@@ -6,7 +6,7 @@ sources:
   - Books
 topics:
   - Philosophy
-origIndex: "29"
+origIndex: 29
 firstPublished: '2026-07-16'
 lastEdited: '2026-07-28'
 ---
