@@ -102,6 +102,56 @@ function getProp(page, name) {
   }
 }
 
+// Hand-rolled frontmatter writer, used instead of matter.stringify().
+// js-yaml's dump() auto-picks a scalar style per value, and for some
+// multi-line markdown content (e.g. a line starting with "**Bold**" or
+// containing a bare colon) it was choosing plain/quoted style instead of
+// a literal block, producing YAML matter() itself couldn't parse back
+// (confirmed against real synced content -- "unidentified alias" and
+// "document separator expected" errors). Always forcing block-literal
+// style for any multi-line string sidesteps that entirely: block
+// literals preserve text verbatim, no special-character interpretation.
+function yamlScalar(s) {
+  const str = String(s);
+  if (
+    str === "" ||
+    /^\s|\s$/.test(str) ||
+    /[:#[\]{}",'\n]/.test(str) ||
+    /^(true|false|null|~)$/i.test(str) ||
+    /^[-*&!|>%@`\d]/.test(str)
+  ) {
+    return JSON.stringify(str);
+  }
+  return str;
+}
+
+function yamlBlockScalar(s) {
+  const lines = String(s).replace(/\r\n/g, "\n").split("\n");
+  return "|\n" + lines.map((l) => (l ? "  " + l : "")).join("\n") + "\n";
+}
+
+function buildFrontmatter(fm) {
+  let out = "";
+  for (const [key, val] of Object.entries(fm)) {
+    if (val === undefined || val === null) continue;
+    if (key === "firstPublished" || key === "lastEdited") {
+      out += `${key}: ${val}\n`;
+    } else if (Array.isArray(val)) {
+      if (!val.length) {
+        out += `${key}: []\n`;
+      } else {
+        out += `${key}:\n`;
+        for (const item of val) out += `  - ${yamlScalar(item)}\n`;
+      }
+    } else if (typeof val === "string" && val.includes("\n")) {
+      out += `${key}: ${yamlBlockScalar(val)}`;
+    } else {
+      out += `${key}: ${yamlScalar(val)}\n`;
+    }
+  }
+  return out;
+}
+
 // gray-matter/js-yaml parses an unquoted bare date scalar (e.g.
 // `firstPublished: 2026-07-29`, which several legacy-migrated articles
 // have) into a real JS Date object, not a string -- re-stringifying that
@@ -486,7 +536,7 @@ async function syncArticles(summary) {
       if (sections.tldr.trim()) fm.tldr = sections.tldr.trim();
       if (sections.resources.trim()) fm.resources = sections.resources.trim();
 
-      const fileContent = matter.stringify(sections.notes.trim() + "\n", fm);
+      const fileContent = `---\n${buildFrontmatter(fm)}---\n${sections.notes.trim()}\n`;
       const outPath = path.join(ARTICLES_DIR, filename);
       if (existingRaw === fileContent) continue;
 
