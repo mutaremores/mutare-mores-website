@@ -135,7 +135,13 @@ function buildFrontmatter(fm) {
   for (const [key, val] of Object.entries(fm)) {
     if (val === undefined || val === null) continue;
     if (key === "firstPublished" || key === "lastEdited") {
-      out += `${key}: ${val}\n`;
+      // Quoted deliberately -- an unquoted bare date (2026-07-29) is
+      // YAML's !!timestamp type, which js-yaml parses into a real JS
+      // Date object. build-articles-json.mjs's real gray-matter parser
+      // hit exactly that: String(dateObj).slice(0,10) produced "Wed Jul
+      // 29" instead of "2026-07-29" on the live site. Quoting keeps it a
+      // plain string on read-back.
+      out += `${key}: '${val}'\n`;
     } else if (Array.isArray(val)) {
       if (!val.length) {
         out += `${key}: []\n`;
@@ -145,6 +151,12 @@ function buildFrontmatter(fm) {
       }
     } else if (typeof val === "string" && val.includes("\n")) {
       out += `${key}: ${yamlBlockScalar(val)}`;
+    } else if (typeof val === "number") {
+      // Real numbers (origIndex) must stay bare, unquoted digits --
+      // yamlScalar's leading-digit check exists to quote strings that
+      // happen to start with a digit, not to stringify actual numbers,
+      // which build-articles-json.mjs checks with Number.isInteger().
+      out += `${key}: ${val}\n`;
     } else {
       out += `${key}: ${yamlScalar(val)}\n`;
     }
