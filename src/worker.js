@@ -20,6 +20,9 @@ export default {
     if (url.pathname === "/notion-sync/trigger" && request.method === "POST") {
       return handleManualSyncTrigger(request, env);
     }
+    if (url.pathname === "/notion-sync/debug") {
+      return handleSyncDebug(env);
+    }
 
     return env.ASSETS.fetch(request);
   },
@@ -32,6 +35,31 @@ export default {
     );
   },
 };
+
+// TEMPORARY diagnostic for the NOTION_TOKEN 401s -- reports shape, not
+// value: whether the secret is bound at all, its length, and its first 4
+// chars (Notion's own token-type prefix, e.g. "ntn_", shared by every
+// internal integration token and not sensitive on its own). Remove once
+// the 401 is resolved.
+function handleSyncDebug(env) {
+  const t = env.NOTION_TOKEN;
+  const g = env.GITHUB_SYNC_TOKEN;
+  return new Response(
+    JSON.stringify(
+      {
+        notionTokenPresent: !!t,
+        notionTokenLength: t ? t.length : 0,
+        notionTokenPrefix: t ? t.slice(0, 4) : null,
+        notionTokenHasWhitespace: t ? /\s/.test(t) : null,
+        githubSyncTokenPresent: !!g,
+        githubSyncTokenLength: g ? g.length : 0,
+      },
+      null,
+      2
+    ),
+    { status: 200, headers: { "Content-Type": "application/json" } }
+  );
+}
 
 // Lets the owner kick off a sync on demand instead of waiting for the
 // daily cron. Reuses the GitHub token Decap CMS already stores in the
