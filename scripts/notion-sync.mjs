@@ -542,7 +542,13 @@ async function syncArticles(summary) {
       if (category) fm.category = category;
       fm.sources = sources;
       fm.topics = topics;
-      if (existingParsed?.data.origIndex !== undefined) fm.origIndex = existingParsed.data.origIndex;
+      if (existingParsed?.data.origIndex !== undefined) {
+        // Coerce back to a real number in case an earlier buggy run left
+        // it quoted as a string (origIndex: "0") -- self-heals files
+        // written before the numeric-scalar fix instead of perpetuating
+        // the string forever.
+        fm.origIndex = Number(existingParsed.data.origIndex);
+      }
       fm.firstPublished = firstPublished;
       fm.lastEdited = lastEdited;
       if (sections.tldr.trim()) fm.tldr = sections.tldr.trim();
