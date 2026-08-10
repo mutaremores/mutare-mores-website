@@ -450,47 +450,53 @@ async function syncArticles(summary) {
     const title = getTitleProp(page);
     if (!title) continue;
 
-    let filename = manifest.articles[page.id];
-    const filePath = filename ? path.join(ARTICLES_DIR, filename) : null;
-    const existingRaw = filePath && fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : null;
-    const existingParsed = existingRaw ? matter(existingRaw) : null;
+    try {
+      let filename = manifest.articles[page.id];
+      const filePath = filename ? path.join(ARTICLES_DIR, filename) : null;
+      const existingRaw = filePath && fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : null;
+      const existingParsed = existingRaw ? matter(existingRaw) : null;
 
-    if (!filename) {
-      filename = articleFilename(title, page.created_time);
-      manifest.articles[page.id] = filename;
+      if (!filename) {
+        filename = articleFilename(title, page.created_time);
+        manifest.articles[page.id] = filename;
+      }
+
+      const status = getProp(page, "Progress") || "Not started";
+      // Category is a Notion multi_select property, but the site's schema
+      // (config.yml's article-category widget) only ever shows/stores one
+      // value -- take the first, matching how the field is actually used.
+      const categoryValues = getProp(page, "Category") || [];
+      const category = categoryValues[0] || null;
+      const sources = getProp(page, "Sources") || [];
+      const topics = getProp(page, "Topics") || [];
+      const firstPublished = existingParsed?.data.firstPublished
+        ? formatDateOnly(existingParsed.data.firstPublished)
+        : (getProp(page, "First edit") || page.created_time).slice(0, 10);
+      const lastEdited = (getProp(page, "Last edit") || page.last_edited_time).slice(0, 10);
+
+      const sections = await buildArticleContent(page.id);
+
+      const fm = { title, status };
+      if (category) fm.category = category;
+      fm.sources = sources;
+      fm.topics = topics;
+      if (existingParsed?.data.origIndex !== undefined) fm.origIndex = existingParsed.data.origIndex;
+      fm.firstPublished = firstPublished;
+      fm.lastEdited = lastEdited;
+      if (sections.tldr.trim()) fm.tldr = sections.tldr.trim();
+      if (sections.resources.trim()) fm.resources = sections.resources.trim();
+
+      const fileContent = matter.stringify(sections.notes.trim() + "\n", fm);
+      const outPath = path.join(ARTICLES_DIR, filename);
+      if (existingRaw === fileContent) continue;
+
+      fs.writeFileSync(outPath, fileContent);
+      summary.articles.push({ title, filename, created: !existingRaw });
+    } catch (e) {
+      // One article's content shouldn't block every other article from
+      // syncing -- record which one and why, and move on.
+      summary.errors.push(`Article "${title}" failed: ${e.message}`);
     }
-
-    const status = getProp(page, "Progress") || "Not started";
-    // Category is a Notion multi_select property, but the site's schema
-    // (config.yml's article-category widget) only ever shows/stores one
-    // value -- take the first, matching how the field is actually used.
-    const categoryValues = getProp(page, "Category") || [];
-    const category = categoryValues[0] || null;
-    const sources = getProp(page, "Sources") || [];
-    const topics = getProp(page, "Topics") || [];
-    const firstPublished = existingParsed?.data.firstPublished
-      ? formatDateOnly(existingParsed.data.firstPublished)
-      : (getProp(page, "First edit") || page.created_time).slice(0, 10);
-    const lastEdited = (getProp(page, "Last edit") || page.last_edited_time).slice(0, 10);
-
-    const sections = await buildArticleContent(page.id);
-
-    const fm = { title, status };
-    if (category) fm.category = category;
-    fm.sources = sources;
-    fm.topics = topics;
-    if (existingParsed?.data.origIndex !== undefined) fm.origIndex = existingParsed.data.origIndex;
-    fm.firstPublished = firstPublished;
-    fm.lastEdited = lastEdited;
-    if (sections.tldr.trim()) fm.tldr = sections.tldr.trim();
-    if (sections.resources.trim()) fm.resources = sections.resources.trim();
-
-    const fileContent = matter.stringify(sections.notes.trim() + "\n", fm);
-    const outPath = path.join(ARTICLES_DIR, filename);
-    if (existingRaw === fileContent) continue;
-
-    fs.writeFileSync(outPath, fileContent);
-    summary.articles.push({ title, filename, created: !existingRaw });
   }
 }
 
