@@ -1,16 +1,15 @@
 ---
-origIndex: 13
-title: 'Training'
-category: 'Concepts'
-topics: ['Leadership', 'Organizational development', 'Training']
+title: Training
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics:
+  - Leadership
+  - Organizational development
+  - Training
+origIndex: 13
 firstPublished: '2026-07-22'
-lastEdited: 'July 22'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-22'
 ---
-
 

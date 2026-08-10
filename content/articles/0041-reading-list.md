@@ -1,16 +1,13 @@
 ---
-origIndex: 41
-title: 'Reading list'
-category: 'Notes'
+title: Reading list
+status: In progress
+category:
+  - Notes
+sources:
+  - Books
 topics: []
-sources: ['Books']
-status: 'In progress'
+origIndex: 41
 firstPublished: '2026-07-16'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

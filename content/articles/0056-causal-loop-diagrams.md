@@ -1,16 +1,13 @@
 ---
-origIndex: 56
-title: 'Causal loop diagrams'
-category: 'Concepts'
-topics: ['Systems design', 'Systems thinking']
+title: Causal loop diagrams
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics:
+  - Systems thinking
+origIndex: 56
 firstPublished: '2026-07-13'
-lastEdited: 'July 22'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-22'
 ---
-
 

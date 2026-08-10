@@ -1,16 +1,15 @@
 ---
+title: Man’s search for meaning - Viktor Frankl
+status: Not started
+category:
+  - Notes
+sources:
+  - Books
+topics:
+  - Philosophy
+  - Personal development
 origIndex: 31
-title: 'Man’s search for meaning - Viktor Frankl'
-category: 'Notes'
-topics: ['Philosophy', 'Personal development']
-sources: ['Books']
-status: 'Not started'
 firstPublished: '2026-07-16'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

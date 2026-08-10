@@ -1,17 +1,12 @@
 ---
-origIndex: 19
-title: 'Group communication'
-category: 'Concepts'
-topics: []
+title: Group communication
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 19
 firstPublished: '2026-07-22'
-lastEdited: 'July 28'
-hasContent: false
-related:
-  - 0021-the-four-types-of-creativity-in-creative-organizations
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

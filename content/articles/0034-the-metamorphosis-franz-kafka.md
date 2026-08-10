@@ -1,16 +1,14 @@
 ---
+title: The metamorphosis - Franz Kafka
+status: Not started
+category:
+  - Notes
+sources:
+  - Books
+topics:
+  - Philosophy
 origIndex: 34
-title: 'The metamorphosis - Franz Kafka'
-category: 'Notes'
-topics: ['Philosophy']
-sources: ['Books']
-status: 'Not started'
 firstPublished: '2026-07-16'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

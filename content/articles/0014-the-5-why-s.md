@@ -1,17 +1,12 @@
 ---
-origIndex: 14
-title: 'The 5 Why’s'
-category: 'Concepts'
-topics: []
+title: The 5 Why’s
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 14
 firstPublished: '2026-07-22'
-lastEdited: 'July 27'
-hasContent: false
-related:
-  - 0022-solving-the-problem-that-keeps-coming-back
-tldr: ''
-resources: ''
+lastEdited: '2026-07-27'
 ---
-
 

@@ -1,17 +1,12 @@
 ---
-origIndex: 25
-title: 'Pareto Principle (80/20 Rule)'
-category: 'Concepts'
-topics: []
+title: Pareto Principle (80/20 Rule)
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 25
 firstPublished: '2026-07-17'
-lastEdited: 'July 22'
-hasContent: false
-related:
-  - 0045-procrastination-can-come-in-the-form-of-progress
-tldr: ''
-resources: ''
+lastEdited: '2026-07-22'
 ---
-
 

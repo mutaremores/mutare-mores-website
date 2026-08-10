@@ -1,16 +1,12 @@
 ---
-origIndex: 24
-title: 'Ideation'
-category: 'Concepts'
-topics: []
+title: Ideation
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 24
 firstPublished: '2026-07-18'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

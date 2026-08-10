@@ -1,18 +1,13 @@
 ---
-origIndex: 10
-title: 'The creative process'
-category: 'Concepts'
-topics: ['Creativity']
+title: The creative process
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics:
+  - Creativity
+origIndex: 10
 firstPublished: '2026-07-27'
-lastEdited: 'July 27'
-hasContent: false
-related:
-  - 0008-5-step-model-for-producing-ideas-young-1940
-tldr: |
-  * Explain
-resources: ''
+lastEdited: '2026-07-27'
 ---
-
 

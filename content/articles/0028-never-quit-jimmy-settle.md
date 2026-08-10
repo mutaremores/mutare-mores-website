@@ -1,16 +1,14 @@
 ---
+title: Never quit - Jimmy Settle
+status: Not started
+category:
+  - Notes
+sources:
+  - Books
+topics:
+  - Personal development
 origIndex: 28
-title: 'Never quit - Jimmy Settle'
-category: 'Notes'
-topics: ['Personal development']
-sources: ['Books']
-status: 'Not started'
 firstPublished: '2026-07-16'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

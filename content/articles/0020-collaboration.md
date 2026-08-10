@@ -1,17 +1,12 @@
 ---
-origIndex: 20
-title: 'Collaboration'
-category: 'Concepts'
-topics: []
+title: Collaboration
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 20
 firstPublished: '2026-07-22'
-lastEdited: 'July 28'
-hasContent: false
-related:
-  - 0021-the-four-types-of-creativity-in-creative-organizations
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

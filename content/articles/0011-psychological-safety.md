@@ -1,17 +1,12 @@
 ---
-origIndex: 11
-title: 'Psychological safety'
-category: 'Concepts'
-topics: []
+title: Psychological safety
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 11
 firstPublished: '2026-07-27'
-lastEdited: 'July 27'
-hasContent: false
-related:
-  - 0039-herding-tigers-todd-henry
-tldr: ''
-resources: ''
+lastEdited: '2026-07-27'
 ---
-
 

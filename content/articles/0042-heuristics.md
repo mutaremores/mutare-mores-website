@@ -1,17 +1,13 @@
 ---
-origIndex: 42
-title: 'Heuristics'
-category: 'Concepts'
-topics: ['Psychology']
+title: Heuristics
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics:
+  - Psychology
+origIndex: 42
 firstPublished: '2026-07-16'
-lastEdited: 'July 22'
-hasContent: false
-related:
-  - 0043-decision-making
-tldr: ''
-resources: ''
+lastEdited: '2026-07-22'
 ---
-
 

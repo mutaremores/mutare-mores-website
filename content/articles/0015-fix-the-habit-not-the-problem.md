@@ -1,16 +1,20 @@
 ---
-origIndex: 15
 title: 'Fix the habit, not the problem'
-category: 'Thoughts'
-topics: ['Psychology', 'Systems design', 'Personal development', 'Productivity', 'Coaching', 'Systems thinking', 'Time management', 'Task management', 'Procrastination']
+status: In progress
+category:
+  - Thoughts
 sources: []
-status: 'In progress'
+topics:
+  - Psychology
+  - Personal development
+  - Productivity
+  - Coaching
+  - Systems thinking
+  - Time management
+  - Task management
+  - Procrastination
+origIndex: 15
 firstPublished: '2026-07-22'
-lastEdited: 'July 27'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-27'
 ---
-
 

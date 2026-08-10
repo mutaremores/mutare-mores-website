@@ -1,16 +1,12 @@
 ---
-origIndex: 23
-title: 'Groupthink'
-category: 'Concepts'
-topics: []
+title: Groupthink
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics: []
+origIndex: 23
 firstPublished: '2026-07-18'
-lastEdited: 'July 28'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-28'
 ---
-
 

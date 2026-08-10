@@ -1,16 +1,15 @@
 ---
-origIndex: 57
-title: 'Systems thinking'
-category: 'Concepts'
-topics: ['Systems design', 'Productivity', 'Systems thinking', 'Personal development']
+title: Systems thinking
+status: Not started
+category:
+  - Concepts
 sources: []
-status: 'Not started'
+topics:
+  - Productivity
+  - Systems thinking
+  - Personal development
+origIndex: 57
 firstPublished: '2026-07-10'
-lastEdited: 'July 22'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-22'
 ---
-
 

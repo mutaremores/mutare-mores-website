@@ -1,16 +1,13 @@
 ---
-origIndex: 61
 title: 'Leverage points: Places to intervene in a system'
-category: 'Notes'
+status: In progress
+category:
+  - Notes
+sources:
+  - Website
 topics: []
-sources: ['Website']
-status: 'In progress'
+origIndex: 61
 firstPublished: '2026-07-10'
-lastEdited: 'July 17'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-17'
 ---
-
 

@@ -1,16 +1,16 @@
 ---
+title: Justin Sung- How to build systems
+status: Not started
+category:
+  - Notes
+sources:
+  - Video
+topics:
+  - Systems thinking
+  - Task management
+  - Personal development
 origIndex: 54
-title: 'Justin Sung- How to build systems'
-category: 'Notes'
-topics: ['Systems design', 'Systems thinking', 'Task management', 'Personal development']
-sources: ['Video']
-status: 'Not started'
 firstPublished: '2026-07-13'
-lastEdited: 'July 27'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-27'
 ---
-
 

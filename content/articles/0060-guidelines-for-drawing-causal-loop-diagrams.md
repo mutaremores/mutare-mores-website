@@ -1,16 +1,13 @@
 ---
-origIndex: 60
-title: 'Guidelines for drawing causal loop diagrams'
-category: 'Notes'
+title: Guidelines for drawing causal loop diagrams
+status: In progress
+category:
+  - Notes
+sources:
+  - Website
 topics: []
-sources: ['Website']
-status: 'In progress'
+origIndex: 60
 firstPublished: '2026-07-10'
-lastEdited: 'July 17'
-hasContent: false
-related: []
-tldr: ''
-resources: ''
+lastEdited: '2026-07-17'
 ---
-
 
