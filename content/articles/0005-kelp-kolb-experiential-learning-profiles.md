@@ -3,7 +3,7 @@ title: KELP - Kolb Experiential Learning Profiles
 status: In progress
 category: Concepts
 sources:
-  - Article
+  - Articles
 topics:
   - Psychology
   - Learning
@@ -12,7 +12,7 @@ topics:
   - Personal development
 origIndex: 5
 firstPublished: '2026-07-28'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-11'
 tldr: |
   ---
 

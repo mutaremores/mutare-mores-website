@@ -6,11 +6,11 @@ sources: []
 topics: []
 origIndex: 16
 firstPublished: '2026-07-22'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-11'
 tldr: |
   ---
 
-  - BLUF
+  - Your habits are not isolated, change your environment (the system around that habit) and it will make your new habit more likely to stick.
 ---
 ---
 

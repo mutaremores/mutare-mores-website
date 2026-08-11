@@ -8,7 +8,7 @@ topics:
   - Systems thinking
   - Personal development
 firstPublished: '2026-08-03'
-lastEdited: '2026-08-03'
+lastEdited: '2026-08-10'
 tldr: |
   ---
 

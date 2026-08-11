@@ -1,11 +1,15 @@
 ---
 title: The 5 Why’s
-status: Not started
+status: In progress
 category: Concepts
 sources: []
-topics: []
+topics:
+  - Personal development
+  - Coaching
+  - Systems thinking
+  - Creativity
 origIndex: 14
 firstPublished: '2026-07-22'
-lastEdited: '2026-07-27'
+lastEdited: '2026-08-11'
 ---
 
