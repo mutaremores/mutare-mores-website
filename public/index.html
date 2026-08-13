@@ -894,7 +894,7 @@ function articleColumnEl(idx, afterIndex){
     ? `
       ${nc.tldr ? `<div class="article-section-label">TL;DR</div>${nc.tldr}` : ''}
       ${nc.notes ? `<div class="article-section-label">Notes</div>${nc.notes}` : ''}
-      ${nc.resources || ''}
+      ${nc.resources ? `<div class="article-section-label">External Resources</div>${nc.resources}` : ''}
     `
     : `<p class="article-body-text article-body-empty">This note hasn't been written up yet — check back soon.</p>`;
   el.innerHTML = `
