@@ -11,13 +11,17 @@
 // the site's own same-origin fetch('articles.json'). script-src and
 // style-src need 'unsafe-inline' because the whole site is one inline
 // <script>/<style> (see public/index.html) rather than external files
-// with nonces -- without it the page wouldn't run at all.
+// with nonces -- without it the page wouldn't run at all. font-src needs
+// data: because the display typefaces (TypewriterTest, FogleHunter, see
+// public/shared-site-styles.css) are embedded as base64 data: URIs, not
+// separate font files -- without it the browser silently fails to load
+// them and falls back to Unbounded.
 const SECURITY_HEADERS = {
   "Content-Security-Policy": [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://app.cal.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    "font-src 'self' data: https://fonts.gstatic.com",
     "img-src 'self' data:",
     "connect-src 'self'",
     "frame-src https://cal.com https://app.cal.com",
