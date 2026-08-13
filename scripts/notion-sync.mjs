@@ -185,6 +185,24 @@ function getTitleProp(page) {
 
 // ---------- Rich text -> markdown ----------
 
+// When you link one article to another in Notion (typing @ and picking a
+// page, or selecting text and using "Link to page"), Notion gives that
+// link an href pointing at its own page -- either a relative
+// "/p/<32 hex chars>" or a full notion.so URL, always ending in the
+// target page's id with the dashes stripped. If that id belongs to one
+// of our synced articles, the link needs to become the site's own
+// article:<slug> href (see public/index.html's slugToPos) instead of a
+// dead Notion path -- otherwise clicking it 404s or, on some setups,
+// downloads a Notion export instead of navigating.
+function articleSlugFromHref(href) {
+  const m = /([0-9a-f]{32})(?:[/?#]|$)/i.exec(href);
+  if (!m) return null;
+  const hex = m[1].toLowerCase();
+  const pageId = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  const filename = manifest.articles[pageId];
+  return filename ? filename.replace(/\.md$/, "") : null;
+}
+
 function richTextToMarkdown(richText) {
   if (!richText || !richText.length) return "";
   return richText
@@ -195,7 +213,10 @@ function richTextToMarkdown(richText) {
       if (rt.annotations?.bold) s = `**${s}**`;
       if (rt.annotations?.italic) s = `*${s}*`;
       if (rt.annotations?.strikethrough) s = `~~${s}~~`;
-      if (rt.href) s = `[${s}](${rt.href})`;
+      if (rt.href) {
+        const articleSlug = articleSlugFromHref(rt.href);
+        s = articleSlug ? `[${s}](article:${articleSlug})` : `[${s}](${rt.href})`;
+      }
       return s;
     })
     .join("");
@@ -506,6 +527,18 @@ async function syncArticles(summary) {
 
   bootstrapManifestFromExistingFiles(pages);
 
+  // Assign every page a filename up front, before building any content --
+  // not just as each is reached in the loop below. articleSlugFromHref
+  // needs the *target* article's manifest entry to already exist when
+  // resolving a cross-link, and articles don't necessarily come back from
+  // Notion in an order where a link's target has already been visited.
+  for (const page of pages) {
+    const title = getTitleProp(page);
+    if (title && !manifest.articles[page.id]) {
+      manifest.articles[page.id] = articleFilename(title, page.created_time);
+    }
+  }
+
   fs.mkdirSync(ARTICLES_DIR, { recursive: true });
 
   for (const page of pages) {
@@ -513,15 +546,10 @@ async function syncArticles(summary) {
     if (!title) continue;
 
     try {
-      let filename = manifest.articles[page.id];
-      const filePath = filename ? path.join(ARTICLES_DIR, filename) : null;
-      const existingRaw = filePath && fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : null;
+      const filename = manifest.articles[page.id];
+      const filePath = path.join(ARTICLES_DIR, filename);
+      const existingRaw = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : null;
       const existingParsed = existingRaw ? matter(existingRaw) : null;
-
-      if (!filename) {
-        filename = articleFilename(title, page.created_time);
-        manifest.articles[page.id] = filename;
-      }
 
       const status = getProp(page, "Progress") || "Not started";
       // Category is a Notion multi_select property, but the site's schema
