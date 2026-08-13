@@ -13,7 +13,7 @@ lastEdited: '2026-07-28'
 tldr: |
   ---
 
-  - This is the classic model for defining what the [creative process](/p/3aab69846bb3801eb328e5d92cdf1e49) is.
+  - This is the classic model for defining what the [creative process](article:0010-the-creative-process) is.
   - Created by James Webb Young, an advertising executive in 1940
   1. Gather - collect the necessary materials and data on the problem
   1. Digest - look at it from all angles and fully understand it

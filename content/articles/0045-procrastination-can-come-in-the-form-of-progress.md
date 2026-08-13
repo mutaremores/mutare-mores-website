@@ -14,7 +14,7 @@ tldr: |
 
   It was busywork, just distractions disguised as being productive. 
 
-  I’m not saying these things didn’t matter or didn’t help at all, but I was focusing on the 20% tasks, not[ the ones that would give me 80% of the results](/p/3a0b69846bb3807499c9e0e933f94d6f)
+  I’m not saying these things didn’t matter or didn’t help at all, but I was focusing on the 20% tasks, not[ the ones that would give me 80% of the results](article:0025-pareto-principle-80-20-rule)
 
   I made new websites and planned out videos, but the only thing I actually needed to do was talk to people and post videos. Everything else was an improvement, but not progress.
 ---

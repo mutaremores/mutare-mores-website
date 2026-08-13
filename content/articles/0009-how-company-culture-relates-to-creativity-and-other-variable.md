@@ -26,7 +26,7 @@ resources: "---"
 - The more similar the needs and personalities are of employees to their work environment, the more effective they will be
 - This includes things like higher motivation, job satisfaction, and low turnover
 - Culture is one of those factors of the work environment
-  - [3 types of culture (Wallach)](/p/3abb69846bb38058bb04e7cd8bd5f835)
+  - [3 types of culture (Wallach)](article:0003-3-types-of-cultures-in-organization-wallach)
     - Bureaucratic
       - Organized, cautious, systemic, mature, and the way that information and power is distributed tends to be in a hierarchy
     - Innovative

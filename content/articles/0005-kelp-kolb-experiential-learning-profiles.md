@@ -16,7 +16,7 @@ lastEdited: '2026-08-11'
 tldr: |
   ---
 
-  - This concept stems from Kolb’s [4 stages of learning](/p/3abb69846bb380d98aacfb7d41626f53) and [4 learning styles](/p/3abb69846bb38048ab8fee62c8af4cd0)
+  - This concept stems from Kolb’s [4 stages of learning](article:0007-4-stages-of-learning-kolb-1984) and [4 learning styles](article:0006-4-learning-preferences-styles-kolb-1984)
   - These are not traits, but 9 different states that we can develop in ourselves so that we learn better
 resources: |
   ---

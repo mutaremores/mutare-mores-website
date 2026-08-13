@@ -12,9 +12,9 @@ tldr: |
   ---
 
   - This is a study that discovered two creative processes in advertising students, Performance and Mastery.
-  - Use [mindscribing](/p/3b9b69846bb380458045d0bebb5bf252) more freely, don’t filter what you write
+  - Use [mindscribing](article:20260811002000-mindscribing) more freely, don’t filter what you write
   - Don’t always refer to the problem given to you, find and solve your own 
-  - Build your toolbox of “[idea generating techniques](/p/3a1b69846bb380769898f84cfd530bc9)”
+  - Build your toolbox of “[idea generating techniques](article:0024-ideation)”
 resources: "---"
 ---
 ---

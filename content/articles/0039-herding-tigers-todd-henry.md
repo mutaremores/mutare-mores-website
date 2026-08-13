@@ -22,7 +22,7 @@ tldr: |
 - Creative people have stereotypes like “they only want to make cool things”, “lack business sense”, “flaky/ insecure/ egotistical” that aren’t always true (sometimes they can be, of course) but believing in it is only harmful to them and the organization
 - People need a bit of challenge to be optimally motivated, too easy becomes boring, too hard and you give up or feel overwhelmed
 - Once you become a leader, you need to focus on leading your team, not being a creative
-  - You need to create the right environment for creative and good ideas ([see Psychological safety](/p/3aab69846bb38074863ffc9e16de581a))
+  - You need to create the right environment for creative and good ideas ([see Psychological safety](article:0011-psychological-safety))
 - Don’t waste your team’s effort on doing the wrong things, get your vision, principles, and guidelines right in order to guide them properly
 - You need to be coaching, not commanding
   - Don’t just instruct or give people the answer, how are they supposed to figure things out for themselves and grow? 

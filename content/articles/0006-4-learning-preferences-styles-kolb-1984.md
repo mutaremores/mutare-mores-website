@@ -13,8 +13,8 @@ lastEdited: '2026-07-28'
 tldr: |
   ---
 
-  - As a part of [Experiential Learning Theory](/p/3abb69846bb380038951c7e69d670464) by Kolb
-  - This was later updated into [9 different styles, called the KELP](/p/3abb69846bb380d4b9f3c248feb28546)
+  - As a part of [Experiential Learning Theory](article:0004-experiential-learning-theory-kolb) by Kolb
+  - This was later updated into [9 different styles, called the KELP](article:0005-kelp-kolb-experiential-learning-profiles)
   - **Accommodator**
     - Practical, intuitive problem-solving, enjoy new challenges
     - Use concrete experience and active experimentation

@@ -16,7 +16,7 @@ tldr: |
 resources: |
   ---
 
-  - [The Art of Explanation by Ros Atkins](/p/3b9b69846bb380eba0a4d6b1a22e8a81)
+  - [The Art of Explanation by Ros Atkins](article:20260811021600-the-art-of-explanation-ross-atkins)
 ---
 ---
 

@@ -10,7 +10,7 @@ lastEdited: '2026-07-28'
 tldr: |
   ---
 
-  - A.k.a. The experiential learning cycle, by Kolb (1984), who also created [four learning preferences](/p/3abb69846bb38048ab8fee62c8af4cd0) and the [KELP](/p/3abb69846bb380d4b9f3c248feb28546) as a part of [Experiential Learning Theory](/p/3abb69846bb380038951c7e69d670464)
+  - A.k.a. The experiential learning cycle, by Kolb (1984), who also created [four learning preferences](article:0006-4-learning-preferences-styles-kolb-1984) and the [KELP](article:0005-kelp-kolb-experiential-learning-profiles) as a part of [Experiential Learning Theory](article:0004-experiential-learning-theory-kolb)
   - There are 4 stages that people go through to learn through experience
 resources: |
   ---
