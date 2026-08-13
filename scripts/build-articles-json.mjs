@@ -84,6 +84,35 @@ for (const p of ordered) {
   });
 }
 
+// "Linked Articles" backlinks: for every in-body article: link (inserted
+// via the CMS's "Link to Article" tool, in tldr/notes/resources), record
+// the source article against the link's target so each article can show
+// what else links to it. Recomputed from scratch on every build rather
+// than stored per-article, so it stays correct automatically as Notion
+// sync adds, edits, or removes cross-links -- including a link added later
+// from an article that predates its target.
+const slugToIdx = new Map(notionEntries.map((e, i) => [e.slug, i]));
+const linkedFromMap = new Map(); // target slug -> [] of source idx, in appearance order
+noteContent.forEach((nc, i) => {
+  const combinedHtml = `${nc.tldr}${nc.notes}${nc.resources}`;
+  const seenTargets = new Set();
+  for (const m of combinedHtml.matchAll(/href="article:([^"#?]+)"/g)) {
+    const targetSlug = m[1];
+    if (targetSlug === notionEntries[i].slug) continue; // no self-links
+    if (!slugToIdx.has(targetSlug)) continue; // dead/unresolved link target
+    if (seenTargets.has(targetSlug)) continue; // one entry per source article
+    seenTargets.add(targetSlug);
+    if (!linkedFromMap.has(targetSlug)) linkedFromMap.set(targetSlug, []);
+    linkedFromMap.get(targetSlug).push(i);
+  }
+});
+notionEntries.forEach((e, i) => {
+  noteContent[i].linkedFrom = (linkedFromMap.get(e.slug) || []).map((srcIdx) => ({
+    slug: notionEntries[srcIdx].slug,
+    t: notionEntries[srcIdx].t,
+  }));
+});
+
 // Site-wide content that isn't a Learn article (currently just the Learn
 // "Start Here" welcome column heading/intro), edited via the CMS's Site
 // Settings entry and written to content/settings/learn-welcome.json.

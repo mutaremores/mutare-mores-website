@@ -897,6 +897,21 @@ function articleColumnEl(idx, afterIndex){
       ${nc.resources ? `<div class="article-section-label">External Resources</div>${nc.resources}` : ''}
     `
     : `<p class="article-body-text article-body-empty">This note hasn't been written up yet — check back soon.</p>`;
+  // Backlinks -- other articles whose own body links to this one (see
+  // linkedFrom in scripts/build-articles-json.mjs). Shown regardless of
+  // whether this article itself has content yet, since a stub can still be
+  // linked to from elsewhere.
+  const linkedFromHtml = (nc && nc.linkedFrom && nc.linkedFrom.length)
+    ? `
+      <div class="article-section-label">Linked Articles</div>
+      <ul class="learn-links">
+        ${nc.linkedFrom.map(l=>{
+          const pos = slugToPos.get(l.slug);
+          const meta = pos != null ? defaultEntryMeta(notionEntries[pos]) : '';
+          return `<li><a data-slug="${l.slug}">${l.t}<span class="meta">${meta}</span></a></li>`;
+        }).join('')}
+      </ul>`
+    : '';
   el.innerHTML = `
     <div class="kicker">Article</div>
     <h3 class="article-title">${entry.t}</h3>
@@ -907,7 +922,7 @@ function articleColumnEl(idx, afterIndex){
     <div class="article-meta-row2">
       <span class="article-date">Last edited ${links.last}</span>
     </div>
-    ${bodyHtml}`;
+    ${bodyHtml}${linkedFromHtml}`;
   // In-body cross-links to other articles (inserted via the CMS's "Link to
   // Article" tool) render as plain <a href="article:<slug>"> from the
   // markdown -> HTML pass; there's no real URL behind that scheme, so
@@ -925,6 +940,12 @@ function articleColumnEl(idx, afterIndex){
     a.addEventListener('click', (e)=>{
       e.preventDefault();
       const pos = slugToPos.get(slug);
+      if(pos != null) openArticleColumn(pos, afterIndex+1);
+    });
+  });
+  el.querySelectorAll('[data-slug]').forEach(a=>{
+    a.addEventListener('click', ()=>{
+      const pos = slugToPos.get(a.dataset.slug);
       if(pos != null) openArticleColumn(pos, afterIndex+1);
     });
   });
