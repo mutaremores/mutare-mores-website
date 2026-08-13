@@ -913,12 +913,19 @@ function articleColumnEl(idx, afterIndex){
   // markdown -> HTML pass; there's no real URL behind that scheme, so
   // clicking one is intercepted here and turned into opening that article
   // as the next column instead of letting the browser try to navigate.
+  // afterIndex here is *this* column's predecessor (the position it was
+  // itself opened after), so this column's own position is afterIndex+1 --
+  // links inside it need to open after THAT, matching the convention every
+  // other column type already uses (see entryListColumnEl). Passing bare
+  // afterIndex instead pointed openArticleColumn at the slot this same
+  // column occupies, so clicking a link replaced the article you were
+  // reading instead of opening a new one to the right of it.
   el.querySelectorAll('a[href^="article:"]').forEach(a=>{
     const slug = a.getAttribute('href').slice('article:'.length);
     a.addEventListener('click', (e)=>{
       e.preventDefault();
       const pos = slugToPos.get(slug);
-      if(pos != null) openArticleColumn(pos, afterIndex);
+      if(pos != null) openArticleColumn(pos, afterIndex+1);
     });
   });
   return el;
