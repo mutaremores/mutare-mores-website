@@ -10,7 +10,6 @@ topics:
   - Coaching
   - Systems thinking
   - Time management
-  - Task management
   - Procrastination
 origIndex: 15
 firstPublished: '2026-07-22'

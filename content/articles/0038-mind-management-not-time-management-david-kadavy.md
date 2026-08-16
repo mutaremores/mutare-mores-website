@@ -6,7 +6,6 @@ sources:
   - Books
 topics:
   - Time management
-  - Task management
   - Creativity
   - Psychology
 origIndex: 38

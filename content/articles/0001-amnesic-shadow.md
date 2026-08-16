@@ -1,14 +1,14 @@
 ---
 title: Amnesic shadow
 status: Done
-category: Concepts
+category: Notes
 sources:
   - Studies
 topics:
   - Psychology
 origIndex: 1
 firstPublished: '2026-07-28'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-15'
 tldr: |
   ---
 
