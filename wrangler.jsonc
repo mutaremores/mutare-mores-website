@@ -13,6 +13,9 @@
     // asset store and skips the Worker's fetch() handler entirely -- so the
     // security headers added there (see src/worker.js) never got attached.
     // This forces every request through fetch() first.
-    "run_worker_first": true
+    "run_worker_first": true,
+    // Serves public/404.html (instead of a bare empty 404 body) for any
+    // path that doesn't match a real file.
+    "not_found_handling": "404-page"
   }
 }
