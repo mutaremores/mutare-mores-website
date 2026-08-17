@@ -15,11 +15,25 @@ import MarkdownIt from "markdown-it";
 const CONTENT_DIR = path.resolve("content/articles");
 const OUT_FILE = path.resolve("public/articles.json");
 
+// Two renderers, deliberately different: settings content (about.json,
+// work.json, discovery-results.json) is hand-edited directly in this repo,
+// so only trusted committers can put raw HTML in it -- work.json actually
+// relies on that today (a hand-crafted <a id="..."> for a JS click hook).
+// Article content comes from Notion instead, which isn't the same trust
+// boundary (anyone with edit access to that Notion database, now or in the
+// future, could put a live <script> in a page and have it render unescaped
+// on every visitor's browser) -- so html stays off there.
 const mdRenderer = new MarkdownIt({ html: true, linkify: true });
+const mdRendererArticles = new MarkdownIt({ html: false, linkify: true });
 
 function htmlFromMarkdown(str) {
   if (!str) return "";
   return mdRenderer.render(str).trim();
+}
+
+function htmlFromArticleMarkdown(str) {
+  if (!str) return "";
+  return mdRendererArticles.render(str).trim();
 }
 
 const files = fs
@@ -68,11 +82,11 @@ for (const p of ordered) {
     slug: p.file.replace(/\.md$/, ""),
   });
 
-  const notesHtml = htmlFromMarkdown(p.body);
+  const notesHtml = htmlFromArticleMarkdown(p.body);
   noteContent.push({
-    tldr: htmlFromMarkdown(d.tldr || ""),
+    tldr: htmlFromArticleMarkdown(d.tldr || ""),
     notes: notesHtml,
-    resources: htmlFromMarkdown(d.resources || ""),
+    resources: htmlFromArticleMarkdown(d.resources || ""),
     // "Has this been written up?" is derived from the body field itself
     // now, not a separate manual checkbox — if there's real body content,
     // it's written up.
