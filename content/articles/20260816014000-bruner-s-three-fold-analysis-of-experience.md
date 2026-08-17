@@ -1,8 +1,12 @@
 ---
 title: Bruner’s Three Fold Analysis of Experience
-status: Not started
-sources: []
-topics: []
+status: In progress
+category: Notes
+sources:
+  - Websites
+topics:
+  - Learning
+  - Training
 firstPublished: '2026-08-16'
 lastEdited: '2026-08-16'
 tldr: |
@@ -18,7 +22,6 @@ resources: |
 
 - Enactive
   - Learn through movement or action
-  - Starts at 
 - Iconic
   - Learn through images, diagrams, charts
 - Symbolic
