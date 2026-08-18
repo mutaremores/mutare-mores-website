@@ -9,6 +9,6 @@ topics:
   - Personal development
 origIndex: 54
 firstPublished: '2026-07-13'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 ---
 

@@ -8,7 +8,7 @@ topics:
   - Creativity
 origIndex: 52
 firstPublished: '2026-07-13'
-lastEdited: '2026-08-15'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -33,5 +33,7 @@ tldr: |
       - Yellow hat- If this campaign succeeds, we'll increase brand awareness, strengthen customer engagement, and give team members an opportunity to showcase their creativity.
       - Red hat- I have a good feeling about this concept. It feels authentic to our brand, but I'm concerned the team is already feeling stretched and could become overwhelmed with this deadline
       - Black hat- If we launch without enough testing, we could receive negative feedback. The timeline is tight, and missing deadlines could affect the quality of the campaign
+
+  **External Resources**
 ---
 

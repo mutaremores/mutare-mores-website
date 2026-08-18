@@ -13,6 +13,8 @@ topics:
   - Procrastination
 origIndex: 15
 firstPublished: '2026-07-22'
-lastEdited: '2026-07-27'
+lastEdited: '2026-08-18'
 ---
 ---
+
+**External Resources**

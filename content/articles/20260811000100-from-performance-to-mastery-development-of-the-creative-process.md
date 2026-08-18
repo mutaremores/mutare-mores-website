@@ -7,7 +7,7 @@ sources:
 topics:
   - Creativity
 firstPublished: '2026-08-11'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -15,7 +15,6 @@ tldr: |
   - Use [mindscribing](article:20260811002000-mindscribing) more freely, don’t filter what you write
   - Don’t always refer to the problem given to you, find and solve your own 
   - Build your toolbox of “[idea generating techniques](article:0024-ideation)”
-resources: "---"
 ---
 ---
 
@@ -31,4 +30,6 @@ resources: "---"
 1. Mindscribing
   1. Tip: Be free and write as much as you can, don’t filter out thoughts or ideas, this is the fuel for your creative ideas
 1. Heuristics
-  1. Gain more experience to build your own “rules of thumb”
+  1. Gain more experience to build your own “rules of thumb” 
+
+**External Resources**

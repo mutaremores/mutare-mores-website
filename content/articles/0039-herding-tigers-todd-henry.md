@@ -10,7 +10,7 @@ topics:
   - Creativity
 origIndex: 39
 firstPublished: '2026-07-16'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -27,3 +27,5 @@ tldr: |
 - You need to be coaching, not commanding
   - Don’t just instruct or give people the answer, how are they supposed to figure things out for themselves and grow? 
   - Not just for tasks, but be empathetic and try to understand their thoughts and feelings (and then use that information to lead them better)
+
+**External Resources**

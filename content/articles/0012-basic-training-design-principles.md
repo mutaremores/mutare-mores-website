@@ -7,7 +7,7 @@ topics:
   - Training
 origIndex: 12
 firstPublished: '2026-07-22'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -31,3 +31,5 @@ tldr: |
   - On-the-job training - 70%
   - Social learning/ other training - 20%
   - Formal videos/ programs - 10%
+
+**External Resources**

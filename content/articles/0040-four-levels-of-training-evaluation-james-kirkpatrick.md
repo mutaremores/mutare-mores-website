@@ -10,7 +10,7 @@ topics:
   - Training
 origIndex: 40
 firstPublished: '2026-07-16'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -25,3 +25,5 @@ tldr: |
 ---
 
 - Notes
+
+**External Resources**

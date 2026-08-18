@@ -8,14 +8,13 @@ topics:
   - Personal development
   - Leadership
 firstPublished: '2026-08-11'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
   - This is a great book about how to explain yourself better, with more clarity and persuasion
-resources: |
-  ---
+---
+---
 
+**External Resources**
   - The Art of Explanation by Ros Atkins
----
----

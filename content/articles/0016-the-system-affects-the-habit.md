@@ -6,7 +6,7 @@ sources: []
 topics: []
 origIndex: 16
 firstPublished: '2026-07-22'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -18,3 +18,5 @@ tldr: |
 - When you change a habit, that habit will effect other parts of your life.
 - When trying to change a habit, you need to change other parts of your life.
 - In other words, the habit you are trying to create, in order to stick, needs to be a *byproduct* of the other things you do in your life.
+
+**External Resources**

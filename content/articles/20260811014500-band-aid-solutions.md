@@ -9,12 +9,13 @@ topics:
   - Systems thinking
   - Personal development
 firstPublished: '2026-08-11'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
   - Band-aid solutions are quick fixes for surface-level issues. 
   - Dig deeper to find the root cause, or other factors involved to solve a problem in the long term.
-resources: "---"
 ---
 ---
+
+**External Resources**

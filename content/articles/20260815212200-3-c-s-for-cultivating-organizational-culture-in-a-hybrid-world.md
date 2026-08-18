@@ -9,8 +9,9 @@ topics:
   - Team dynamics
   - Culture
 firstPublished: '2026-08-15'
-lastEdited: '2026-08-15'
+lastEdited: '2026-08-18'
 tldr: "---"
-resources: "---"
 ---
 ---
+
+**External Resources**

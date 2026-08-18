@@ -7,17 +7,12 @@ sources:
 topics:
   - Creativity
 firstPublished: '2026-08-16'
-lastEdited: '2026-08-16'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
   - A way to come up with 2 tiers of ideas, 8 “core” ideas and additional ideas for each of those
   - Draw it out!
-resources: |
-  ---
-
-  - [https://andyeklund.com/lotus-blossom/](https://andyeklund.com/lotus-blossom/)
-  - [https://itk.mitre.org/2020/11/02/lotus-blossom-tool-tips/](https://itk.mitre.org/2020/11/02/lotus-blossom-tool-tips/)
 ---
 ---
 
@@ -28,3 +23,7 @@ resources: |
 1. Draw 8 grids around the first one, and put each of the sub-topics into the center of those
 1. Fill in each square with an idea relating to the center
 1. Repeat for each grid
+
+**External Resources**
+  - [Lotus Blossom](https://andyeklund.com/lotus-blossom/)
+  - [Lotus Blossom Tool Tips - Innovation Toolkit](https://itk.mitre.org/2020/11/02/lotus-blossom-tool-tips/)

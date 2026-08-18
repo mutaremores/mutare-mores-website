@@ -10,7 +10,7 @@ topics:
   - Psychology
 origIndex: 38
 firstPublished: '2026-07-16'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -33,10 +33,12 @@ tldr: |
   - Important tasks first, think of filling a jar with rocks, then gravel, then sand
     - You can’t fit the important tasks (the rocks) if you fill your day with small ones (the sand)
 - Stages of creativity
-  1.  Preliminary work
+  1. Preliminary work
   1. Rest
   1. Creativity
   - Research and get to know the problem at hand from all angles
   - You can’t go straight into creative thinking, give your brain time to rest and then think 
     - This is why “Shower Thoughts” are a thing, your brain is forced to “zone out” and that’s when it processes things
   - Distracting yourself (social media is a big one, of course) prevents this processing
+
+**External Resources**

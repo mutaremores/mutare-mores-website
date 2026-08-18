@@ -9,7 +9,7 @@ topics:
   - Leadership
 origIndex: 6
 firstPublished: '2026-07-28'
-lastEdited: '2026-07-28'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -27,14 +27,13 @@ tldr: |
   - **Converger**
     - Practical, technical, experimental, unemotional
     - Use abstract conceptualization and active experimentation
-resources: |
-  ---
-
-  - [https://en.wikipedia.org/wiki/Kolb%27s_experiential_learning](https://en.wikipedia.org/wiki/Kolb%27s_experiential_learning)
-  - [https://citt.it.ufl.edu/resources/course-development/the-learning-process/types-of-learners/kolbs-four-stages-of-learning/](https://citt.it.ufl.edu/resources/course-development/the-learning-process/types-of-learners/kolbs-four-stages-of-learning/)
-  - [https://medium.com/proactive-learning/kolb-learning-style-e56162c48d43](https://medium.com/proactive-learning/kolb-learning-style-e56162c48d43)
 ---
 ---
 
 - Knowing your learning style can help you adjust how you learn or how you teach others
 - Helps design activities around the style, and encourage yourself and others to go through the full learning process
+
+**External Resources**
+  - [Kolb's experiential learning](https://en.wikipedia.org/wiki/Kolb%27s_experiential_learning)
+  - [Kolbs Four Stages of Learning | CITT | University of Florida](https://citt.it.ufl.edu/resources/course-development/the-learning-process/types-of-learners/kolbs-four-stages-of-learning/)
+  - [Kolb Learning Style](https://medium.com/proactive-learning/kolb-learning-style-e56162c48d43)

@@ -10,7 +10,7 @@ topics:
   - Culture
 origIndex: 9
 firstPublished: '2026-07-27'
-lastEdited: '2026-08-11'
+lastEdited: '2026-08-18'
 tldr: |
   ---
 
@@ -19,7 +19,6 @@ tldr: |
   - **Bureaucratic **cultures- associated with higher needs for power and affiliation, and creativity
   - **Innovative **cultures- associated with high needs for achievement, affiliation, and power
   - **Supportive **cultures- associated with high needs for autonomy
-resources: "---"
 ---
 ---
 
@@ -34,7 +33,7 @@ resources: "---"
     - Supportive
       - Very friendly, helpful, and open, might be described as a “family”
 - The researchers chose various factors to measure using a survey, given to several companies
-  -  Job satisfaction, job involvement, likelihood to leave, need for achievement/ autonomy/ power/ affiliation, likelihood to take risks, creativity, and the organization’s culture
+  - Job satisfaction, job involvement, likelihood to leave, need for achievement/ autonomy/ power/ affiliation, likelihood to take risks, creativity, and the organization’s culture
 - Within each type of culture, the results showed that the people were associated with the following:
   - **Bureaucratic **cultures
     - Higher needs for power and affiliation, and creativity
@@ -42,3 +41,5 @@ resources: "---"
     - High needs for achievement, affiliation, and power
   - **Supportive **cultures
     - High needs for autonomy
+
+**External Resources**
