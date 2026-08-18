@@ -294,10 +294,19 @@ let currentRoom = 'home';
 // browser's own toolbar. Feature-detected once so browsers without dvh
 // support keep working with plain vh instead of silently failing to move.
 const VH_UNIT = (window.CSS && CSS.supports && CSS.supports('height', '100dvh')) ? 'dvh' : 'vh';
-function goToRoom(name){
+// Real, bookmarkable/shareable URLs per room -- src/worker.js serves
+// index.html for these paths directly (see its SPA_ROOM_PATHS), so a
+// direct load or refresh lands here too, not just in-app clicks.
+const ROOM_PATHS = { home:'/', about:'/about', work:'/work', assessment:'/assessment', learn:'/learn' };
+function goToRoom(name, opts){
+  opts = opts || {};
   const pos = ROOM_POS[name];
   document.getElementById('canvasInner').style.transform = `translate(-${pos.x}vw,-${pos.y}${VH_UNIT})`;
   currentRoom = name;
+  if(opts.updateUrl !== false){
+    const path = ROOM_PATHS[name] || '/';
+    if(location.pathname !== path) history.pushState({room:name}, '', path);
+  }
 }
 
 // Sizes each home-screen word to exactly fill its own quadrant. Height is
@@ -813,10 +822,10 @@ function entryListColumnEl(kicker, title, entries, afterIndex, metaFn){
     <div class="kicker">${kicker}</div>
     <h3>${title}</h3>
     <ul class="learn-links">
-      ${entries.map(e=>`<li><a data-idx="${notionEntries.indexOf(e)}">${e.t}<span class="meta">${metaFn(e)}</span></a></li>`).join('')}
+      ${entries.map(e=>`<li><a href="/learn/${e.slug}" data-idx="${notionEntries.indexOf(e)}">${e.t}<span class="meta">${metaFn(e)}</span></a></li>`).join('')}
     </ul>`;
   el.querySelectorAll('[data-idx]').forEach(a=>{
-    a.addEventListener('click', ()=>openArticleColumn(+a.dataset.idx, afterIndex+1));
+    a.addEventListener('click', (e)=>{ e.preventDefault(); openArticleColumn(+a.dataset.idx, afterIndex+1); });
   });
   return el;
 }
@@ -916,7 +925,7 @@ function articleColumnEl(idx, afterIndex){
         ${nc.linkedFrom.map(l=>{
           const pos = slugToPos.get(l.slug);
           const meta = pos != null ? defaultEntryMeta(notionEntries[pos]) : '';
-          return `<li><a data-slug="${l.slug}">${l.t}<span class="meta">${meta}</span></a></li>`;
+          return `<li><a href="/learn/${l.slug}" data-slug="${l.slug}">${l.t}<span class="meta">${meta}</span></a></li>`;
         }).join('')}
       </ul>`
     : '';
@@ -933,18 +942,20 @@ function articleColumnEl(idx, afterIndex){
     ${bodyHtml}${linkedFromHtml}`;
   // In-body cross-links to other articles (inserted via the CMS's "Link to
   // Article" tool) render as plain <a href="article:<slug>"> from the
-  // markdown -> HTML pass; there's no real URL behind that scheme, so
-  // clicking one is intercepted here and turned into opening that article
-  // as the next column instead of letting the browser try to navigate.
-  // afterIndex here is *this* column's predecessor (the position it was
-  // itself opened after), so this column's own position is afterIndex+1 --
-  // links inside it need to open after THAT, matching the convention every
-  // other column type already uses (see entryListColumnEl). Passing bare
-  // afterIndex instead pointed openArticleColumn at the slot this same
-  // column occupies, so clicking a link replaced the article you were
-  // reading instead of opening a new one to the right of it.
+  // markdown -> HTML pass -- that's not a real URL, so it's rewritten here
+  // to the actual /learn/<slug> path (crawlable, right-click-copyable) and
+  // clicking is still intercepted for instant in-app navigation instead of
+  // a full page load. afterIndex here is *this* column's predecessor (the
+  // position it was itself opened after), so this column's own position is
+  // afterIndex+1 -- links inside it need to open after THAT, matching the
+  // convention every other column type already uses (see
+  // entryListColumnEl). Passing bare afterIndex instead pointed
+  // openArticleColumn at the slot this same column occupies, so clicking a
+  // link replaced the article you were reading instead of opening a new
+  // one to the right of it.
   el.querySelectorAll('a[href^="article:"]').forEach(a=>{
     const slug = a.getAttribute('href').slice('article:'.length);
+    a.setAttribute('href', '/learn/' + slug);
     a.addEventListener('click', (e)=>{
       e.preventDefault();
       const pos = slugToPos.get(slug);
@@ -952,7 +963,8 @@ function articleColumnEl(idx, afterIndex){
     });
   });
   el.querySelectorAll('[data-slug]').forEach(a=>{
-    a.addEventListener('click', ()=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
       const pos = slugToPos.get(a.dataset.slug);
       if(pos != null) openArticleColumn(pos, afterIndex+1);
     });
@@ -983,18 +995,29 @@ function openTopicColumn(topic, afterIndex){
   learnColumns.push({type:'topic', el:topicColumnEl(topic, afterIndex)});
   renderLearnScroller();
 }
-function openArticleColumn(idx, afterIndex){
+// Pushes the current article's real URL (/learn/<slug>) so it's shareable
+// and survives a refresh -- see routeFromLocation, which reads it back.
+function setArticleUrl(idx){
+  const slug = notionEntries[idx] && notionEntries[idx].slug;
+  if(!slug) return;
+  const path = '/learn/' + slug;
+  if(location.pathname !== path) history.pushState({room:'learn', slug}, '', path);
+}
+function openArticleColumn(idx, afterIndex, opts){
+  opts = opts || {};
   // if this article is already open somewhere earlier in the row, go back
   // to it (trim everything after) instead of opening a second copy
   const existingPos = learnColumns.findIndex(c=>c.type==='article' && c.idx===idx);
   if(existingPos !== -1){
     learnColumns = learnColumns.slice(0, existingPos+1);
     renderLearnScroller();
+    if(opts.updateUrl !== false) setArticleUrl(idx);
     return;
   }
   learnColumns = learnColumns.slice(0, afterIndex+1);
   learnColumns.push({type:'article', idx, el:articleColumnEl(idx, afterIndex)});
   renderLearnScroller();
+  if(opts.updateUrl !== false) setArticleUrl(idx);
 }
 
 // Renders one What it means / Strengths / Considerations bullet group
@@ -1055,10 +1078,42 @@ fetch('articles.json')
     buildLearnColumns();
     renderAboutRoom(data.about);
     renderWorkRoom(data.work);
+    routeFromLocation({replace:true});
   })
   .catch(err => {
     console.error('Failed to load articles.json', err);
   });
+
+// ===================== URL routing =====================
+// Opens whatever the current URL points at: a room (/about, /work, ...) or
+// a single article (/learn/<slug>). Runs on first load -- so a shared or
+// refreshed article link lands on that article rather than the homepage --
+// and again on every back/forward, so browser history walks the same path
+// the user clicked through. Article URLs open the article one column after
+// the Learn welcome column, giving the same "click back through previous
+// columns" behavior as if it had been opened from the list.
+function routeFromLocation(opts){
+  opts = opts || {};
+  const path = location.pathname.replace(/\/+$/, '') || '/';
+  const articleMatch = /^\/learn\/(.+)$/.exec(path);
+  if(articleMatch){
+    const pos = slugToPos.get(decodeURIComponent(articleMatch[1]));
+    if(pos != null){
+      goToRoom('learn', {updateUrl:false});
+      openArticleColumn(pos, 0, {updateUrl:false});
+      if(opts.replace) history.replaceState({room:'learn', slug:notionEntries[pos].slug}, '', path);
+      return;
+    }
+    // unknown slug (deleted/renamed article): fall back to the Learn room
+    // rather than leaving a URL pointing at nothing
+    goToRoom('learn');
+    return;
+  }
+  const room = Object.keys(ROOM_PATHS).find(r => ROOM_PATHS[r] === path);
+  goToRoom(room || 'home', {updateUrl:false});
+  if(opts.replace) history.replaceState({room:room||'home'}, '', path);
+}
+window.addEventListener('popstate', ()=>routeFromLocation());
 
 // ===================== 3D halftone scribble ball =====================
 // Concept: a tangled 3D "scribble" (tube-mesh yarn ball + a few longer

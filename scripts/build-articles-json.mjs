@@ -257,3 +257,35 @@ fs.writeFileSync(
 );
 
 console.log(`Wrote ${notionEntries.length} articles to ${OUT_FILE}`);
+
+// sitemap.xml + robots.txt: generated here rather than hand-maintained so
+// articles added via the Notion sync show up automatically. Every article
+// has a real URL (see src/worker.js's ARTICLE_PATH and routeFromLocation in
+// public/index.html), which is what makes them individually crawlable.
+const SITE_ORIGIN = "https://mutaremores.com";
+const staticPaths = ["/", "/about", "/work", "/assessment", "/learn"];
+const urls = [
+  ...staticPaths.map((p) => ({ loc: SITE_ORIGIN + p, lastmod: null })),
+  ...ordered.map((p, i) => ({
+    loc: `${SITE_ORIGIN}/learn/${notionEntries[i].slug}`,
+    lastmod: /^\d{4}-\d{2}-\d{2}$/.test(String(p.data.lastEdited || ""))
+      ? String(p.data.lastEdited)
+      : null,
+  })),
+];
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) =>
+      `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`
+  )
+  .join("\n")}
+</urlset>
+`;
+fs.writeFileSync(path.resolve("public/sitemap.xml"), sitemap);
+fs.writeFileSync(
+  path.resolve("public/robots.txt"),
+  `User-agent: *\nAllow: /\n\nSitemap: ${SITE_ORIGIN}/sitemap.xml\n`
+);
+console.log(`Wrote sitemap.xml (${urls.length} urls) and robots.txt`);
