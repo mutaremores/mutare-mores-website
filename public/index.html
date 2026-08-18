@@ -1092,9 +1092,15 @@ fetch('/articles.json')
 // a single article (/learn/<slug>). Runs on first load -- so a shared or
 // refreshed article link lands on that article rather than the homepage --
 // and again on every back/forward, so browser history walks the same path
-// the user clicked through. Article URLs open the article one column after
-// the Learn welcome column, giving the same "click back through previous
-// columns" behavior as if it had been opened from the list.
+// the user clicked through.
+//
+// Articles open after the LAST existing column, not at a fixed position:
+// on a cold load that's just the welcome column (so the article lands
+// second, same as opening it from the list, keeping the click-back-through-
+// columns trail intact), while on a forward navigation it re-extends the
+// trail the matching back navigation had trimmed. openArticleColumn's own
+// "already open?" check still trims back to an earlier copy instead of
+// appending a duplicate, which is what makes the back direction work.
 function routeFromLocation(opts){
   opts = opts || {};
   const path = location.pathname.replace(/\/+$/, '') || '/';
@@ -1103,7 +1109,7 @@ function routeFromLocation(opts){
     const pos = slugToPos.get(decodeURIComponent(articleMatch[1]));
     if(pos != null){
       goToRoom('learn', {updateUrl:false});
-      openArticleColumn(pos, 0, {updateUrl:false});
+      openArticleColumn(pos, Math.max(0, learnColumns.length - 1), {updateUrl:false});
       if(opts.replace) history.replaceState({room:'learn', slug:notionEntries[pos].slug}, '', path);
       return;
     }
