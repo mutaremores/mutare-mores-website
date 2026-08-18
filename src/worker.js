@@ -44,7 +44,11 @@ const SECURITY_HEADERS = {
 // one would otherwise 404 -- these serve index.html instead and let the
 // client route itself from location.pathname.
 const SPA_ROOM_PATHS = new Set(["/about", "/work", "/assessment", "/learn"]);
-const ARTICLE_PATH = /^\/learn\/([^/]+)\/?$/;
+// Excludes anything with a file extension so a real asset request that
+// happens to sit under /learn/ (or a relative-URL mistake resolving to
+// one, e.g. /learn/articles.json) still falls through to ASSETS instead
+// of being treated as an article slug and answered with the HTML page.
+const ARTICLE_PATH = /^\/learn\/([^/.]+)\/?$/;
 
 const SITE_ORIGIN = "https://mutaremores.com";
 const DEFAULT_SOCIAL_IMAGE = `${SITE_ORIGIN}/social-share.png`;
@@ -80,10 +84,10 @@ function excerptFromHtml(html, maxLen) {
 async function articleMetaHtml(html, slug, env, request) {
   const dataUrl = new URL("/articles.json", request.url);
   const res = await env.ASSETS.fetch(new Request(dataUrl, { headers: request.headers }));
-  if (!res.ok) return html;
+  if (!res.ok) return { html, found: false };
   const data = await res.json();
   const idx = (data.notionEntries || []).findIndex((e) => e.slug === slug);
-  if (idx === -1) return html;
+  if (idx === -1) return { html, found: false };
 
   const entry = data.notionEntries[idx];
   const nc = (data.noteContent || [])[idx] || {};
@@ -93,7 +97,7 @@ async function articleMetaHtml(html, slug, env, request) {
     "Notes on behavioral psychology, systems thinking, and creative leadership from Mutare Mores.";
   const url = `${SITE_ORIGIN}/learn/${slug}`;
 
-  return html
+  const rewritten = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
     .replace(
       /<meta name="description" content="[^"]*">/,
@@ -127,6 +131,7 @@ async function articleMetaHtml(html, slug, env, request) {
       /<meta property="og:image" content="[^"]*">/,
       `<meta property="og:image" content="${DEFAULT_SOCIAL_IMAGE}">`
     );
+  return { html: rewritten, found: true };
 }
 
 function withSecurityHeaders(response, extraHeaders) {
@@ -154,11 +159,20 @@ export default {
       const indexUrl = new URL("/index.html", request.url);
       const indexRes = await env.ASSETS.fetch(new Request(indexUrl, { headers: request.headers }));
       let html = await indexRes.text();
+      // An unrecognized slug (deleted or renamed article) still renders the
+      // page -- the client falls back to the Learn room -- but answers 404
+      // so search engines drop the dead URL instead of indexing it as a
+      // valid page.
+      let status = 200;
       if (articleMatch) {
-        html = await articleMetaHtml(html, decodeURIComponent(articleMatch[1]), env, request);
+        const result = await articleMetaHtml(
+          html, decodeURIComponent(articleMatch[1]), env, request
+        );
+        html = result.html;
+        if (!result.found) status = 404;
       }
       return withSecurityHeaders(
-        new Response(html, { status: 200, headers: indexRes.headers }),
+        new Response(html, { status, headers: indexRes.headers }),
         { "Content-Type": "text/html; charset=utf-8" }
       );
     }

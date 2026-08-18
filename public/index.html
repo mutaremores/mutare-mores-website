@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared-site-styles.css">
+<link rel="stylesheet" href="/shared-site-styles.css">
 </head>
 <body>
 
@@ -1063,7 +1063,10 @@ function insertResultsColumn(profile){
 // Article data now lives in articles.json (generated from the Tina-managed
 // content files at build time) instead of being hard-coded here, so it has
 // to be loaded before the Learn section can render.
-fetch('articles.json')
+// Root-absolute, not relative: this page is also served at nested paths
+// like /learn/<slug>, where a relative 'articles.json' would resolve to
+// /learn/articles.json instead.
+fetch('/articles.json')
   .then(r => r.json())
   .then(data => {
     notionEntries = data.notionEntries;
